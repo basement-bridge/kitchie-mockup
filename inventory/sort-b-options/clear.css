@@ -1,0 +1,14 @@
+/* Extra pieces for the sort B "clear" variations. Colours come from ../../theme.css only; layout basics from ../sort-options/shared.css. */
+.tog { display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border: 1px solid var(--border); border-radius: 999px; background: var(--surface); color: var(--muted); cursor: pointer; }
+.tog svg { width: 1.2rem; height: 1.2rem; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.tog.is-on { background: var(--accent); border-color: var(--accent); color: var(--bg); }
+.tog.is-on svg { stroke: none; }
+.tog.is-on svg path { stroke-width: 2.4; }
+.titlechip { display: inline-flex; align-items: center; gap: .35rem; min-height: 44px; margin-left: -.2rem; padding: 0 .45rem 0 .9rem; border: 1px solid var(--accent); border-radius: 999px; background: transparent; color: var(--fg); font-family: var(--head); font-size: 1.15rem; font-weight: 700; line-height: 1.1; white-space: nowrap; cursor: pointer; }
+.titlechip .x { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 999px; background: var(--surface); color: var(--muted); }
+.titlechip .x svg { width: .9rem; height: .9rem; stroke: currentColor; fill: none; stroke-width: 2.4; stroke-linecap: round; }
+.titlechip:hover .x { color: var(--fg); }
+.clearpill { flex: 0 0 auto; scroll-snap-align: start; display: inline-flex; align-items: center; gap: .3rem; min-height: 44px; padding: 0 .8rem; border: 1px dashed var(--border); border-radius: .75rem; background: var(--surface); color: var(--muted); font: inherit; font-weight: 700; font-size: .9rem; cursor: pointer; }
+.clearpill svg { width: .85rem; height: .85rem; stroke: currentColor; fill: none; stroke-width: 2.4; stroke-linecap: round; }
+.clearpill:hover { color: var(--fg); border-color: var(--accent); }
+.iseg button[aria-pressed="true"] { background: var(--accent); color: var(--bg); }
