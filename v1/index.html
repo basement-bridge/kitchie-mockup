@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Kitchie: join page mockup</title>
+<title>Kitchie: join page mockup (v1, before the marketing review)</title>
 <meta name="description" content="Interactive mockup of the Kitchie invite landing page. Not the live product.">
 <meta name="robots" content="noindex">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -86,10 +86,9 @@ details div{padding:0 1.1rem 1rem;color:var(--muted);display:flex;flex-direction
 details b{color:var(--fg)}
 /* joining an existing household: the pitch is optional, shown on request */
 .story{display:contents}
-#k-join:checked ~ main:not(:has(#how:target)) .story,#k-join:checked ~ main:not(:has(#how:target)) .story-end{display:none}
-.more.j{text-align:center;text-wrap:balance}
+#k-join:checked ~ #k-more:not(:checked) ~ main .story,#k-join:checked ~ #k-more:not(:checked) ~ main .story-end{display:none}
+.more.j{cursor:pointer;border:1px solid var(--border);border-radius:999px;background:var(--surface);color:var(--fg);margin-top:1rem;padding:.6rem 1.2rem;border-radius:1.4rem;text-align:center;text-wrap:balance}
 h1.j{font-size:2.4rem;line-height:1.05}
-h1.o{font-size:2.5rem;line-height:1.04}
 .sub.j{font-size:1.15rem;margin-bottom:1.2rem}
 /* demo-only: switch between the two kinds of invite link */
 .vh{position:absolute;opacity:0;pointer-events:none}
@@ -108,6 +107,7 @@ h1.o{font-size:2.5rem;line-height:1.04}
 </head>
 <body>
 <input class="vh" type="radio" name="kind" id="k-join" checked aria-label="Preview: invite to an existing household">
+<input class="vh" type="checkbox" id="k-more" aria-label="Show the full story">
 <input class="vh" type="radio" name="kind" id="k-own" aria-label="Preview: invite to start your own household">
 <div class="banner"><span>Mockup only. Preview the invite as:</span><label for="k-join">Join a household</label><label for="k-own">Start your own</label></div>
 
@@ -123,24 +123,24 @@ h1.o{font-size:2.5rem;line-height:1.04}
 <span>Kitchie</span>
 </div>
 <p class="invite o"><i aria-hidden="true">J</i><span>Jane&rsquo;s already cooking. Your turn.</span></p>
-<h1 class="o">Your kitchen. Now your AI knows what&rsquo;s in&nbsp;it.</h1>
-<p class="lead o">One live view of your fridge, pantry and shopping list, for your household and your AI. Ask what you have, what needs using, what to cook tonight.</p>
+<h1 class="o">Do we have any&hellip;?</h1>
+<p class="sub o">Never ask that question again.</p>
 <h1 class="j">You&rsquo;re in Jane&rsquo;s kitchen now. Almost.</h1>
-<p class="sub j">See what&rsquo;s in the fridge and pantry, share the shopping list, keep it up to date together.</p>
+<p class="sub j">So skip the pitch. Grab a funny name and come on in.</p>
+<p class="lead o"><strong>Start a kitchen of your own.</strong> Kitchie is the digital twin of your fridge and pantry. Bring your AI along and put it to work.</p>
 
 <div class="join">
-<p class="label j">Join Jane&rsquo;s kitchen</p>
-<p class="label o">Start my kitchen</p>
+<p class="label j">Take your seat</p>
+<p class="label o">Fire up your kitchen</p>
 <a class="gbtn" href="#demo"><svg width="20" height="20" aria-hidden="true"><use href="#g"></use></svg><span>Sign in with Google</span></a>
-<small class="j">Private. No profile to fill in. We&rsquo;ll give you a ridiculous name.</small>
-<small class="o">Free while we&rsquo;re building Kitchie. No name or email needed.</small>
+<small class="j">Anonymous: no email, no name kept. This invite link works once.</small>
+<small class="o">Starts empty. Only people you invite see it, and Jane won&rsquo;t. This link works once.</small>
 </div>
 <a class="more o" href="#how">Or see how it works first &darr;</a>
-<a class="more j" href="#how">Don&rsquo;t take Jane&rsquo;s word for it. Take the 60-second tour. &darr;</a>
+<label class="more j" for="k-more">Don&rsquo;t take Jane&rsquo;s word for it. Take the tour. &darr;</label>
 </section>
 
 <div class="story">
-
 <section id="how">
 <div class="step"><b>1 / 5</b><span>The problem</span></div>
 <h2>Every household has this conversation.</h2>
@@ -150,46 +150,18 @@ h1.o{font-size:2.5rem;line-height:1.04}
 <div class="bubble me">Think so. Can you check?</div>
 <div class="bubble them">I&rsquo;m at the shop. I bought another litre of milk, just in case.</div>
 </div>
-<p class="copy" style="margin-top:1.2rem">Somebody has to remember what&rsquo;s in the kitchen. Usually it&rsquo;s the same somebody.</p>
+<p class="copy" style="margin-top:1.2rem">Nobody knows what&rsquo;s really in the kitchen, so food gets bought twice, forgotten, or thrown out.</p>
 </section>
 
 <section>
-<div class="step"><b>2 / 5</b><span>The magic</span></div>
-<h2>Finally, an AI that&rsquo;s seen your fridge.</h2>
-<div class="card">
-<span class="chip">Sample chat</span>
-<div class="bubble me" style="align-self:flex-end">What can I cook tonight?</div>
-<div class="ai"><i><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"></path></svg></i>
-<div class="bubble them" style="max-width:100%">The spinach needs using soon. You&rsquo;ve got eggs and rice too, so spinach and egg fried rice would use what you already have. Nothing else to buy.</div></div>
-</div>
-<p class="copy" style="margin:1.2rem 0 0">Link ChatGPT, Claude or your favourite AI to Kitchie. It gets what it normally lacks: what&rsquo;s actually in your kitchen.</p>
-</section>
-
-<section>
-<div class="step"><b>3 / 5</b><span>Real life</span></div>
-<h2>Stop asking &ldquo;Do we have any&hellip;?&rdquo;</h2>
+<div class="step"><b>2 / 5</b><span>One shared view</span></div>
+<h2>Everyone sees the same shelves.</h2>
+<p class="copy">Items live in places, like the fridge and the pantry, with use-by dates. Add something and the whole household sees it.</p>
 <div class="moments">
-<div class="moment"><b>At the supermarket</b><span>&ldquo;Do we already have eggs?&rdquo; Check Kitchie instead of messaging home.</span></div>
-<div class="moment"><b>At 5:30 pm</b><span>&ldquo;What can I make without going shopping?&rdquo; Your AI starts with what&rsquo;s really on the shelves.</span></div>
-<div class="moment"><b>Before food goes bad</b><span>&ldquo;What needs using?&rdquo; Kitchie knows what&rsquo;s been sitting there.</span></div>
+<div class="moment"><b>What&rsquo;s in the fridge?</b><span>Look before you shop, so nothing gets bought twice.</span></div>
+<div class="moment"><b>What do I have? What do I need?</b><span>Plan the week&rsquo;s food for the family without opening every cupboard.</span></div>
+<div class="moment"><b>I&rsquo;m at the store&hellip;</b><span>Can&rsquo;t remember what to get? Check the list. No more &ldquo;did you forget the&hellip;?&rdquo; phone calls.</span></div>
 </div>
-</section>
-
-<section>
-<div class="step"><b>4 / 5</b><span>Staying current</span></div>
-<h2>Just tell it what changed.</h2>
-<div class="card">
-<div class="bubble me" style="align-self:flex-end">We&rsquo;re out of milk.</div>
-<div class="bubble me" style="align-self:flex-end">We used two eggs.</div>
-<div class="bubble me" style="align-self:flex-end">I bought chicken.</div>
-</div>
-<p class="copy" style="margin:1.2rem 0 0">Say it out loud or type it. The shared kitchen updates, without turning household inventory into another admin job.</p>
-</section>
-
-<section>
-<div class="step"><b>5 / 5</b><span>One household</span></div>
-<h2>Everyone shares the same kitchen.</h2>
-<p class="copy">One fridge. One pantry. One shopping list. Several humans. Possibly one Sleepy Wombat.</p>
 <div class="card">
 <span class="chip">Sample</span>
 <span class="loc">Fridge</span>
@@ -199,47 +171,79 @@ h1.o{font-size:2.5rem;line-height:1.04}
 <div class="row"><span>Rice</span><small>added by Sleepy Wombat</small></div>
 <div class="row"><span>Lentils</span><small>added by Cheerful Kettle</small></div>
 </div>
-<div class="card name" style="margin-top:.8rem">
+</section>
+
+<section>
+<div class="step"><b>3 / 5</b><span>Your AI</span></div>
+<h2>Let your AI carry the mental load.</h2>
+<p class="copy">Link ChatGPT, Claude or your favourite AI to Kitchie. It can read your shelves, so ideas start from what you actually have.</p>
+<div class="card">
+<span class="chip">Sample chat</span>
+<div class="bubble me" style="align-self:flex-end">What can I cook tonight?</div>
+<div class="ai"><i><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"></path></svg></i>
+<div class="bubble them" style="max-width:100%">The spinach needs using soon. Spinach and egg fried rice works with what&rsquo;s in the fridge and pantry, and there&rsquo;s nothing to buy.</div></div>
+</div>
+</section>
+
+<section>
+<div class="step"><b>4 / 5</b><span>It keeps itself up to date</span></div>
+<h2>Talking is easier than typing.</h2>
+<p class="copy">Just say it out loud.</p>
+<ul class="items">
+<li><div class="num">1</div><div><strong>Say what you cooked</strong><span>The ingredients come off the shelves.</span></div></li>
+<li><div class="num">2</div><div><strong>Add and remove on the go</strong><span>Say &ldquo;we&rsquo;re out of milk&rdquo; and everyone sees it.</span></div></li>
+<li><div class="num">3</div><div><strong>One shared shopping list</strong><span>The whole household sees and adds to the same list.</span></div></li>
+</ul>
+</section>
+
+<section>
+<div class="step"><b>5 / 5</b><span>Joining is anonymous</span></div>
+<h2>We&rsquo;ll give you a funny name.</h2>
+<p class="copy">No need to think what to call yourself. Kitchie never asks Google for your email or your name, so you arrive as something like this, and can swap it any time.</p>
+<div class="card name">
 <div class="avatar">SW</div>
 <b>Sleepy Wombat</b>
-<span>That&rsquo;s you. Rename any time, emoji welcome.</span>
+<span>Rename any time, emoji welcome</span>
 </div>
 </section>
 
 <section>
 <h2>Privacy? It&rsquo;s your pantry, for God&rsquo;s sake.</h2>
-<p class="copy" style="margin-bottom:0">No ads. No trackers. We don&rsquo;t sell your household data.</p>
+<p class="copy" style="margin-bottom:0">Still, nobody should be selling it. We never will.</p>
 <details>
-<summary>How Kitchie handles privacy &rarr;</summary>
+<summary>A couple of key things</summary>
 <div>
 <span><b>We just use Google to sign you in.</b> We don&rsquo;t know your name. We don&rsquo;t know your email.</span>
 <span><b>You get a made-up name,</b> and you can change it any time. The old one isn&rsquo;t kept.</span>
 <span><b>No trackers, no ads, no third-party scripts.</b> Nothing on the page phones anyone else.</span>
 <span><b>Invite links work once</b> and expire after 48 hours.</span>
-<span class="o"><b>Your kitchen starts empty.</b> Only the people you invite will see it. Jane won&rsquo;t be a member and can&rsquo;t see your items.</span>
-<span class="j"><b>You&rsquo;ll share items and the shopping list</b> with the other members of Our kitchen.</span>
 </div>
 </details>
+</section>
+
+<section class="qa">
+<div class="step"><span>Straight answers</span></div>
+<h2>The questions you&rsquo;re probably asking.</h2>
+<div class="card" style="margin-bottom:1rem">
+<h3>How do you make money?</h3>
+<p>We don&rsquo;t. Kitchie is an idea we&rsquo;re building and testing, and you&rsquo;re helping shape it.</p>
+</div>
+<div class="card">
+<h3>How will you pay for it later?</h3>
+<p>We don&rsquo;t know yet. But not by selling your data or showing you ads. We dislike those ideas as much as you do.</p>
+<p>If Kitchie turns out to be a genuinely useful tool, we&rsquo;ll look at donations, a subscription, or a free version with optional premium features.</p>
+</div>
 </section>
 
 </div>
 
 <section class="join final story-end">
-<h2 class="o">Your kitchen is waiting.</h2>
-<h2 class="j">Jane&rsquo;s kitchen is waiting.</h2>
+<p class="label">Ready when you are</p>
+<h2>Your kitchen is waiting.</h2>
+<p class="j">You&rsquo;ll share items and the shopping list with the other members of Our kitchen.</p>
+<p class="o">Your kitchen starts empty, and only you decide who sees it.</p>
 <a class="gbtn" href="#demo"><svg width="20" height="20" aria-hidden="true"><use href="#g"></use></svg><span>Sign in with Google</span></a>
-<small class="j">Private. No profile to fill in.</small>
-<small class="o">Free while we&rsquo;re building Kitchie.</small>
-</section>
-
-<section class="qa story-end">
-<details>
-<summary>The money question</summary>
-<div>
-<span><b>How do you make money?</b> We don&rsquo;t. Kitchie is an idea we&rsquo;re building and testing, and you&rsquo;re helping shape it.</span>
-<span><b>How will you pay for it later?</b> We don&rsquo;t know yet, but not by selling your data or showing you ads. We dislike those ideas as much as you do. If Kitchie turns out to be genuinely useful, we&rsquo;ll look at donations, a subscription, or a free version with optional premium features.</span>
-</div>
-</details>
+<small>Anonymous: no email, no name kept. This invite link works once.</small>
 </section>
 
 </main>
