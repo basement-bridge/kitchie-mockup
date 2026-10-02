@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Kitchie: home screen mockup</title>
-<meta name="description" content="Interactive mockup of the Kitchie home screen. Not the live product.">
+<meta name="description" content="The Kitchie home screen with a pin and tag toggle that switches the filter ribbon between location and category. Not the live product.">
 <meta name="robots" content="noindex">
 <link rel="stylesheet" href="../theme.css">
 <style>
@@ -162,6 +162,17 @@ html{overflow-x:clip}
 .sheet-body input[type=number]{font:inherit;width:100%;max-width:26rem;min-height:52px;padding:.4rem 1rem;background:var(--surface);color:var(--fg);border:1px solid var(--border);border-radius:1rem}
 .profile summary.icon{list-style:none}
 table td:nth-child(2){white-space:nowrap}
+
+/* Filter toggle: the ribbon shows Location or Category, and a two-state switch decides which. */
+.tabhead{display:flex;align-items:center;justify-content:space-between;gap:.8rem;margin:0 .1rem .5rem}
+.tabhead b{font-family:var(--head);font-size:1.3rem;font-weight:700}
+.bin{position:relative;display:grid;grid-template-columns:1fr 1fr;width:5.6rem;height:44px;padding:3px;border:1px solid var(--border);border-radius:999px;background:var(--surface);color:var(--fg);font:inherit;cursor:pointer}
+.bin i{position:absolute;top:3px;left:3px;width:calc(50% - 3px);height:calc(100% - 6px);border-radius:999px;background:var(--accent);transition:transform .2s ease,background .2s ease}
+.bin[aria-checked="true"] i{transform:translateX(100%);background:var(--sage)}
+.bin span{position:relative;z-index:1;display:grid;place-items:center;color:var(--muted)}
+.bin[aria-checked="false"] span:first-of-type,.bin[aria-checked="true"] span:last-of-type{color:var(--bg)}
+.bin svg{width:1.1rem;height:1.1rem;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+nav.tabs.dim-cat a[aria-current=page]{background:var(--sage)}
 </style>
 </head>
 <body>
@@ -179,7 +190,7 @@ table td:nth-child(2){white-space:nowrap}
       <button type="button" class="seg" data-theme-pick="light" aria-pressed="false">Light</button>
       <button type="button" class="seg" data-theme-pick="dark" aria-pressed="false">Dark</button>
     </fieldset>
-    <p>Try: swipe a row right (use one) or left (used up), tap the &minus; or tick on a row, the plus to add, the magnifier or mic to search, the area tabs and Sort. Undo appears for 5 seconds after a change.</p>
+    <p>Try: swipe a row right (use one) or left (used up), tap the &minus; or tick on a row, the plus to add, the magnifier or mic to search, the pin and tag switch (Location or Category), the ribbon (scroll it; press and hold a chip to reorder) and Sort. Undo appears for 5 seconds after a change.</p>
     <p><button type="button" class="seg" id="reset">Reset sample items</button></p>
   </div>
 </details>
@@ -286,7 +297,7 @@ table td:nth-child(2){white-space:nowrap}
   }
 
   /* ---------- state ---------- */
-  var state = { scenario: "full", theme: "auto", area: "", sort: "name", query: "", items: [], removed: [], undo: null };
+  var state = { scenario: "full", theme: "auto", dim: "area", cat: "", area: "", sort: "name", query: "", items: [], removed: [], undo: null };
   var fresh = seed(); state.items = fresh.items; state.removed = fresh.removed;
 
   /* ---------- rules copied from the product ---------- */
@@ -354,6 +365,75 @@ table td:nth-child(2){white-space:nowrap}
     return keys.map(function (k) { return [k, map[k]]; });
   }
 
+
+  /* ---------- filter ribbon ---------- */
+  // Default order: the value with the most items first, then by name. A saved order (per view, in this browser only) wins over that.
+  var RIBBON_KEY = function () { return "kitchie.tabs." + state.dim; };
+  function readOrder() { try { var v = JSON.parse(localStorage.getItem(RIBBON_KEY()) || "[]"); return Array.isArray(v) ? v.filter(function (x) { return typeof x === "string"; }) : []; } catch (e) { return []; } }
+  function saveOrder(order) { try { localStorage.setItem(RIBBON_KEY(), JSON.stringify(order)); } catch (e) { /* storage blocked: the order is just not remembered */ } }
+  function ribbonValues(list) {
+    var count = {};
+    list.forEach(function (i) { var k = state.dim === "cat" ? i.category : (i.area || "Other"); if (k) count[k] = (count[k] || 0) + 1; });
+    var vals = Object.keys(count).sort(function (a, b) { return count[b] - count[a] || a.localeCompare(b); });
+    var saved = readOrder();
+    if (!saved.length) return vals;
+    var rank = function (v) { var n = saved.indexOf(v); return n === -1 ? 1e6 + vals.indexOf(v) : n; };   // values new since the last save keep their usual place after the saved ones
+    return vals.slice().sort(function (a, b) { return rank(a) - rank(b); });
+  }
+  var ribbonLater = null;
+  window.addEventListener("resize", function () { if (ribbonLater) ribbonLater(); });
+  function initRibbon() {
+    var nav = $("nav.tabs"); ribbonLater = null;
+    if (!nav) return;
+    var links = function () { return $$("a", nav); };
+    var movable = function () { return links().filter(function (a) { return !a.hasAttribute("data-fixed"); }); };
+    var timer = 0, mine = false, dragging = null, press = null, suppress = false;
+    function fit() {   // only whole buttons are visible at the right edge
+      var from = nav.scrollLeft;
+      nav.style.scrollSnapType = "none"; nav.style.width = "";
+      var avail = nav.getBoundingClientRect().width, items = links();
+      var done = function () { requestAnimationFrame(function () { nav.style.scrollSnapType = ""; setTimeout(function () { mine = false; }, 60); }); };
+      nav.classList.remove("fitted");
+      if (nav.scrollWidth <= avail + 1) { nav.scrollLeft = 0; done(); return; }
+      nav.classList.add("fitted");
+      var pad = parseFloat(getComputedStyle(nav).paddingLeft) || 0;
+      var start = items.slice().sort(function (a, b) { return Math.abs(a.offsetLeft - pad - from) - Math.abs(b.offsetLeft - pad - from); })[0];
+      var scroll = start.offsetLeft - pad, w = 0;
+      items.forEach(function (a) { if (a.offsetLeft < start.offsetLeft) return; var need = a.offsetLeft + a.offsetWidth + pad - scroll; if (need <= avail && need > w) w = need; });
+      if (w > 0) { nav.style.width = Math.ceil(w) + "px"; mine = true; nav.scrollLeft = scroll; }
+      done();
+    }
+    function later() { clearTimeout(timer); timer = setTimeout(fit, 120); }
+    ribbonLater = later;
+    nav.addEventListener("scroll", function () { if (mine) { mine = false; return; } if (!dragging) later(); }, { passive: true });
+    var cur = nav.querySelector("[aria-current]");   // keep the chosen chip in view after a redraw
+    if (cur && cur.offsetLeft + cur.offsetWidth > nav.clientWidth) nav.scrollLeft = cur.offsetLeft - 8;
+    fit();
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(later);
+    // long press to reorder; the order is saved for this view
+    var HOLD = 500, MOVE = 8;
+    function cancelPress() { if (press) { clearTimeout(press.t); press = null; } }
+    function startDrag(a) { dragging = a; nav.classList.add("reordering"); a.classList.add("lifted"); if (navigator.vibrate) { try { navigator.vibrate(15); } catch (e) { /* not supported */ } } }
+    function endDrag() { if (!dragging) return; dragging.classList.remove("lifted"); nav.classList.remove("reordering"); dragging = null; saveOrder(movable().map(function (a) { return a.getAttribute("data-tab"); })); fit(); }
+    nav.addEventListener("pointerdown", function (e) {
+      var a = e.target.closest && e.target.closest("a[data-tab]");
+      if (!a || a.hasAttribute("data-fixed") || (e.pointerType === "mouse" && e.button !== 0)) return;
+      press = { a: a, x: e.clientX, y: e.clientY, t: setTimeout(function () { var p = press; press = null; if (p) startDrag(p.a); }, HOLD) };
+    });
+    nav.addEventListener("pointermove", function (e) {
+      if (press && (Math.abs(e.clientX - press.x) > MOVE || Math.abs(e.clientY - press.y) > MOVE)) cancelPress();
+      if (!dragging) return;
+      var over = movable().filter(function (a) { return a !== dragging; }).filter(function (a) { var r = a.getBoundingClientRect(); return e.clientX >= r.left && e.clientX <= r.right; })[0];
+      if (over) { var before = over.compareDocumentPosition(dragging) & Node.DOCUMENT_POSITION_FOLLOWING; nav.insertBefore(dragging, before ? over : over.nextSibling); }
+      var box = nav.getBoundingClientRect();
+      if (e.clientX < box.left + 28) nav.scrollLeft -= 8; else if (e.clientX > box.right - 28) nav.scrollLeft += 8;
+    });
+    ["pointerup", "pointercancel"].forEach(function (n) { nav.addEventListener(n, function () { cancelPress(); if (dragging) { suppress = true; setTimeout(function () { suppress = false; }, 50); endDrag(); } }); });
+    nav.addEventListener("touchmove", function (e) { if (dragging) e.preventDefault(); }, { passive: false });
+    nav.addEventListener("contextmenu", function (e) { if (press || dragging) e.preventDefault(); });
+    nav.addEventListener("click", function (e) { if (suppress) { e.preventDefault(); e.stopPropagation(); } }, true);
+  }
+
   /* ---------- rendering ---------- */
   var editing = function () { return state.scenario !== "readonly"; };
 
@@ -370,10 +450,12 @@ table td:nth-child(2){white-space:nowrap}
 
   function update() {
     var ed = editing(), all = state.items, empty = all.length === 0, q = state.query.trim();
-    var visible = all.filter(function (i) { return !q || rank(i, q) >= 0; });
+    var areaSel = state.dim === "area" ? state.area : "", catSel = state.dim === "cat" ? state.cat : "";   // only the view in front filters
+    var visible = all.filter(function (i) { return (!q || rank(i, q) >= 0) && (!catSel || i.category === catSel); });
     var cmp = sorter();
     var gs = groups(all);
     if (state.area && !gs.some(function (g) { return g[0] === state.area; })) state.area = "";
+    if (state.cat && !all.some(function (i) { return i.category === state.cat; })) state.cat = "";
 
     // header icons
     var profile = ed ? '<details class="profile"><summary class="icon" aria-label="Profile" title="Profile">' + ICONS.person + '</summary><div class="menu"><a href="#" data-na="Household">Household</a><a href="#" data-na="History">History</a><a href="#" data-na="Settings">Settings</a><button type="button" data-na="Create invite link">Create invite link</button><a href="#" data-na="Download CSV">Download CSV</a><a href="#" data-na="JSON">JSON</a><button type="button" data-na="Sign out">Sign out</button></div></details>' : "";
@@ -387,21 +469,28 @@ table td:nth-child(2){white-space:nowrap}
     $("#count").textContent = q ? visible.length + " of " + all.length : "";
     $("#sort").value = state.sort;
 
-    // area tabs
-    $("#tabs").innerHTML = gs.length > 1 ? '<nav class="tabs" aria-label="Area"><a href="#" data-tab="" ' + (state.area === "" ? 'aria-current="page"' : "") + ' draggable="false">All</a>' + gs.slice(0, 12).map(function (g) { return '<a href="#" data-tab="' + esc(g[0]) + '" ' + (g[0] === state.area ? 'aria-current="page"' : "") + ' draggable="false">' + esc(g[0]) + "</a>"; }).join("") + "</nav>" : "";
+    // filter ribbon: the pin | tag switch picks Location or Category; chips are whole buttons, scroll sideways and can be reordered
+    var PIN = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.2A7 7 0 0 1 19 9.8C19 14.8 12 21 12 21z"/><circle cx="12" cy="10" r="2.5"/></svg>';
+    var TAG = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12V4h8l10 10-8 8L3 12z"/><circle cx="7.5" cy="8.5" r="1.3"/></svg>';
+    var isCat = state.dim === "cat", sel = isCat ? state.cat : state.area, title = isCat ? "Category" : "Location";
+    var vals = ribbonValues(all);
+    $("#tabs").innerHTML = empty ? "" : '<div class="tabhead"><b>' + title + '</b><button type="button" class="bin" role="switch" aria-checked="' + isCat + '" aria-label="Filter by category" data-flip><i></i><span>' + PIN + '</span><span>' + TAG + '</span></button></div>' +
+      '<nav class="tabs' + (isCat ? " dim-cat" : "") + '" aria-label="' + title + '"><a href="#" data-tab="" data-fixed ' + (sel === "" ? 'aria-current="page"' : "") + ' draggable="false">All</a>' +
+      vals.slice(0, 20).map(function (v) { return '<a href="#" data-tab="' + esc(v) + '" ' + (v === sel ? 'aria-current="page"' : "") + ' draggable="false">' + esc(v) + "</a>"; }).join("") + "</nav>";
+    initRibbon();
 
     // list
     var html = "";
     if (empty) html = "<p>Nothing here yet.</p>";
     else if (visible.length === 0) html = '<p class="note">Nothing matches “' + esc(q) + "”.</p>";
     else {
-      html = groups(visible).filter(function (g) { return !state.area || g[0] === state.area; }).map(function (g) {
+      html = groups(visible).filter(function (g) { return !areaSel || g[0] === areaSel; }).map(function (g) {
         var list = g[1].slice();
         if (q) { var base = list.slice().sort(cmp); list = base.map(function (r, n) { return { r: r, n: n, k: rank(r, q) }; }).sort(function (a, b) { return a.k - b.k || a.n - b.n; }).map(function (x) { return x.r; }); }
         else list.sort(cmp);
         return '<section class="group" data-group="' + esc(g[0]) + '"><div class="grouphead"><h2>' + esc(g[0]) + '</h2><span class="count">' + list.length + '</span></div><ul class="rows">' + list.map(rowHtml).join("") + "</ul></section>";
       }).join("");
-      if (state.area && !html) html = '<p class="note">Nothing matches “' + esc(q) + "” in " + esc(state.area) + ".</p>";
+      if (areaSel && !html) html = '<p class="note">Nothing matches “' + esc(q) + "” in " + esc(state.area) + ".</p>";
     }
     $("#list").innerHTML = html;
 
@@ -477,7 +566,8 @@ table td:nth-child(2){white-space:nowrap}
     if (na) { e.preventDefault(); toast(na.getAttribute("data-na") + " isn’t part of this mockup."); var p = $("details.profile"); if (p) p.open = false; return; }
     var use = t.closest("[data-use]"); if (use) { e.preventDefault(); useOne(use.getAttribute("data-use")); return; }
     var done = t.closest("[data-used-up]"); if (done) { e.preventDefault(); usedUp(done.getAttribute("data-used-up")); return; }
-    var tab = t.closest("[data-tab]"); if (tab) { e.preventDefault(); state.area = tab.getAttribute("data-tab"); update(); return; }
+    var flip = t.closest("[data-flip]"); if (flip) { e.preventDefault(); state.dim = state.dim === "area" ? "cat" : "area"; state.area = ""; state.cat = ""; update(); var again = $("[data-flip]"); if (again) again.focus(); return; }
+    var tab = t.closest("[data-tab]"); if (tab) { e.preventDefault(); if (state.dim === "cat") state.cat = tab.getAttribute("data-tab"); else state.area = tab.getAttribute("data-tab"); update(); return; }
     var sc = t.closest("[data-scenario]"); if (sc) { setScenario(sc.getAttribute("data-scenario")); return; }
     var th = t.closest("[data-theme-pick]"); if (th) { setTheme(th.getAttribute("data-theme-pick")); return; }
     var sh = t.closest("[data-share]"); if (sh) { toast(sh.getAttribute("data-share") + " copied (mockup: nothing is shared)."); return; }
@@ -492,7 +582,7 @@ table td:nth-child(2){white-space:nowrap}
     var fresh = seed();
     if (s === "empty") { state.items = []; state.removed = []; }
     else { state.items = fresh.items; state.removed = fresh.removed; }
-    state.area = ""; state.query = ""; $("#q").value = ""; hideUndo();
+    state.area = ""; state.cat = ""; state.query = ""; $("#q").value = ""; hideUndo();
     $$("[data-scenario]").forEach(function (b) { b.setAttribute("aria-pressed", String(b.getAttribute("data-scenario") === s)); });
     update();
   }
@@ -582,7 +672,7 @@ table td:nth-child(2){white-space:nowrap}
       state.items.push(target); note = "Added " + name + ".";
     }
     state.removed = state.removed.filter(function (r) { return fold(r.name) !== fold(name); });
-    state.area = ""; closeSheet(); update();
+    state.area = ""; state.cat = ""; closeSheet(); update();
     var li = $('li[data-id="' + target.id + '"]');
     if (li) { li.scrollIntoView({ block: "center", behavior: "smooth" }); li.classList.add("flash"); }
     offerUndo(note, before);
