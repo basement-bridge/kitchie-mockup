@@ -200,7 +200,7 @@ table td:nth-child(2){white-space:nowrap}
       <button type="button" class="seg" data-theme-pick="light" aria-pressed="false">Light</button>
       <button type="button" class="seg" data-theme-pick="dark" aria-pressed="false">Dark</button>
     </fieldset>
-    <p>Try: open the magnifier and type a few letters, pause, and pick a location (pin), a category (tag) or an item. Also swipe a row right (use one) or left (used up), tap the &minus; or tick on a row, the plus to add, the magnifier or mic to search, the area tabs and Sort. Undo appears for 5 seconds after a change.</p>
+    <p>Try: open the magnifier and type a few letters, pause, and pick a location (pin), a category (tag) or an item. Also swipe a row right (use one) or left (used up), tap the &minus; or tick on a row, the plus to add, the magnifier or mic to search, Sort. Undo appears for 5 seconds after a change.</p>
     <p><button type="button" class="seg" id="reset">Reset sample items</button></p>
   </div>
 </details>
@@ -413,7 +413,7 @@ table td:nth-child(2){white-space:nowrap}
     $("#sort").value = state.sort;
 
     // area tabs
-    $("#tabs").innerHTML = gs.length > 1 ? '<nav class="tabs" aria-label="Area"><a href="#" data-tab="" ' + (state.area === "" ? 'aria-current="page"' : "") + ' draggable="false">All</a>' + gs.slice(0, 12).map(function (g) { return '<a href="#" data-tab="' + esc(g[0]) + '" ' + (g[0] === state.area ? 'aria-current="page"' : "") + ' draggable="false">' + esc(g[0]) + "</a>"; }).join("") + "</nav>" : "";
+    $("#tabs").innerHTML = "";   // no tab ribbon here: the search bar does the location and category filtering
 
     // list
     var html = "";
