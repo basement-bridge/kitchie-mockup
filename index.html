@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kitchie: join page mockup</title>
+<meta name="description" content="Interactive mockup of the Kitchie invite landing page. Not the live product.">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700;800&amp;family=DM+Sans:wght@400;500;700&amp;display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:dark;--bg:#0F1E19;--surface:#172A23;--border:#24403A;--fg:#F3EEE3;--muted:#A9B8AE;--accent:#F2B84B;--danger:#FF9A8F;--sage:#9CCBA8;--head:"Bricolage Grotesque","DM Sans",system-ui,sans-serif}
+@media (prefers-color-scheme:light){:root{color-scheme:light;--bg:#F6F1E6;--surface:#FFFFFF;--border:#D9D1BF;--fg:#1D2A24;--muted:#56645B;--accent:#8A5600;--danger:#B42318;--sage:#2F6B45}}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{margin:0 auto;max-width:30rem;padding:1.25rem 20px 3rem;background:var(--bg);color:var(--fg);font-family:"DM Sans",system-ui,sans-serif;line-height:1.5}
+h1,h2{font-family:var(--head);margin:0}
+.banner{margin:0 -20px 1.5rem;padding:.6rem 20px;background:var(--surface);border-bottom:1px solid var(--border);font-size:.85rem;color:var(--muted)}
+.landing{display:flex;flex-direction:column;gap:4.5rem}
+.brand{display:flex;align-items:center;gap:.6rem;font-family:var(--head);font-weight:700;font-size:1.4rem;margin-bottom:1.5rem}
+.brand svg{color:var(--sage)}
+.eyebrow{margin:0 0 .6rem;font-size:.8rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+h1{font-size:2.9rem;line-height:1.02;font-weight:800;letter-spacing:-.02em;margin-bottom:1rem}
+h2{font-size:2.1rem;line-height:1.06;font-weight:800;letter-spacing:-.015em;margin-bottom:.9rem}
+.lead{font-size:1.15rem;color:var(--muted);margin:0 0 1.4rem}
+.lead strong{color:var(--fg)}
+.btn{display:flex;align-items:center;justify-content:center;width:100%;min-height:56px;border:0;border-radius:1rem;background:var(--accent);color:var(--bg);font:inherit;font-size:1.05rem;font-weight:700;text-decoration:none;cursor:pointer}
+.btn:hover{filter:brightness(1.08)}
+:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+.more{display:flex;align-items:center;justify-content:center;gap:.4rem;min-height:44px;margin-top:.4rem;color:var(--muted);font-weight:700;text-decoration:none}
+.note{margin:.6rem 0 0;text-align:center;font-size:.9rem;color:var(--muted)}
+.step{display:flex;align-items:baseline;gap:.8rem;margin-bottom:.8rem}
+.step b{font-family:var(--head);font-weight:800;color:var(--accent)}
+.step span{font-size:.8rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.copy{margin:0 0 1.2rem;font-size:1.1rem;color:var(--muted)}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:1.2rem;padding:1.1rem;display:flex;flex-direction:column;gap:.8rem}
+.chip{align-self:flex-end;font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);border:1px solid var(--border);border-radius:999px;padding:.15rem .6rem}
+.chat{display:flex;flex-direction:column;gap:.6rem}
+.bubble{max-width:85%;padding:.7rem 1rem;border-radius:1.1rem;background:var(--surface);border:1px solid var(--border)}
+.bubble.me{align-self:flex-end;background:var(--border);border-bottom-right-radius:.3rem}
+.bubble.them{align-self:flex-start;border-bottom-left-radius:.3rem}
+.who{align-self:flex-start;font-size:.78rem;color:var(--muted);padding-left:.4rem}
+.loc{font-size:.8rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--sage);margin-top:.3rem}
+.row{display:flex;justify-content:space-between;align-items:center;gap:.6rem;padding-bottom:.7rem;border-bottom:1px solid var(--border)}
+.row:last-child{border-bottom:0;padding-bottom:0}
+.row small{color:var(--muted);font-size:.85rem}
+.soon{font-size:.8rem;font-weight:700;color:var(--danger);border:1px solid var(--danger);border-radius:999px;padding:.05rem .6rem}
+.ai{display:flex;gap:.6rem;align-items:flex-start}
+.ai i{flex:0 0 auto;width:2rem;height:2rem;border-radius:50%;background:var(--accent);color:var(--bg);display:flex;align-items:center;justify-content:center}
+.items{display:flex;flex-direction:column;gap:1rem;margin:0;padding:0;list-style:none}
+.items li{display:flex;gap:1rem;align-items:flex-start}
+.num{flex:0 0 auto;width:2.2rem;height:2.2rem;border-radius:50%;background:var(--accent);color:var(--bg);font-weight:800;display:flex;align-items:center;justify-content:center}
+.items strong{display:block;font-size:1.1rem}
+.items span{color:var(--muted)}
+.name{align-items:center;text-align:center}
+.avatar{width:4.5rem;height:4.5rem;border-radius:50%;background:var(--sage);color:var(--bg);display:flex;align-items:center;justify-content:center;font-family:var(--head);font-weight:800;font-size:1.7rem}
+.name b{font-family:var(--head);font-size:1.5rem}
+.name span{color:var(--muted);font-size:.9rem}
+.two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.8rem;margin-top:1rem}
+.two div{background:var(--surface);border-radius:1.1rem;padding:1rem;font-size:.92rem}
+.two b{display:block;margin-bottom:.3rem}
+.two .yes b{color:var(--sage)}.two .no b{color:var(--danger)}
+.qa h3{margin:0 0 .4rem;font-family:var(--head);font-size:1.25rem}
+.qa p{margin:0 0 .6rem;color:var(--muted)}
+.qa p:last-child{margin-bottom:0}
+.final{text-align:center;padding:1.8rem 1.4rem;border-radius:1.6rem}
+.final h2{font-size:2rem}
+details{background:var(--surface);border:1px solid var(--border);border-radius:1rem}
+summary{cursor:pointer;min-height:44px;display:flex;align-items:center;padding:0 1.1rem;font-weight:700}
+details div{padding:0 1.1rem 1rem;color:var(--muted);display:flex;flex-direction:column;gap:.6rem}
+/* demo-only: what the sign-in button does in this mockup */
+.demo{position:fixed;inset:0;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(0,0,0,.6);z-index:10}
+.demo:target{display:flex}
+.demo div{max-width:22rem;background:var(--surface);border:1px solid var(--accent);border-radius:1.3rem;padding:1.4rem;text-align:center}
+.demo p{margin:.6rem 0 1.1rem;color:var(--muted)}
+.demo .btn{width:auto;padding:0 1.5rem;margin:0 auto}
+</style>
+</head>
+<body>
+<div class="banner">Mockup only. Nothing here signs you in or stores anything.</div>
+
+<main class="landing">
+
+<section>
+<div class="brand">
+<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12h18a9 9 0 0 1-18 0z"></path><path d="M8 8c0-1.5 1.5-1.5 1.5-3M13 8c0-1.5 1.5-1.5 1.5-3"></path></svg>
+<span>Kitchie</span>
+</div>
+<p class="eyebrow">You&rsquo;re invited to Our kitchen</p>
+<h1>Never ask &ldquo;do we have any&hellip;?&rdquo; again.</h1>
+<p class="lead">Kitchie is a shared kitchen for your household: one live view of what&rsquo;s in stock, and an AI that can read every shelf.</p>
+<a class="btn" href="#demo">Sign in with Google</a>
+<a class="more" href="#how">Or see how it works first &darr;</a>
+<p class="note">This invite link works once.</p>
+</section>
+
+<section id="how">
+<div class="step"><b>1 / 5</b><span>The problem</span></div>
+<h2>Sound familiar?</h2>
+<div class="chat">
+<span class="who">Group chat, 5:42pm</span>
+<div class="bubble them">Are we out of eggs?</div>
+<div class="bubble me">Think so? Can you check?</div>
+<div class="bubble them">I&rsquo;m at the shop. I bought a third jar of cumin, just in case.</div>
+</div>
+<p class="copy" style="margin-top:1.2rem">Nobody knows what&rsquo;s really in the kitchen, so food gets bought twice, forgotten, or thrown out.</p>
+</section>
+
+<section>
+<div class="step"><b>2 / 5</b><span>One shared view</span></div>
+<h2>Everyone sees the same shelves.</h2>
+<p class="copy">Items live in places, like the fridge and the pantry, with use-by dates. Add something and the whole household sees it.</p>
+<div class="card">
+<span class="chip">Sample</span>
+<span class="loc">Fridge</span>
+<div class="row"><span>Spinach</span><span class="soon">Use soon</span></div>
+<div class="row"><span>Eggs</span><small>added by Brave Teapot</small></div>
+<span class="loc">Pantry</span>
+<div class="row"><span>Rice</span><small>added by Sleepy Wombat</small></div>
+<div class="row"><span>Lentils</span><small>added by Cheerful Kettle</small></div>
+</div>
+</section>
+
+<section>
+<div class="step"><b>3 / 5</b><span>Your AI</span></div>
+<h2>Ask your AI what&rsquo;s for dinner.</h2>
+<p class="copy">Link ChatGPT, Claude or your favourite AI to Kitchie. It can read your shelves, so ideas start from what you actually have.</p>
+<div class="card">
+<span class="chip">Sample chat</span>
+<div class="bubble me" style="align-self:flex-end">What can I cook tonight?</div>
+<div class="ai"><i><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"></path></svg></i>
+<div class="bubble them" style="max-width:100%">The spinach needs using soon. Spinach and egg fried rice works with what&rsquo;s in the fridge and pantry, and there&rsquo;s nothing to buy.</div></div>
+</div>
+</section>
+
+<section>
+<div class="step"><b>4 / 5</b><span>It keeps itself up to date</span></div>
+<h2>Tell your AI. Skip the typing.</h2>
+<ul class="items">
+<li><div class="num">1</div><div><strong>Say what you cooked</strong><span>The ingredients come off the shelves.</span></div></li>
+<li><div class="num">2</div><div><strong>Add and remove on the go</strong><span>Say &ldquo;we&rsquo;re out of milk&rdquo; and everyone sees it.</span></div></li>
+<li><div class="num">3</div><div><strong>One shared shopping list</strong><span>The whole household sees and adds to the same list.</span></div></li>
+</ul>
+</section>
+
+<section>
+<div class="step"><b>5 / 5</b><span>Joining is anonymous</span></div>
+<h2>Come in as Sleepy Wombat.</h2>
+<p class="copy">Kitchie never asks Google for your email or your name. You get a made-up one and can swap it any time.</p>
+<div class="card name">
+<div class="avatar">SW</div>
+<b>Sleepy Wombat</b>
+<span>Rename any time, emoji welcome</span>
+</div>
+<div class="two">
+<div class="yes"><b>Kitchie keeps</b>An anonymous ID from Google, only to recognise you next time</div>
+<div class="no"><b>Kitchie never gets</b>Your email, your name from Google, or a trail of old names</div>
+</div>
+</section>
+
+<section class="qa">
+<div class="step"><span>Straight answers</span></div>
+<h2>The questions you&rsquo;re probably asking.</h2>
+<div class="card" style="margin-bottom:1rem">
+<h3>How do you make money?</h3>
+<p>Right now, we don&rsquo;t. Kitchie is an idea we&rsquo;re building and testing, and you&rsquo;re helping shape it.</p>
+</div>
+<div class="card">
+<h3>How will you pay for it later?</h3>
+<p>We don&rsquo;t know yet. But not by selling your data or showing you ads. We dislike those ideas as much as you do.</p>
+<p>If Kitchie turns out to be a genuinely useful tool, we&rsquo;ll look at donations, a subscription, or a free version with optional premium features.</p>
+</div>
+</section>
+
+<section class="card final">
+<h2>Your kitchen is waiting.</h2>
+<p class="copy" style="margin:0">You&rsquo;ll share items and the shopping list with the other members of Our kitchen.</p>
+<a class="btn" href="#demo">Sign in with Google</a>
+<span class="note" style="margin:0">This invite link works once.</span>
+<details style="text-align:left;margin-top:.4rem">
+<summary>How your privacy works</summary>
+<div>
+<span>Only an anonymous ID from Google is used, to recognise you next time.</span>
+<span>Your email address is not requested and is not kept.</span>
+<span>Your name is not requested from Google either. You start with a playful made-up one and can change it to anything on the Household page.</span>
+<span>If you change it, the old name is not kept: there is no name history.</span>
+</div>
+</details>
+</section>
+
+</main>
+
+<div class="demo" id="demo" role="dialog" aria-label="Mockup notice">
+<div>
+<strong>This is a mockup</strong>
+<p>In the real app this button signs you in with Google, anonymously.</p>
+<a class="btn" href="#">Back to the page</a>
+</div>
+</div>
+</body>
+</html>
