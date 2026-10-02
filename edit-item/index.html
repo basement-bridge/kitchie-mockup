@@ -1,0 +1,599 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kitchie: add and edit item mockup</title>
+<meta name="description" content="The redesigned add and edit item form: name as the heading, two tabs, a quantity stepper with a unit, and suggestion lists. Not the live product.">
+<meta name="robots" content="noindex">
+<!-- Colours, fonts and the form's look (k- classes) come from the shared theme. Never copy them into this page. -->
+<link rel="stylesheet" href="../theme.css">
+<style>
+:root{--page-width:30rem}
+body{padding-bottom:3rem}
+body.kbd-on{padding-bottom:300px}
+/* Control strip: outside the phone-style frame. Mockup tooling, not part of the form. */
+.strip{margin:0 0 1rem;padding:.6rem .7rem;border:1px dashed var(--border);border-radius:1.2rem;font-size:.85rem;color:var(--muted)}
+.strip-row{display:flex;flex-wrap:wrap;align-items:center;gap:.3rem}
+.strip-row+.strip-row{margin-top:.35rem}
+.strip-gap{flex:1 1 0}
+.strip .k-pill{min-height:36px;padding:0 .65rem;font-size:.85rem}
+.strip .k-pill.sq{width:32px;min-width:0;padding:0;flex:1 1 0;max-width:44px}
+.strip-info{margin:.5rem 0 0}
+.strip-info code{word-break:normal;color:var(--fg)}
+/* The phone-style frame */
+.frame{position:relative;padding:.6rem 14px 1.4rem;border:1px solid var(--border);border-radius:1.6rem;background:var(--bg)}
+.head{display:flex;align-items:center;justify-content:space-between;gap:.5rem;min-height:44px}
+.back{display:inline-flex;align-items:center;min-height:44px;padding:0 .5rem 0 0;border:0;background:none;color:var(--accent);font:inherit;font-weight:600;cursor:pointer}
+.status{min-width:0;font-size:.85rem;color:var(--muted);text-align:right}
+.notice{margin:.4rem 0 .6rem;padding:.7rem 1rem;border:1px solid var(--accent);border-radius:1rem;background:var(--surface)}
+.namerow{display:flex;align-items:flex-start;gap:.6rem;margin:.2rem 0 .9rem}
+.namecell{flex:1 1 auto;min-width:0}
+.k-seg{margin:0 0 .2rem}
+.qrow{display:flex;align-items:center;gap:.4rem}
+.qnum{flex:0 0 4.2rem;min-width:0;padding:.4rem .3rem;text-align:center;font-size:1.15rem;font-weight:600}
+.qrow.plain .qnum{flex:1 1 auto;text-align:left;padding:.4rem 1rem;font-weight:400;font-size:1rem}
+.qunit{position:relative;flex:1 1 auto;min-width:0}
+.qunit .k-field{padding:.4rem .8rem}
+.qsub{margin:.35rem .2rem 0;text-align:right;color:var(--muted);font-size:.95rem}
+.qsub b{color:var(--fg);font-weight:600}
+.datefield{position:relative;display:flex;align-items:center;gap:.4rem}
+.datefield .k-field{flex:1 1 auto;min-width:0}
+.datefield .k-field.is-empty{color:var(--muted)}
+.datefield input[type=date]{position:absolute;left:0;top:0;bottom:0;right:48px;width:calc(100% - 48px);opacity:0;cursor:pointer;font-size:16px}
+.datefield.is-empty input[type=date]{right:0;width:100%}
+.datefield:focus-within .k-field{outline:3px solid var(--accent);outline-offset:3px}
+.pills{display:grid;grid-template-columns:1fr 1fr;gap:.45rem;margin:.6rem 0 0}
+.pickpill{position:relative;overflow:hidden}
+.pickpill input[type=date]{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;font-size:16px}
+.pickpill:focus-within{outline:3px solid var(--accent);outline-offset:3px}
+.finish{margin:0 0 .5rem;color:var(--muted);font-size:.9rem}
+.kbd{position:fixed;left:0;right:0;bottom:0;height:280px;z-index:50;display:flex;align-items:center;justify-content:center;background:var(--surface);border-top:1px solid var(--border);color:var(--muted);font-size:.9rem}
+</style>
+</head>
+<body>
+<div class="k-banner"><strong>Mockup</strong> &middot; sample data</div>
+
+<section class="strip" aria-label="Mockup controls">
+  <div class="strip-row" role="group" aria-label="Mode">
+    <button type="button" class="k-pill" data-mode="add" aria-pressed="false">Add</button>
+    <button type="button" class="k-pill" data-mode="edit" aria-pressed="true">Edit</button>
+    <span class="strip-gap"></span>
+    <button type="button" class="k-pill" id="kbdToggle" aria-pressed="false" title="Pretend the phone keyboard is open">Keyboard</button>
+    <button type="button" class="k-pill" id="themeToggle" title="Phone, Light or Dark">Phone</button>
+  </div>
+  <div class="strip-row" role="group" aria-label="State">
+    <button type="button" class="k-pill sq" data-jump="A" title="A: Details, normal edit">A</button>
+    <button type="button" class="k-pill sq" data-jump="B" title="B: Quantity direct entry">B</button>
+    <button type="button" class="k-pill sq" data-jump="C" title="C: Custom unit">C</button>
+    <button type="button" class="k-pill sq" data-jump="D" title="D: Location suggestions">D</button>
+    <button type="button" class="k-pill sq" data-jump="E" title="E: Spot suggestions, scoped by Location">E</button>
+    <button type="button" class="k-pill sq" data-jump="F" title="F: Stock and more, no date">F</button>
+    <button type="button" class="k-pill sq" data-jump="G" title="G: Stock and more, date set">G</button>
+    <button type="button" class="k-pill sq" data-jump="H" title="H: Edit lifecycle action">H</button>
+  </div>
+  <div class="strip-row" role="group" aria-label="More states">
+    <button type="button" class="k-pill" data-jump="M" title="The custom unit window open">Unit window</button>
+    <button type="button" class="k-pill" data-jump="P" title="An amount that is not a number then a unit">Plain amount</button>
+  </div>
+  <p class="strip-info" aria-live="polite"><span id="stateInfo">State: A, Details, normal edit</span> &middot; amount text: <code id="amountText"></code></p>
+</section>
+
+<main class="frame" id="frame">
+  <div class="head">
+    <button type="button" class="back" id="back">&larr; Back</button>
+    <span class="status" id="status" role="status" aria-live="polite"></span>
+  </div>
+  <div class="notice" id="doneNotice" role="status" hidden>Marked as used up. Its history is kept.</div>
+
+  <div class="namerow">
+    <button type="button" class="k-emoji" id="emoji" aria-label="Change emoji (hold to clear)"></button>
+    <div class="namecell">
+      <input class="k-title" id="name" type="text" maxlength="120" autocomplete="off" autocapitalize="sentences" enterkeyhint="done" placeholder="Item name" aria-label="Item name" aria-describedby="nameErr">
+      <p class="k-error" id="nameErr" role="alert" hidden>Name must not be empty.</p>
+    </div>
+  </div>
+
+  <div class="k-seg" role="tablist" aria-label="Item sections">
+    <button type="button" role="tab" id="t-details" aria-controls="p-details" aria-selected="true">Details</button>
+    <button type="button" role="tab" id="t-stock" aria-controls="p-stock" aria-selected="false" tabindex="-1">Stock &amp; more</button>
+  </div>
+
+  <section id="p-details" role="tabpanel" aria-labelledby="t-details">
+    <div role="group" aria-labelledby="qLabel">
+      <span class="k-label" id="qLabel">Quantity</span>
+      <div class="qrow" id="qrow">
+        <button type="button" class="k-step" id="qMinus" aria-label="One less">&minus;</button>
+        <input class="k-field qnum" id="qNum" type="text" inputmode="numeric" autocomplete="off" maxlength="80" aria-label="Quantity" enterkeyhint="done">
+        <button type="button" class="k-step" id="qPlus" aria-label="One more">+</button>
+        <div class="qunit" id="qUnitWrap">
+          <button type="button" class="k-field" id="qUnit" aria-haspopup="listbox" aria-expanded="false" aria-label="Unit"><span id="qUnitText"></span><span class="k-caret" aria-hidden="true">&#9662;</span></button>
+          <ul class="k-list is-right" id="qUnitList" role="listbox" aria-label="Unit" hidden></ul>
+        </div>
+      </div>
+      <p class="qsub" id="qSub" hidden></p>
+    </div>
+
+    <label class="k-label" for="area">Location</label>
+    <div class="k-combo"><input class="k-field" id="area" type="text" maxlength="80" autocomplete="off" autocapitalize="none" enterkeyhint="next" placeholder="Pick or type"></div>
+
+    <label class="k-label" for="spot">Spot</label>
+    <div class="k-combo"><input class="k-field" id="spot" type="text" maxlength="120" autocomplete="off" autocapitalize="none" enterkeyhint="next" placeholder="Pick or type"></div>
+
+    <label class="k-label" for="cat">Category</label>
+    <div class="k-combo"><input class="k-field" id="cat" type="text" maxlength="40" autocomplete="off" autocapitalize="none" enterkeyhint="done" placeholder="Optional"></div>
+  </section>
+
+  <section id="p-stock" role="tabpanel" aria-labelledby="t-stock" hidden>
+    <span class="k-label" id="ubLabel">Use by</span>
+    <div class="datefield is-empty" id="dateField">
+      <div class="k-field is-empty" id="dateText" aria-hidden="true">Add use-by date</div>
+      <input type="date" id="useBy" aria-labelledby="ubLabel">
+      <button type="button" class="k-icon" id="dateClear" aria-label="Remove the use-by date" title="No use-by date" hidden>&times;</button>
+    </div>
+    <div class="pills" role="group" aria-label="Quick use-by choices">
+      <button type="button" class="k-pill" data-days="3">+3 days</button>
+      <button type="button" class="k-pill" data-days="5">+5 days</button>
+      <button type="button" class="k-pill" data-days="7">+1 week</button>
+      <span class="k-pill pickpill">Pick date&hellip;<input type="date" id="pickDate" aria-label="Pick a use-by date"></span>
+    </div>
+
+    <label class="k-label" for="single">Single use</label>
+    <div class="k-selectwrap"><select class="k-field" id="single"><option value="">Not set</option><option value="yes">Yes</option><option value="no">No</option></select></div>
+
+    <label class="k-label" for="minimum">Minimum stock</label>
+    <input class="k-field" id="minimum" type="text" inputmode="numeric" autocomplete="off" maxlength="4" placeholder="e.g. 2" enterkeyhint="done">
+    <p class="k-note">Used to decide when this item goes on the shopping list.</p>
+
+    <div id="usedUp" hidden>
+      <hr class="k-divider">
+      <p class="finish">Finished with it?</p>
+      <button type="button" class="k-btn" id="usedBtn">Mark as used up</button>
+    </div>
+  </section>
+</main>
+
+<div class="kbd" id="kbd" aria-hidden="true" hidden>Keyboard (simulated)</div>
+
+<div class="k-scrim" id="unitDlg" hidden>
+  <div class="k-dialog" role="dialog" aria-modal="true" aria-labelledby="unitDlgTitle">
+    <h2 id="unitDlgTitle">Custom unit</h2>
+    <input class="k-field" id="unitText" type="text" maxlength="20" autocomplete="off" autocapitalize="none" enterkeyhint="done" aria-label="Custom unit">
+    <div class="k-actions">
+      <button type="button" class="k-btn" id="unitCancel">Cancel</button>
+      <button type="button" class="k-btn is-primary" id="unitUse" disabled>Use unit</button>
+    </div>
+  </div>
+</div>
+
+<div class="k-scrim" id="usedDlg" hidden>
+  <div class="k-dialog" role="dialog" aria-modal="true" aria-labelledby="usedDlgTitle">
+    <h2 id="usedDlgTitle">Mark as used up?</h2>
+    <p style="margin:0 0 .4rem"><strong id="usedName"></strong></p>
+    <p class="k-note" style="margin:0">It leaves the list but its history is kept. Staples go on the shopping list.</p>
+    <div class="k-actions">
+      <button type="button" class="k-btn" id="usedCancel">Cancel</button>
+      <button type="button" class="k-btn is-primary" id="usedYes">Yes, it is used up</button>
+    </div>
+  </div>
+</div>
+
+<p style="margin:1.4rem 0 0"><a class="k-btn" href="../index.html">All mockups</a></p>
+
+<script>
+(function () {
+  "use strict";
+  var $ = function (id) { return document.getElementById(id); };
+  var norm = function (s) { return String(s).trim().toLowerCase(); };
+
+  /* ---------- Sample data (made up) ---------- */
+  var UNITS = ["g", "kg", "mL", "L", "pack", "tin", "jar", "bottle", "bag", "box", "carton", "bunch", "roll", "Other"];
+  var LOCATIONS = [
+    { area: "Pantry", spots: ["Bottom shelf", "Bottom drawer", "Top shelf", "Door", "Baskets"] },
+    { area: "Fridge", spots: ["Top shelf", "Crisper", "Door"] },
+    { area: "Freezer", spots: ["Top drawer", "Bottom drawer"] },
+    { area: "Pantry cupboard", spots: ["Left shelf", "Right shelf"] },
+    { area: "Outdoor pantry", spots: ["Tub", "Wall rack"] },
+    { area: "Laundry", spots: ["Top shelf"] }
+  ];
+  var CATEGORIES = ["Seasoning", "Baking", "Dairy", "Snacks", "Condiments", "Veggies", "Fruits", "Meat", "Beverages", "Dry goods", "Cans"];
+  var EMOJI = ["🍊", "🍎", "🍚", "🥛", "🧀", "🍞", "🥕"];
+  var MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  var ORANGE = { name: "Orange", emoji: EMOJI[0], amount: "3 pack", area: "Pantry", spot: "Bottom shelf", cat: "Fruits", useBy: "", single: "", min: "2" };
+  var RICE = { name: "Brown rice", emoji: EMOJI[2], amount: "half a bag", area: "Pantry", spot: "Top shelf", cat: "Dry goods", useBy: "", single: "", min: "" };
+  var BLANK = { name: "", emoji: "", amount: "", area: "", spot: "", cat: "", useBy: "", single: "", min: "" };
+
+  /* ---------- State ---------- */
+  var mode = "edit", tab = "details";
+  var Q = { n: "", unit: "", custom: "", raw: null };   // raw is set when the amount cannot be read as "number then unit"
+  var kbdOn = false;
+
+  /* ---------- Amount text: the unit lives inside it ("3 pack") ---------- */
+  function parseAmount(text) {
+    var t = String(text).trim();
+    if (t === "") return { n: "", unit: "", custom: "", raw: null };
+    var m = /^(\d{1,4})(?:\s+(\S+))?$/.exec(t);
+    if (!m) return { n: "", unit: "", custom: "", raw: String(text) };
+    if (m[2] === undefined) return { n: m[1], unit: "", custom: "", raw: null };
+    var known = UNITS.filter(function (u) { return u !== "Other" && norm(u) === norm(m[2]); })[0];
+    if (known) return { n: m[1], unit: known, custom: "", raw: null };
+    return { n: m[1], unit: "Other", custom: m[2], raw: null };
+  }
+  function amountText() {
+    if (Q.raw !== null) return Q.raw;
+    var u = Q.unit === "Other" ? Q.custom : Q.unit;
+    return [Q.n, u].filter(Boolean).join(" ");
+  }
+
+  /* ---------- Status ("Will be saved when you go back" / "Saved"), as the app's autosave says it ---------- */
+  var statusEl = $("status");
+  function say(t) { statusEl.textContent = t; }
+  function touched() { say("Will be saved when you go back"); $("amountText").textContent = amountText() || "(empty)"; }
+
+  /* ---------- Suggestion lists: open on the side with room, so they work above a phone keyboard ---------- */
+  var openLists = [];
+  function visibleBox() {
+    var vv = window.visualViewport;
+    var top = vv ? vv.offsetTop : 0, h = vv ? vv.height : window.innerHeight;
+    if (kbdOn) h -= $("kbd").offsetHeight;
+    return { top: top, bottom: top + h };
+  }
+  function placeList(anchor, list) {
+    var MAXH = 224, MINH = 132, gap = 8;
+    list.classList.remove("is-up");
+    list.style.maxHeight = MAXH + "px";
+    var need = Math.min(list.scrollHeight + 10, MAXH);
+    var box = visibleBox(), r = anchor.getBoundingClientRect();
+    var below = box.bottom - r.bottom - gap, above = r.top - box.top - gap;
+    if (Math.max(below, above) < Math.min(need, MINH)) {
+      // Neither side has room (a very short visible area): bring the field to the middle of what is visible, then measure again.
+      window.scrollBy(0, r.top - (box.top + (box.bottom - box.top) / 2 - r.height));
+      r = anchor.getBoundingClientRect();
+      below = box.bottom - r.bottom - gap; above = r.top - box.top - gap;
+    }
+    var up = below < need && above > below;
+    list.classList.toggle("is-up", up);
+    list.style.maxHeight = Math.max(88, Math.min(MAXH, up ? above : below)) + "px";
+  }
+  function track(fn) { openLists.push(fn); }
+  function untrack(fn) { openLists = openLists.filter(function (f) { return f !== fn; }); }
+  function replaceAll() { openLists.slice().forEach(function (f) { f(); }); }
+  window.addEventListener("resize", replaceAll);
+  window.addEventListener("scroll", replaceAll, { passive: true });
+  if (window.visualViewport) { window.visualViewport.addEventListener("resize", replaceAll); window.visualViewport.addEventListener("scroll", replaceAll); }
+
+  // With the pretend keyboard up, a field behind it is brought into the visible part, as a phone's browser does.
+  function ensureVisible(el) {
+    if (!kbdOn) return;
+    var box = visibleBox(), r = el.getBoundingClientRect(), h = box.bottom - box.top;
+    if (r.bottom > box.bottom - 16 || r.top < box.top + 8) window.scrollBy(0, r.top - (box.top + h * 0.3));
+  }
+  document.addEventListener("focusin", function (ev) { if (/^(INPUT|SELECT)$/.test(ev.target.tagName)) ensureVisible(ev.target); });
+
+  /* A text box with a list under (or over) it: click to open, type to filter, or just type something new. */
+  function combo(input, entries) {
+    var list = document.createElement("ul");
+    list.className = "k-list"; list.id = input.id + "-list"; list.setAttribute("role", "listbox"); list.hidden = true;
+    input.parentNode.appendChild(list);
+    input.setAttribute("role", "combobox"); input.setAttribute("aria-autocomplete", "list");
+    input.setAttribute("aria-controls", list.id); input.setAttribute("aria-expanded", "false");
+    var shown = [], active = -1, typed = false, api = { onchoose: null, onblur: null, open: open, close: close };
+    var again = function () { if (!list.hidden) placeList(input, list); };
+    function close() { list.hidden = true; input.setAttribute("aria-expanded", "false"); input.removeAttribute("aria-activedescendant"); active = -1; untrack(again); }
+    function mark(i) {
+      active = i;
+      Array.prototype.forEach.call(list.children, function (li, n) {
+        li.setAttribute("aria-selected", n === i ? "true" : "false");
+        if (n === i) { input.setAttribute("aria-activedescendant", li.id); li.scrollIntoView({ block: "nearest" }); }
+      });
+    }
+    function open(asTyped) {
+      if (asTyped !== undefined) typed = asTyped;
+      var q = typed ? norm(input.value) : "";
+      shown = entries().filter(function (e) { return q === "" || norm(e.text).indexOf(q) !== -1; }).slice(0, 80);
+      list.textContent = "";
+      if (shown.length === 0) { close(); return; }
+      shown.forEach(function (e, n) {
+        var li = document.createElement("li");
+        li.id = list.id + "-" + n; li.setAttribute("role", "option"); li.setAttribute("aria-selected", "false");
+        li.appendChild(document.createTextNode(e.text));
+        if (e.hint) { var h = document.createElement("span"); h.className = "hint"; h.textContent = e.hint; li.appendChild(h); }
+        li.addEventListener("mousedown", function (ev) { ev.preventDefault(); });   // keeps the field focused (and the keyboard up)
+        li.addEventListener("click", function () { choose(e); });
+        list.appendChild(li);
+      });
+      list.hidden = false; input.setAttribute("aria-expanded", "true"); active = -1;
+      placeList(input, list); untrack(again); track(again);
+    }
+    function choose(e) { input.value = e.text; typed = false; close(); if (api.onchoose) api.onchoose(e); touched(); }
+    input.addEventListener("focus", function () { open(false); });
+    input.addEventListener("click", function () { if (list.hidden) open(false); });
+    input.addEventListener("input", function () { open(true); touched(); });
+    input.addEventListener("blur", function () { close(); if (api.onblur) api.onblur(); });
+    input.addEventListener("keydown", function (ev) {
+      if (ev.key === "ArrowDown" || ev.key === "ArrowUp") {
+        if (list.hidden) open(false);
+        if (shown.length) { ev.preventDefault(); mark((active + (ev.key === "ArrowDown" ? 1 : -1) + shown.length) % shown.length); }
+      } else if (ev.key === "Enter" && !list.hidden && active >= 0) { ev.preventDefault(); choose(shown[active]); }
+      else if (ev.key === "Escape" && !list.hidden) { ev.preventDefault(); close(); }
+    });
+    return api;
+  }
+
+  /* ---------- Location, Spot, Category ---------- */
+  var area = $("area"), spot = $("spot"), cat = $("cat");
+  var areaOf = function (name) { return LOCATIONS.filter(function (l) { return norm(l.area) === norm(name); })[0]; };
+  var spotArea = null;   // the Location the current Spot was chosen or typed under
+  var areaBox = combo(area, function () { return LOCATIONS.map(function (l) { return { text: l.area }; }); });
+  var spotBox = combo(spot, function () {
+    if (area.value.trim() === "") {
+      var all = [];
+      LOCATIONS.forEach(function (l) { l.spots.forEach(function (s) { all.push({ text: s, hint: l.area, area: l.area }); }); });
+      return all;
+    }
+    var l = areaOf(area.value);
+    return l ? l.spots.map(function (s) { return { text: s, area: l.area }; }) : [];
+  });
+  combo(cat, function () { return CATEGORIES.map(function (c) { return { text: c }; }); });
+  function commitArea() {
+    if (spot.value.trim() !== "" && spotArea && norm(area.value) !== norm(spotArea)) { spot.value = ""; touched(); }
+    if (spot.value.trim() === "") spotArea = null;
+  }
+  areaBox.onchoose = commitArea; areaBox.onblur = commitArea;
+  spotBox.onchoose = function (e) { if (e.area && area.value.trim() === "") area.value = e.area; spotArea = area.value; };
+  spot.addEventListener("input", function () { spotArea = area.value.trim() === "" ? null : area.value; });
+
+  /* ---------- Quantity and unit ---------- */
+  var qNum = $("qNum"), qMinus = $("qMinus"), qPlus = $("qPlus"), qrow = $("qrow");
+  function renderQty() {
+    var plain = Q.raw !== null;
+    qrow.classList.toggle("plain", plain);
+    qNum.value = plain ? Q.raw : Q.n;
+    qNum.inputMode = plain ? "text" : "numeric";
+    qMinus.disabled = plain || (parseInt(Q.n, 10) || 0) <= 0;
+    qPlus.disabled = plain || (parseInt(Q.n, 10) || 0) >= 9999;
+    $("qUnitWrap").hidden = plain;
+    var t = $("qUnitText"); t.textContent = Q.unit || "Unit"; $("qUnit").classList.toggle("is-empty", Q.unit === "");
+    var sub = $("qSub");
+    if (!plain && Q.unit === "Other" && Q.custom) { sub.hidden = false; sub.textContent = Q.custom; } else { sub.hidden = true; sub.textContent = ""; }
+    $("amountText").textContent = amountText() || "(empty)";
+  }
+  qNum.addEventListener("input", function () {
+    if (Q.raw !== null) { Q.raw = qNum.value; touched(); return; }
+    var d = qNum.value.replace(/\D/g, "").slice(0, 4);
+    if (d !== qNum.value) qNum.value = d;
+    Q.n = d; renderQty(); touched();
+  });
+  qNum.addEventListener("change", function () {   // an unreadable amount that is now "number then unit" gets its stepper back
+    if (Q.raw === null) return;
+    var p = parseAmount(Q.raw);
+    if (p.raw === null) { Q = p; renderQty(); }
+  });
+  function bump(by) {
+    var n = (parseInt(Q.n, 10) || 0) + by;
+    Q.n = String(Math.max(0, Math.min(9999, n)));
+    renderQty(); touched();
+  }
+  qMinus.addEventListener("click", function () { bump(-1); });
+  qPlus.addEventListener("click", function () { bump(1); });
+
+  // Unit: a list that opens like the other suggestion lists. Choosing Other (again) opens the custom unit window.
+  var uBtn = $("qUnit"), uList = $("qUnitList"), uActive = -1;
+  var uAgain = function () { if (!uList.hidden) placeList(uBtn, uList); };
+  function unitEntries() { return [{ text: "No unit", value: "" }].concat(UNITS.map(function (u) { return { text: u, value: u }; })); }
+  function uClose() { uList.hidden = true; uBtn.setAttribute("aria-expanded", "false"); uBtn.removeAttribute("aria-activedescendant"); uActive = -1; untrack(uAgain); }
+  function uMark(i) {
+    uActive = i;
+    Array.prototype.forEach.call(uList.children, function (li, n) {
+      var sel = n === i; li.classList.toggle("is-active", sel);
+      if (sel) { uBtn.setAttribute("aria-activedescendant", li.id); li.scrollIntoView({ block: "nearest" }); }
+      li.style.background = sel ? "var(--border)" : "";
+    });
+  }
+  function uOpen() {
+    uList.textContent = "";
+    unitEntries().forEach(function (e, n) {
+      var li = document.createElement("li");
+      li.id = "u-" + n; li.setAttribute("role", "option"); li.setAttribute("aria-selected", String(e.value === Q.unit));
+      li.textContent = e.text;
+      li.addEventListener("mousedown", function (ev) { ev.preventDefault(); });
+      li.addEventListener("click", function () { pickUnit(e.value); });
+      uList.appendChild(li);
+    });
+    uList.hidden = false; uBtn.setAttribute("aria-expanded", "true");
+    placeList(uBtn, uList); untrack(uAgain); track(uAgain);
+    var cur = Array.prototype.filter.call(uList.children, function (li) { return li.getAttribute("aria-selected") === "true"; })[0];
+    if (cur) uList.scrollTop = Math.max(0, cur.offsetTop - 44);
+  }
+  uBtn.addEventListener("click", function () { if (uList.hidden) uOpen(); else uClose(); });
+  uBtn.addEventListener("blur", uClose);
+  uBtn.addEventListener("keydown", function (ev) {
+    var n = uList.children.length;
+    if (ev.key === "ArrowDown" || ev.key === "ArrowUp") {
+      ev.preventDefault(); if (uList.hidden) uOpen();
+      uMark((uActive + (ev.key === "ArrowDown" ? 1 : -1) + n) % n);
+    } else if (ev.key === "Enter" && !uList.hidden && uActive >= 0) { ev.preventDefault(); pickUnit(unitEntries()[uActive].value); }
+    else if (ev.key === "Escape" && !uList.hidden) { ev.preventDefault(); uClose(); }
+  });
+  function pickUnit(v) {
+    uClose();
+    if (v === "Other") { openUnitDialog(); return; }
+    Q.unit = v; Q.custom = ""; renderQty(); touched();
+  }
+
+  /* ---------- Dialogs: blocking, focus kept inside ---------- */
+  var returnTo = null;
+  function trap(dlg) {
+    dlg.addEventListener("keydown", function (ev) {
+      if (ev.key !== "Tab") return;
+      var f = Array.prototype.filter.call(dlg.querySelectorAll("input,button"), function (x) { return !x.disabled; });
+      if (!f.length) return;
+      var first = f[0], last = f[f.length - 1];
+      if (ev.shiftKey && document.activeElement === first) { ev.preventDefault(); last.focus(); }
+      else if (!ev.shiftKey && document.activeElement === last) { ev.preventDefault(); first.focus(); }
+    });
+  }
+  function showDialog(el, focusEl) { returnTo = document.activeElement; el.hidden = false; focusEl.focus(); }
+  function hideDialog(el) { el.hidden = true; if (returnTo && returnTo.focus && !kbdOn) returnTo.focus(); returnTo = null; }
+  var unitDlg = $("unitDlg"), unitText = $("unitText"), unitUse = $("unitUse");
+  trap(unitDlg); trap($("usedDlg"));
+  function openUnitDialog() {
+    unitText.value = Q.unit === "Other" ? Q.custom : "";
+    unitUse.disabled = unitText.value.trim() === "";
+    showDialog(unitDlg, unitText);
+    unitText.select();
+  }
+  unitText.addEventListener("input", function () { unitUse.disabled = unitText.value.trim() === ""; });
+  function useUnit() {
+    var v = unitText.value.trim().replace(/\s+/g, " ");
+    if (v === "") return;
+    Q.unit = "Other"; Q.custom = v; hideDialog(unitDlg); renderQty(); touched();
+  }
+  unitUse.addEventListener("click", useUnit);
+  $("unitCancel").addEventListener("click", function () { hideDialog(unitDlg); });
+  unitDlg.addEventListener("keydown", function (ev) {
+    if (ev.key === "Escape") { ev.preventDefault(); hideDialog(unitDlg); }
+    else if (ev.key === "Enter" && ev.target === unitText) { ev.preventDefault(); useUnit(); }
+  });
+
+  /* ---------- Header: name as the heading, emoji tap / long press ---------- */
+  var nameEl = $("name"), emojiEl = $("emoji"), emoji = "", emojiIx = -1;
+  function renderEmoji() {
+    emojiEl.textContent = emoji || "+";
+    emojiEl.classList.toggle("is-none", emoji === "");
+  }
+  var pressTimer = null, longDone = false;
+  emojiEl.addEventListener("pointerdown", function () {
+    longDone = false; clearTimeout(pressTimer);
+    pressTimer = setTimeout(function () { longDone = true; emoji = ""; renderEmoji(); touched(); }, 550);
+  });
+  ["pointerup", "pointerleave", "pointercancel"].forEach(function (t) { emojiEl.addEventListener(t, function () { clearTimeout(pressTimer); }); });
+  emojiEl.addEventListener("contextmenu", function (ev) { ev.preventDefault(); });
+  emojiEl.addEventListener("click", function () {
+    if (longDone) { longDone = false; return; }
+    emojiIx = (emojiIx + 1) % EMOJI.length;           // the mockup just cycles a few; the app uses the phone's own emoji keyboard
+    if (emoji !== "" && EMOJI[emojiIx] === emoji) emojiIx = (emojiIx + 1) % EMOJI.length;
+    emoji = EMOJI[emojiIx]; renderEmoji(); touched();
+  });
+  emojiEl.addEventListener("keydown", function (ev) { if (ev.key === "Delete" || ev.key === "Backspace") { ev.preventDefault(); emoji = ""; renderEmoji(); touched(); } });
+  function checkName(show) {
+    var bad = nameEl.value.trim() === "";
+    if (show) { nameEl.setAttribute("aria-invalid", String(bad)); $("nameErr").hidden = !bad; }
+    if (!bad) { nameEl.removeAttribute("aria-invalid"); $("nameErr").hidden = true; }
+    return !bad;
+  }
+  nameEl.addEventListener("input", function () { checkName(false); touched(); });
+  nameEl.addEventListener("blur", function () { if (mode === "edit") checkName(true); });
+  nameEl.addEventListener("keydown", function (ev) { if (ev.key === "Enter") { ev.preventDefault(); nameEl.blur(); } });
+  $("back").addEventListener("click", function () { if (checkName(true)) say("Saved"); else nameEl.focus(); });
+
+  /* ---------- Tabs ---------- */
+  function setTab(t) {
+    tab = t;
+    ["details", "stock"].forEach(function (k) {
+      var on = k === t;
+      $("t-" + k).setAttribute("aria-selected", String(on)); $("t-" + k).tabIndex = on ? 0 : -1;
+      $("p-" + k).hidden = !on;
+    });
+    closeAllLists();
+  }
+  function closeAllLists() { document.activeElement && document.activeElement.blur && document.activeElement.blur(); uClose(); }
+  $("t-details").addEventListener("click", function () { setTab("details"); });
+  $("t-stock").addEventListener("click", function () { setTab("stock"); });
+  document.querySelector(".k-seg").addEventListener("keydown", function (ev) {
+    if (ev.key === "ArrowRight" || ev.key === "ArrowLeft") { var t = tab === "details" ? "stock" : "details"; setTab(t); $("t-" + t).focus(); }
+  });
+
+  /* ---------- Use by: empty until set; pills compute from today; a clear control always empties it ---------- */
+  var useBy = $("useBy");
+  var iso = function (d) { return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"); };
+  function fmtDate(v) { var p = /^(\d{4})-(\d{2})-(\d{2})$/.exec(v); return p ? Number(p[3]) + " " + MONTHS[Number(p[2]) - 1] + " " + p[1] : ""; }
+  function renderDate() {
+    var has = useBy.value !== "";
+    $("dateField").classList.toggle("is-empty", !has);
+    $("dateText").classList.toggle("is-empty", !has);
+    $("dateText").textContent = has ? fmtDate(useBy.value) : "Add use-by date";
+    $("dateClear").hidden = !has;
+  }
+  function setDate(v) { useBy.value = v; $("pickDate").value = v; renderDate(); }
+  useBy.addEventListener("input", function () { setDate(useBy.value); touched(); });
+  $("pickDate").addEventListener("input", function () { setDate($("pickDate").value); touched(); });
+  $("dateClear").addEventListener("click", function () { setDate(""); touched(); });
+  Array.prototype.forEach.call(document.querySelectorAll("[data-days]"), function (b) {
+    b.addEventListener("click", function () { var d = new Date(); d.setDate(d.getDate() + Number(b.getAttribute("data-days"))); setDate(iso(d)); touched(); });
+  });
+  $("minimum").addEventListener("input", function () { var d = this.value.replace(/\D/g, "").slice(0, 4); if (d !== this.value) this.value = d; touched(); });
+  $("single").addEventListener("change", touched);
+
+  /* ---------- Mark as used up (Edit only): the app's confirmation, as a window ---------- */
+  $("usedBtn").addEventListener("click", function () { $("usedName").textContent = nameEl.value.trim() || "This item"; showDialog($("usedDlg"), $("usedYes")); });
+  $("usedCancel").addEventListener("click", function () { hideDialog($("usedDlg")); });
+  $("usedYes").addEventListener("click", function () { hideDialog($("usedDlg")); $("doneNotice").hidden = false; $("usedUp").hidden = true; say(""); });
+  $("usedDlg").addEventListener("keydown", function (ev) { if (ev.key === "Escape") { ev.preventDefault(); hideDialog($("usedDlg")); } });
+
+  /* ---------- Load a sample into the form ---------- */
+  function load(d) {
+    $("doneNotice").hidden = true;
+    nameEl.value = d.name; nameEl.removeAttribute("aria-invalid"); $("nameErr").hidden = true;
+    emoji = d.emoji; emojiIx = EMOJI.indexOf(d.emoji); renderEmoji();
+    Q = parseAmount(d.amount); renderQty();
+    area.value = d.area; spot.value = d.spot; spotArea = d.spot ? d.area : null; cat.value = d.cat;
+    setDate(d.useBy); $("single").value = d.single; $("minimum").value = d.min;
+    $("usedUp").hidden = mode !== "edit";
+    say("");
+  }
+  function setMode(m) {
+    mode = m;
+    Array.prototype.forEach.call(document.querySelectorAll("[data-mode]"), function (b) { b.setAttribute("aria-pressed", String(b.getAttribute("data-mode") === m)); });
+    closeAllLists(); setTab("details");
+    load(m === "edit" ? ORANGE : BLANK);
+    $("stateInfo").textContent = m === "edit" ? "State: A, Details, normal edit" : "State: Add, empty form";
+  }
+  Array.prototype.forEach.call(document.querySelectorAll("[data-mode]"), function (b) { b.addEventListener("click", function () { setMode(b.getAttribute("data-mode")); }); });
+
+  /* ---------- State jumpers ---------- */
+  function setKbd(on) {
+    kbdOn = on; $("kbd").hidden = !on; document.body.classList.toggle("kbd-on", on);
+    $("kbdToggle").setAttribute("aria-pressed", String(on));
+    replaceAll();
+  }
+  $("kbdToggle").addEventListener("click", function () { setKbd(!kbdOn); });
+  var NAMES = { A: "Details, normal edit", B: "Quantity direct entry", C: "Custom unit", D: "Location suggestions", E: "Spot suggestions, scoped by Location", F: "Stock & more, no date", G: "Stock & more, date set", H: "Edit lifecycle action", M: "Custom unit window", P: "Amount that is not a number then a unit" };
+  function jump(s) {
+    if (s === "H" && mode !== "edit") mode = "edit";
+    Array.prototype.forEach.call(document.querySelectorAll("[data-mode]"), function (b) { b.setAttribute("aria-pressed", String(b.getAttribute("data-mode") === mode)); });
+    closeAllLists(); if (!unitDlg.hidden) hideDialog(unitDlg); if (!$("usedDlg").hidden) hideDialog($("usedDlg"));
+    var d = Object.assign({}, ORANGE);
+    if (s === "P") d = Object.assign({}, RICE);
+    if (s === "B") d.amount = "12 tin";
+    if (s === "C" || s === "M") d.amount = "3 tray";
+    if (s === "D") { d.area = "Pan"; d.spot = ""; }
+    if (s === "E") d.spot = "bot";
+    if (s === "G") { var t = new Date(); t.setDate(t.getDate() + 5); d.useBy = iso(t); }
+    if (s === "F") d.min = "";
+    load(d);
+    $("usedUp").hidden = mode !== "edit";
+    setTab(s === "F" || s === "G" || s === "H" ? "stock" : "details");
+    setKbd(s === "B" || s === "D" || s === "E");
+    $("stateInfo").textContent = "State: " + (s.length === 1 && "ABCDEFGH".indexOf(s) >= 0 ? s + ", " : "") + NAMES[s];
+    if (s === "B") { qNum.focus(); qNum.select(); }
+    if (s === "D") { area.focus(); area.setSelectionRange(3, 3); areaBox.open(true); }
+    if (s === "E") { spot.focus(); spot.setSelectionRange(3, 3); spotBox.open(true); }
+    if (s === "M") openUnitDialog();
+    if (s === "H") $("usedBtn").scrollIntoView({ block: "center" });
+  }
+  Array.prototype.forEach.call(document.querySelectorAll("[data-jump]"), function (b) { b.addEventListener("click", function () { jump(b.getAttribute("data-jump")); }); });
+
+  /* ---------- Theme (for trying light and dark on a computer) ---------- */
+  var themes = ["auto", "light", "dark"], themeNames = ["Phone", "Light", "Dark"], themeIx = 0;
+  $("themeToggle").addEventListener("click", function () {
+    themeIx = (themeIx + 1) % 3;
+    if (themeIx === 0) document.documentElement.removeAttribute("data-theme"); else document.documentElement.setAttribute("data-theme", themes[themeIx]);
+    this.textContent = themeNames[themeIx];
+  });
+
+  setMode("edit");
+})();
+</script>
+</body>
+</html>

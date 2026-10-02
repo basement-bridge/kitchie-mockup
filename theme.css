@@ -20,6 +20,7 @@
   --bg: #0F1E19; --surface: #172A23; --border: #24403A;
   --fg: #F3EEE3; --muted: #A9B8AE;
   --accent: #F2B84B; --danger: #FF9A8F; --sage: #9CCBA8;
+  --scrim: rgba(0,0,0,.45); --shadow: 0 8px 24px rgba(0,0,0,.35);
   --font-body: "DM Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --head: "Bricolage Grotesque", "DM Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --page-width: 44rem;
@@ -70,3 +71,47 @@ h1, h2, h3 { font-family: var(--head); }
 /* no modifier = Draft: still being explored */
 .k-btn { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 1rem; border: 1px solid var(--border); border-radius: .8rem; background: var(--surface); color: var(--fg); font: inherit; text-decoration: none; cursor: pointer; }
 .k-btn:hover { border-color: var(--accent); }
+
+/* The add/edit item form (the app's look: 52px fields, 16px radius, 44px touch targets). Used by edit-item/. */
+.k-label { display: block; margin: 1.1rem 0 .3rem; font-weight: 600; }
+.k-field { display: flex; align-items: center; justify-content: space-between; gap: .5rem; width: 100%; min-height: 52px; padding: .4rem 1rem; border: 1px solid var(--border); border-radius: 1rem; background: var(--surface); color: var(--fg); font: inherit; text-align: left; }
+.k-field::placeholder { color: var(--muted); opacity: 1; }
+.k-field[aria-invalid="true"] { border-color: var(--danger); }
+.k-field.is-empty { color: var(--muted); }
+button.k-field { cursor: pointer; }
+.k-field .k-caret { flex: 0 0 auto; color: var(--muted); font-size: .8rem; }
+.k-selectwrap { position: relative; }
+.k-selectwrap select { appearance: none; -webkit-appearance: none; padding-right: 2.4rem; }
+.k-selectwrap::after { content: "\25BE"; position: absolute; right: 1rem; top: 50%; transform: translateY(-50%); color: var(--muted); font-size: .8rem; pointer-events: none; }
+.k-step { flex: 0 0 auto; display: inline-flex; align-items: center; justify-content: center; width: 52px; height: 52px; border: 1px solid var(--border); border-radius: 1rem; background: var(--surface); color: var(--fg); font: inherit; font-size: 1.5rem; line-height: 1; cursor: pointer; }
+.k-step:hover:not(:disabled) { border-color: var(--accent); }
+.k-step:disabled { opacity: .4; cursor: default; }
+.k-pill { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 .9rem; border: 1px solid var(--border); border-radius: 999px; background: var(--surface); color: var(--fg); font: inherit; font-size: .95rem; cursor: pointer; }
+.k-pill:hover { border-color: var(--accent); }
+.k-pill[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--bg); font-weight: 700; }
+.k-seg { display: flex; gap: .25rem; padding: .25rem; border-radius: 1rem; background: var(--surface); border: 1px solid var(--border); }
+.k-seg [role="tab"] { flex: 1 1 0; min-height: 44px; border: 0; border-radius: .75rem; background: transparent; color: var(--muted); font: inherit; font-weight: 600; cursor: pointer; }
+.k-seg [role="tab"][aria-selected="true"] { background: var(--accent); color: var(--bg); font-weight: 700; }
+.k-combo { position: relative; }
+.k-list { position: absolute; z-index: 5; left: 0; right: 0; top: calc(100% + .25rem); margin: 0; padding: .25rem; list-style: none; max-height: 14rem; overflow-y: auto; background: var(--surface); border: 1px solid var(--border); border-radius: 1rem; box-shadow: var(--shadow); -webkit-overflow-scrolling: touch; }
+.k-list.is-up { top: auto; bottom: calc(100% + .25rem); }
+.k-list.is-right { left: auto; min-width: 100%; width: max-content; max-width: 80vw; }
+.k-list li { display: flex; justify-content: space-between; align-items: center; gap: .75rem; min-height: 44px; padding: 0 .75rem; border-radius: .75rem; cursor: pointer; }
+.k-list li[aria-selected="true"] { background: var(--border); }
+.k-list li .hint { color: var(--muted); font-size: .85rem; }
+.k-icon { flex: 0 0 auto; display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; border: 1px solid var(--border); border-radius: .75rem; background: var(--surface); color: var(--muted); font: inherit; font-size: 1.2rem; cursor: pointer; }
+.k-title { display: block; width: 100%; min-height: 52px; padding: 0 .1rem; border: 0; border-bottom: 2px solid var(--border); border-radius: 0; background: transparent; color: var(--fg); font-family: var(--head); font-size: 1.9rem; font-weight: 700; line-height: 1.1; }
+.k-title:focus { outline: none; border-bottom-color: var(--accent); }
+.k-title::placeholder { color: var(--muted); opacity: 1; font-weight: 600; }
+.k-title[aria-invalid="true"] { border-bottom-color: var(--danger); }
+.k-emoji { flex: 0 0 auto; display: inline-flex; align-items: center; justify-content: center; width: 52px; height: 52px; border: 1px solid var(--border); border-radius: 1rem; background: var(--surface); font-size: 1.9rem; line-height: 1; cursor: pointer; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; touch-action: manipulation; }
+.k-emoji.is-none { border-style: dashed; color: var(--muted); font-size: 1.4rem; }
+.k-error { margin: .35rem 0 0; color: var(--danger); font-size: .9rem; }
+.k-note { margin: .4rem 0 0; color: var(--muted); font-size: .9rem; }
+.k-divider { margin: 1.8rem 0 1rem; border: 0; border-top: 1px solid var(--border); }
+.k-scrim { position: fixed; inset: 0; z-index: 60; display: flex; align-items: center; justify-content: center; padding: 20px; background: var(--scrim); -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); }
+.k-dialog { width: 100%; max-width: 22rem; padding: 1.2rem; border: 1px solid var(--border); border-radius: 1.2rem; background: var(--surface); box-shadow: var(--shadow); }
+.k-dialog h2 { margin: 0 0 .8rem; font-size: 1.3rem; }
+.k-actions { display: flex; justify-content: flex-end; flex-wrap: wrap; gap: .5rem; margin-top: 1rem; }
+.k-btn.is-primary { background: var(--accent); border-color: var(--accent); color: var(--bg); font-weight: 700; }
+.k-btn:disabled { opacity: .45; cursor: default; }
