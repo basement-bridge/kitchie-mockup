@@ -98,15 +98,15 @@ h1{font-size:2.4rem;line-height:1.05;font-weight:700;margin:.5rem 0 .6rem}
   function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];});}
   function frecency(kind,name){return picks.reduce(function(a,p){return a+(p.kind===kind&&p.name===name?Math.pow(.5,(now-p.t)/(7*DAY)):0);},0);}
   function passTokens(i,skip){return (skip==="loc"||!tok.loc||i.loc===tok.loc)&&(skip==="cat"||!tok.cat||i.cat===tok.cat);}
-  function count(kind,name){return ITEMS.filter(function(i){return i[kind]===name&&passTokens(i,kind);}).length;}
+  function count(kind,name){return ITEMS.filter(function(i){return i[kind]===name&&passTokens(i);}).length;}
   function match(name,text){var n=name.toLowerCase();if(n.indexOf(text)===0)return 3;if((" "+n).indexOf(" "+text)!==-1)return 2;return n.indexOf(text)!==-1?1:0;}
   function hl(name,text){var i=name.toLowerCase().indexOf(text);return i<0?esc(name):esc(name.slice(0,i))+"<mark>"+esc(name.slice(i,i+text.length))+"</mark>"+esc(name.slice(i+text.length));}
 
   function build(){
     var text=q.value.trim().toLowerCase(), out=[];
     ["loc","cat"].forEach(function(kind){
+      if(tok[kind])return;                                // a place (or category) is already picked: no more of that kind are offered
       (kind==="loc"?LOCS:CATS).forEach(function(name){
-        if(tok[kind]===name)return;                       // already a token: never offered again
         var c=count(kind,name); if(c===0)return;           // zero is never shown
         var s=text?match(name,text):0; if(text&&!s)return;
         out.push({kind:kind,name:name,count:c,score:s,f:frecency(kind,name),ord:kind==="loc"?0:1});
