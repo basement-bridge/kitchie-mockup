@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kitchie: Filter toggle mockup</title>
+<meta name="description" content="One ribbon for the kitchen list that filters by location or by category, with a two-state pin and tag toggle. Not the live product.">
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="../theme.css">
+<style>
+:root{--page-width:30rem}
+h1{font-size:2.4rem;line-height:1.05;font-weight:700;margin:.5rem 0 .6rem}
+h2{font-size:1.25rem;margin:2rem 0 .3rem}
+.lead,.hint{color:var(--muted)}
+.lead{margin:0 0 .4rem}
+.hint{margin:0 0 .9rem;font-size:.9rem}
+.panel{padding:1rem;border:1px solid var(--border);border-radius:1.4rem;background:var(--bg)}
+.ic{width:1.1rem;height:1.1rem;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none;display:block}
+
+.head{display:flex;align-items:center;justify-content:space-between;gap:.8rem;margin:0 .1rem .7rem}
+.head b{font-family:var(--head);font-size:1.45rem;font-weight:700}
+
+/* Option 1: two-state switch, the thumb slides between the pin and the tag */
+.bin{position:relative;display:grid;grid-template-columns:1fr 1fr;width:5.6rem;height:44px;padding:3px;border:1px solid var(--border);border-radius:999px;background:var(--surface);color:var(--fg);font:inherit;cursor:pointer}
+.bin i{position:absolute;top:3px;left:3px;width:calc(50% - 3px);height:calc(100% - 6px);border-radius:999px;background:var(--accent);transition:transform .2s ease,background .2s ease}
+.bin[aria-checked="true"] i{transform:translateX(100%);background:var(--sage)}
+.bin span{position:relative;z-index:1;display:grid;place-items:center;color:var(--muted)}
+.bin[aria-checked="false"] span:first-of-type,.bin[aria-checked="true"] span:last-of-type{color:var(--bg)}
+
+/* Option 2: one button that shows the view you are in */
+.one{display:inline-flex;align-items:center;gap:.5rem;min-height:44px;padding:0 1rem 0 .8rem;border:0;border-radius:999px;color:var(--bg);background:var(--accent);font:inherit;font-weight:700;cursor:pointer}
+.one[data-dim="cat"]{background:var(--sage)}
+
+.ribbon{display:flex;gap:.5rem;overflow-x:auto;scrollbar-width:none;scroll-snap-type:x proximity;padding:.1rem .1rem .7rem}
+.ribbon::-webkit-scrollbar{display:none}
+.chip{flex:none;scroll-snap-align:start;min-height:44px;padding:0 1rem;border:1px solid var(--border);border-radius:999px;background:var(--surface);color:var(--fg);font:inherit;cursor:pointer}
+.chip small{color:var(--muted);font-size:.85rem;margin-left:.15rem}
+.chip[aria-pressed="true"]{color:var(--bg);font-weight:700;border-color:transparent}
+.chip[aria-pressed="true"] small{color:inherit;opacity:.8}
+.dim-loc .chip[aria-pressed="true"]{background:var(--accent)}
+.dim-cat .chip[aria-pressed="true"]{background:var(--sage)}
+
+.sum{display:flex;justify-content:space-between;gap:.6rem;margin:.2rem .2rem .2rem;font-size:.9rem;color:var(--muted)}
+.sum b{color:var(--fg)}
+.items{list-style:none;margin:.3rem 0 0;padding:0;display:grid;gap:.5rem}
+.items li{display:flex;align-items:center;gap:.8rem;padding:.6rem .8rem;border:1px solid var(--border);border-radius:1.1rem;background:var(--surface)}
+.items .e{display:grid;place-items:center;width:2.4rem;height:2.4rem;border-radius:.8rem;background:var(--bg);font-size:1.4rem;flex:none}
+.items .m{flex:1;min-width:0}
+.items small{display:block;color:var(--muted);font-size:.8rem}
+.items .q{color:var(--muted);font-size:.85rem}
+.note{margin:1.6rem 0 0;font-size:.85rem;color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="k-banner"><strong>Mockup</strong> &middot; sample data</div>
+<h1>Filter toggle</h1>
+<p class="lead">One ribbon, two views. Pin means location, tag means category. Whichever is in front decides what the ribbon filters, and switching starts again from All.</p>
+
+<h2>Option 1: two-state switch</h2>
+<p class="hint">The thumb slides to show which view is in front, so both states are visible at once.</p>
+<div class="panel" id="p1"></div>
+
+<h2>Option 2: one button</h2>
+<p class="hint">The button shows the view you are in. Tap and it flips to the other.</p>
+<div class="panel" id="p2"></div>
+
+<p class="note">Both are tappable. The list is the kitchen list, shown short. Nothing is saved; reloading starts again.</p>
+<p><a class="k-btn" href="../index.html">All mockups</a></p>
+
+<script>
+(function(){
+  "use strict";
+  var ITEMS=[
+    ["🥛","milk","Fridge","Dairy","1 L"],["🧈","butter","Fridge","Dairy","2"],["🧀","cheddar","Fridge","Dairy","400 g"],["🥚","eggs","Fridge","Dairy","6"],
+    ["🥕","carrots","Fridge","Veggies","1 kg"],["🍦","ice cream","Freezer","Dairy","1"],["🍗","chicken thighs","Freezer","Meat","1 kg"],
+    ["🍟","fries","Freezer","Snacks","1 bag"],["🍚","rice","Pantry","Dry goods","5 kg"],["🍝","pasta","Pantry","Dry goods","3"],
+    ["🥫","chopped tomatoes","Pantry","Cans","4"],["🧂","cumin","Pantry","Seasoning","1"],["🍫","dairy milk chocolate","Pantry","Snacks","2 blocks"]
+  ].map(function(r){return{emoji:r[0],name:r[1],loc:r[2],cat:r[3],qty:r[4]};});
+  var VALUES={loc:["Fridge","Pantry","Freezer"],cat:["Dairy","Veggies","Meat","Dry goods","Cans","Seasoning","Snacks"]};
+  var TITLE={loc:"Location",cat:"Category"};
+  var PIN='<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.2A7 7 0 0 1 19 9.8C19 14.8 12 21 12 21z"/><circle cx="12" cy="10" r="2.5"/></svg>';
+  var TAG='<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12V4h8l10 10-8 8L3 12z"/><circle cx="7.5" cy="8.5" r="1.3"/></svg>';
+  function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];});}
+
+  function mount(el,control){
+    var st={dim:"loc",sel:"All"};
+    function draw(){
+      var list=ITEMS.filter(function(i){return st.sel==="All"||i[st.dim]===st.sel;});
+      var chips=[["All",ITEMS.length]].concat(VALUES[st.dim].map(function(v){return[v,ITEMS.filter(function(i){return i[st.dim]===v;}).length];}).filter(function(c){return c[1]>0;}));
+      el.innerHTML=
+        '<div class="head"><b>'+TITLE[st.dim]+'</b>'+control(st)+'</div>'+
+        '<div class="ribbon dim-'+st.dim+'" role="group" aria-label="Filter by '+TITLE[st.dim].toLowerCase()+'">'+
+        chips.map(function(c){return '<button class="chip" type="button" data-sel="'+esc(c[0])+'" aria-pressed="'+(st.sel===c[0])+'">'+esc(c[0])+(c[0]==="All"?'':' <small>('+c[1]+')</small>')+'</button>';}).join("")+'</div>'+
+        '<div class="sum"><b>'+list.length+'</b><span>'+esc(st.sel==="All"?"Everything":st.sel)+'</span></div>'+
+        '<ul class="items">'+list.slice(0,4).map(function(i){return '<li><span class="e" aria-hidden="true">'+i.emoji+'</span><span class="m">'+esc(i.name)+'<small>'+esc(i.loc)+' · '+esc(i.cat)+'</small></span><span class="q">'+esc(i.qty)+'</span></li>';}).join("")+'</ul>';
+      var flip=el.querySelector("[data-flip]");
+      flip.onclick=function(){st.dim=st.dim==="loc"?"cat":"loc";st.sel="All";draw();var again=el.querySelector("[data-flip]");if(again)again.focus();};
+      Array.prototype.forEach.call(el.querySelectorAll("[data-sel]"),function(b){b.onclick=function(){st.sel=b.dataset.sel;draw();var again=el.querySelector('[data-sel="'+st.sel.replace(/"/g,'\\"')+'"]');if(again)again.focus({preventScroll:true});};});
+    }
+    draw();
+  }
+
+  mount(document.getElementById("p1"),function(st){
+    return '<button type="button" class="bin" role="switch" aria-checked="'+(st.dim==="cat")+'" aria-label="Filter by category" data-flip><i></i><span>'+PIN+'</span><span>'+TAG+'</span></button>';
+  });
+  mount(document.getElementById("p2"),function(st){
+    var next=st.dim==="loc"?"category":"location";
+    return '<button type="button" class="one" data-dim="'+st.dim+'" aria-label="Showing '+TITLE[st.dim].toLowerCase()+'. Switch to '+next+'" data-flip>'+(st.dim==="loc"?PIN:TAG)+TITLE[st.dim]+'</button>';
+  });
+})();
+</script>
+</body>
+</html>
