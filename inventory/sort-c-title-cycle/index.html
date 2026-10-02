@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kitchie: sort option C mockup</title>
+<meta name="description" content="Mockup of a Kitchie kitchen list idea: sort by Use by in almost no screen space. Not the live product.">
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="../../theme.css">
+<link rel="stylesheet" href="../sort-options/shared.css">
+</head>
+<body data-option="c">
+<div class="k-banner"><strong>Mockup only.</strong> Sample items are made up. <a href="../index.html">Kitchen list</a></div>
+<section class="mockdesc">
+  <h2>Option C: tap the title to cycle</h2>
+  <p>The title is the control: Location with a small arrows mark. Each tap cycles Location, Category, Use by, and a short message fades in at the bottom naming the new mode. The pin and tag switch stays only as a second way to pick Location or Category. The sort row and Recent button are gone.</p>
+  <p class="costs"><b>Costs:</b> no new row and no new button: the list starts 66 px higher than today's home list (116 px higher in Use by). Use by is 2 taps from Location, 1 from Category, and the cycle is not visible until you try it.</p>
+</section>
+<main class="screen" id="screen">
+  <div class="top"><h1>Kitchen</h1><div class="hdr" id="hdr"></div></div>
+  <div class="titlerow" id="titlerow"></div>
+  <div id="tabs"></div>
+  <div id="list"></div>
+  
+</main>
+<nav class="dock" id="dock" aria-label="Add and share"></nav>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script src="../sort-options/shared.js"></script>
+</body>
+</html>

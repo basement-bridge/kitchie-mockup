@@ -1,0 +1,58 @@
+/* Layout shared by the three sort-by-use-by mockups. Colours and fonts come from ../../theme.css only. */
+:root { --page-width: 28rem; }
+html { overflow-x: clip; }
+h1 { font-family: var(--head); font-size: 2.5rem; line-height: 1.02; font-weight: 700; margin: .1rem 0 1rem; }
+h2 { font-family: var(--head); font-size: 1.4rem; margin: 0; font-weight: 700; }
+a { color: var(--accent); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.top { padding-top: .5rem; display: flex; align-items: flex-start; justify-content: space-between; gap: .75rem; }
+.hdr { display: flex; gap: .5rem; padding-top: .45rem; }
+.icon { display: inline-flex; align-items: center; justify-content: center; width: 48px; height: 48px; border-radius: .9rem; border: 1px solid var(--border); background: transparent; color: var(--fg); cursor: pointer; padding: 0; }
+.icon:hover { border-color: var(--accent); color: var(--accent); }
+
+/* The explanation above the phone-sized screen (mockup only). */
+.mockdesc { margin: 0 0 1.2rem; padding: .8rem 1rem; border: 1px dashed var(--border); border-radius: 1rem; font-size: .9rem; color: var(--muted); }
+.mockdesc h2 { font-size: 1.05rem; color: var(--fg); margin: 0 0 .3rem; }
+.mockdesc p { margin: 0 0 .4rem; }
+.mockdesc .costs { margin: 0; color: var(--fg); }
+.screen { padding-top: .2rem; }
+
+/* Title row: the list's title on the left, its controls on the right. */
+.titlerow { display: flex; align-items: center; justify-content: space-between; gap: .6rem; margin: 0 .1rem .5rem; }
+.titlerow b, .titlebtn { font-family: var(--head); font-size: 1.3rem; font-weight: 700; line-height: 1.1; white-space: nowrap; }
+.ctl { display: flex; align-items: center; gap: .4rem; flex: 0 0 auto; }
+.titlebtn { display: inline-flex; align-items: center; gap: .4rem; min-height: 44px; margin-left: -.4rem; padding: 0 .4rem; border: 0; border-radius: .7rem; background: transparent; color: var(--fg); cursor: pointer; }
+.titlebtn:hover { color: var(--accent); }
+.titlebtn .mark { color: var(--muted); font-size: .95rem; font-weight: 600; }
+
+/* Icon switch: a small pill of icon buttons; the chosen one is filled. */
+.iseg { display: inline-flex; align-items: center; gap: 2px; height: 44px; padding: 3px; border: 1px solid var(--border); border-radius: 999px; background: var(--surface); }
+.iseg button { display: grid; place-items: center; width: 38px; height: 36px; padding: 0; border: 0; border-radius: 999px; background: transparent; color: var(--muted); cursor: pointer; }
+.iseg.is-sort button { width: 36px; }
+.iseg button[aria-checked="true"] { background: var(--accent); color: var(--bg); }
+.iseg svg { width: 1.1rem; height: 1.1rem; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.iseg svg text { fill: currentColor; stroke: none; font-family: var(--font-body); font-weight: 800; font-size: 9px; }
+
+nav.tabs { position: relative; display: flex; gap: .25rem; padding: .25rem; border-radius: 1rem; background: var(--surface); margin: 0 0 .6rem; overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding-left: .25rem; scrollbar-width: none; max-width: 100%; user-select: none; }
+nav.tabs::-webkit-scrollbar { display: none; }
+nav.tabs a { scroll-snap-align: start; flex: 1 0 auto; display: flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 1rem; border-radius: .75rem; color: var(--fg); font-weight: 700; font-size: .95rem; text-decoration: none; white-space: nowrap; }
+nav.tabs a[aria-current="page"] { background: var(--accent); color: var(--bg); }
+
+.grouphead { display: flex; justify-content: space-between; align-items: baseline; padding: 1rem .25rem 0; }
+.count { font-size: .9rem; color: var(--muted); }
+ul.rows { list-style: none; margin: 0; padding: 0; }
+li[data-row] { display: flex; align-items: stretch; min-height: 68px; border-bottom: 1px solid var(--border); }
+li .rowlink { flex: 1 1 auto; display: flex; align-items: center; gap: .75rem; min-width: 0; padding: .65rem .5rem; border-radius: .75rem; color: inherit; text-decoration: none; }
+li a.rowlink:hover { background: var(--surface); }
+li .main { flex: 1 1 auto; min-width: 0; }
+li .name { font-size: 1.06rem; font-weight: 600; text-transform: lowercase; }
+li .meta { font-size: .9rem; color: var(--muted); margin-top: .1rem; }
+li .chev { display: inline-flex; color: var(--muted); }
+.empty { color: var(--muted); }
+
+nav.dock { position: fixed; left: 0; right: 0; bottom: 0; display: flex; justify-content: center; gap: .6rem; margin: 0; padding: .25rem 20px calc(.25rem + env(safe-area-inset-bottom)); pointer-events: none; z-index: 5; }
+nav.dock .icon { pointer-events: auto; background: var(--surface); box-shadow: 0 1px 5px rgba(0,0,0,.2); }
+body:has(nav.dock) { padding-bottom: calc(4.4rem + env(safe-area-inset-bottom)); }
+.toast { width: max-content; position: fixed; left: 50%; bottom: 5.5rem; transform: translateX(-50%); max-width: calc(100vw - 40px); padding: .6rem 1rem; border-radius: .8rem; background: var(--fg); color: var(--bg); font-weight: 600; z-index: 10; opacity: 0; transition: opacity .25s; pointer-events: none; text-align: center; }
+.toast.on { opacity: 1; }
+@media (prefers-reduced-motion: reduce) { .toast { transition: none; } }

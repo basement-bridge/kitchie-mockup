@@ -115,3 +115,8 @@ button.k-field { cursor: pointer; }
 .k-actions { display: flex; justify-content: flex-end; flex-wrap: wrap; gap: .5rem; margin-top: 1rem; }
 .k-btn.is-primary { background: var(--accent); border-color: var(--accent); color: var(--bg); font-weight: 700; }
 .k-btn:disabled { opacity: .45; cursor: default; }
+
+/* The use-by label on a list row (right side, wraps to two lines). Tone follows the app's rule: late = red, soon = amber (today up to 3 days), none = grey. */
+.k-due { font-size: .9rem; line-height: 1.25; color: var(--muted); max-width: 5.6rem; text-align: right; }
+.k-due[data-tone="late"] { color: var(--danger); }
+.k-due[data-tone="soon"] { color: var(--accent); }
