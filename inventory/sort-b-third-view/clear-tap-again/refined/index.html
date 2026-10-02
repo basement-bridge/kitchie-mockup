@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kitchie: sort B1 refined mockup</title>
+<meta name="description" content="Mockup of a Kitchie kitchen list idea: Use by on at every load from the cache, Location and Category off, and a ribbon that gets out of the way. Not the live product.">
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="../../../../theme.css">
+<link rel="stylesheet" href="../../../sort-options/shared.css">
+<link rel="stylesheet" href="../../../sort-b-options/clear.css">
+<style>
+.loading { color: var(--muted); font-size: .9rem; margin: .8rem .25rem; }
+.note { color: var(--muted); font-size: .9rem; margin: .8rem .25rem; }
+.mocklog { margin: 1.2rem 0 0; padding: .7rem 1rem; border: 1px dashed var(--border); border-radius: 1rem; font-size: .85rem; color: var(--muted); }
+.mocklog h2 { font-size: 1rem; color: var(--fg); margin: 0 0 .3rem; }
+.mocklog ul { margin: 0 0 .5rem; padding-left: 1.1rem; }
+.mocklog button { font: inherit; min-height: 44px; padding: 0 1rem; border: 1px solid var(--border); border-radius: .8rem; background: var(--surface); color: var(--fg); cursor: pointer; }
+</style>
+</head>
+<body>
+<div class="k-banner"><strong>Mockup only.</strong> Sample items are made up. <a href="../../../index.html">Kitchen list</a></div>
+<section class="mockdesc">
+  <h2>B1 refined: Use by first, from the cache</h2>
+  <p>Clearing is B1: tap the lit pin or tag again to turn it off. The rest is what we agreed.</p>
+  <ul>
+    <li><b>Every load:</b> Use by is on, Location and Category are off. The list shows only what expires within a month, soonest first, painted at once from what this phone cached, then refreshed from the server, then the rest of the kitchen arrives page by page in the background.</li>
+    <li><b>Pin and tag</b> never both on; each combines with Use by on or off. Picking from the ribbon works as before.</li>
+    <li><b>Out of the way:</b> the ribbon hides after 5 seconds with no touch, and at once when you pick a value while Use by is on. The title then reads the pick (“Use by · Pantry”). Tap the title to bring the ribbon back.</li>
+    <li><b>Use by off</b> shows everything A to Z (or grouped, if pin or tag is on). If the rest has not arrived yet it says “Loading the rest…”.</li>
+  </ul>
+  <p class="costs"><b>Costs:</b> the ribbon is hidden most of the time, so a grouping change is one extra tap on the title; items with no use by date are hidden until Use by is turned off.</p>
+</section>
+<main class="screen" id="screen">
+  <div class="top"><h1>Kitchen</h1><div class="hdr" id="hdr"></div></div>
+  <div class="titlerow" id="titlerow"></div>
+  <div id="tabs"></div>
+  <div id="list"></div>
+</main>
+<section class="mocklog">
+  <h2>What the page is doing (mockup only)</h2>
+  <ul id="loadlog"></ul>
+  <button type="button" id="replay">Replay the load</button>
+</section>
+<nav class="dock" id="dock" aria-label="Add and share"></nav>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script src="../../../sort-b-options/refined.js"></script>
+</body>
+</html>
