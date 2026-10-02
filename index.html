@@ -113,9 +113,9 @@ details b{color:var(--fg)}
 /* joining an existing household: the pitch is optional, shown on request */
 .story{display:contents}
 #k-join:checked ~ main:not(:has(#how:target)) .story,#k-join:checked ~ main:not(:has(#how:target)) .story-end{display:none}
-.more.j{text-align:center;text-wrap:balance;margin-top:1.4rem}
+.more.j{justify-content:flex-start;margin-top:1.3rem;min-height:44px;white-space:nowrap;font-size:min(1.15rem,3.8vw);font-weight:700;color:var(--muted);text-decoration:none}
 h1.j{font-size:2.6rem;line-height:1.05;margin-bottom:1.4rem}
-.sub.j.under{margin:1.2rem 0 0;text-align:center;font-size:1.1rem;color:var(--muted)}
+.rows{margin:1.3rem 0 0;display:flex;flex-direction:column;gap:.7rem;color:var(--muted);font-size:min(.98rem,4vw)}.rows div{display:flex;gap:.7rem;align-items:center;white-space:nowrap}.rows svg{flex:0 0 auto;color:var(--accent)}
 h1.j small{display:block;white-space:nowrap;margin-bottom:.5rem;font-family:"DM Sans",system-ui,sans-serif;font-size:min(1.15rem,3.8vw);font-weight:700;letter-spacing:0;line-height:1.3;color:var(--muted)}
 h1.o{font-size:2.5rem;line-height:1.04}
 .sub.j{font-size:1.15rem;margin-bottom:1.2rem}
@@ -162,9 +162,13 @@ h1.o{font-size:2.5rem;line-height:1.04}
 <small class="j">Private. No profile to fill in. We&rsquo;ll give you a ridiculous name.</small>
 <small class="o">Free while we&rsquo;re building Kitchie. No name or email needed.</small>
 </div>
-<p class="sub j under">See what&rsquo;s in the fridge, pantry and shelves. Share the shopping list. Now you can stay on top of it together.</p>
+<div class="rows j">
+<div><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="2.5" width="12" height="19" rx="2.5"></rect><path d="M6 10h12M9 6v1.5M9 13v3"></path></svg><span>See what&rsquo;s in the fridge or the pantry</span></div>
+<div><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6h11M9 12h11M9 18h11M4 6l1 1 2-2M4 12l1 1 2-2M4 18l1 1 2-2"></path></svg><span>Share the shopping list</span></div>
+<div><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3"></circle><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6M16 5a3 3 0 0 1 0 6M18 14c2 .6 3.5 2.4 3.5 5"></path></svg><span>Stay on top of it together</span></div>
+</div>
 <a class="more o" href="#how">Or see how it works first &darr;</a>
-<a class="more j" href="#how">Don&rsquo;t take Jane&rsquo;s word for it. Take the 60-second tour. &darr;</a>
+<a class="more j" href="#how">Don&rsquo;t want to take Jane&rsquo;s word for it? &darr;</a>
 </section>
 
 <div class="story">
