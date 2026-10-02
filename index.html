@@ -37,6 +37,7 @@ h2{font-size:2.1rem;line-height:1.06;font-weight:800;letter-spacing:-.015em;marg
 /* The sign-up panel: set apart from the pitch on purpose, and the button follows Google's familiar look. */
 .join{display:flex;flex-direction:column;gap:.9rem;padding:1.3rem;border:2px solid var(--accent);border-radius:1.5rem;background:var(--surface);box-shadow:0 10px 30px rgba(0,0,0,.25)}
 .join .hh{margin:-.55rem 0 0;font-family:"DM Sans",system-ui,sans-serif;font-size:1.02rem;font-weight:600;line-height:1.3;color:var(--muted)}
+.join .jn{display:flex;align-items:baseline;flex-wrap:nowrap;white-space:nowrap;gap:.2rem .6rem;font-size:min(.8rem,3.3vw)}.join .jn b{font-family:"DM Sans",system-ui,sans-serif;font-size:min(1.02rem,4.1vw);font-weight:600;letter-spacing:0;text-transform:none;color:var(--muted)}
 .join .label{margin:0;font-size:.8rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
 .join h2{font-size:1.7rem;margin:0}
 .join p{margin:0;color:var(--muted);font-size:.98rem}
@@ -157,11 +158,10 @@ h1.o{font-size:2.5rem;line-height:1.04}
 <h1 class="j"><small>Jane&rsquo;s got the kitchen in order&hellip; almost.</small>Grab your spot.</h1>
 
 <div class="join">
-<p class="label j">You&rsquo;re joining</p>
-<p class="hh j">Casa Jane</p>
+<p class="label j jn"><span>You&rsquo;re joining</span><b>&#127969; Casa Jane</b></p>
 <p class="label o">Start my kitchen</p>
 <a class="gbtn" href="#demo"><svg width="20" height="20" aria-hidden="true"><use href="#g"></use></svg><span>Sign in with Google</span></a>
-<small class="j">Private. No profile to fill in. We&rsquo;ll give you a ridiculous name.</small>
+<small class="j">Totally private. We&rsquo;ll even give you a ridiculous name.</small>
 <small class="o">Free while we&rsquo;re building Kitchie. No name or email needed.</small>
 </div>
 <div class="rows j">
