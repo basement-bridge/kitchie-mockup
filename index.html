@@ -18,6 +18,15 @@ h1{font-size:2.9rem;line-height:1.02;font-weight:700;margin:.5rem 0 .6rem}
 .list p{margin:0 0 .8rem;color:var(--muted)}
 .row{display:flex;flex-wrap:wrap;gap:.5rem .9rem;align-items:center}
 .row a{color:var(--accent)}
+.state{margin:0 0 .8rem;font-size:.9rem;color:var(--muted)}
+.vars{list-style:none;margin:.9rem 0 0;padding:.8rem 0 0;border-top:1px solid var(--border);display:grid;gap:.5rem}
+.vars li{display:flex;flex-wrap:wrap;gap:.3rem .6rem;align-items:center;font-size:.95rem}
+.vars a{color:var(--accent)}
+.vars .why{color:var(--muted)}
+.legend{margin:1.8rem 0 0;padding:1rem 1.2rem;border:1px dashed var(--border);border-radius:1.2rem;font-size:.9rem;color:var(--muted)}
+.legend h2{font-size:1rem;margin:0 0 .6rem;color:var(--fg)}
+.legend div{display:flex;gap:.7rem;align-items:baseline;margin:.35rem 0}
+.legend .k-chip{flex:0 0 5.6rem;text-align:center}
 .foot{margin:1.8rem 0 0;font-size:.9rem;color:var(--muted)}
 </style>
 </head>
@@ -31,24 +40,33 @@ h1{font-size:2.9rem;line-height:1.02;font-weight:700;margin:.5rem 0 .6rem}
     <article class="k-card">
       <h2><a href="join/index.html">Join page</a></h2>
       <p>The invite landing page, told as a short story before the sign-in button.</p>
-      <div class="row"><span class="k-chip is-current">Current</span> <a href="join/v1/index.html">Earlier version, before the marketing review</a></div>
+      <div class="row"><span class="k-chip is-production">Production</span></div>
+      <ul class="vars"><li><span class="k-chip">Earlier</span> <a href="join/v1/index.html">v1</a> <span class="why">before the marketing review, kept for comparing</span></li></ul>
     </article>
   </li>
   <li>
     <article class="k-card">
       <h2><a href="inventory/index.html">Kitchen list</a></h2>
       <p>The list with each location as a section that opens and closes, a green arrow on anything added in the last 24 hours, and no running item counts.</p>
-      <div class="row"><span class="k-chip is-current">Current</span></div>
+      <div class="row"><span class="k-chip">Draft</span></div>
     </article>
   </li>
   <li>
     <article class="k-card">
       <h2><a href="home/index.html">Home screen</a></h2>
       <p>The Kitchen list you can use: area tabs, sort, search by typing or voice, swipe to use one or mark used up, add an item, Undo and the shopping list. Switch between a full kitchen, an empty one and the read-only view.</p>
-      <div class="row"><span class="k-chip is-current">Current</span></div>
+      <div class="row"><span class="k-chip">Draft</span></div>
     </article>
   </li>
 </ul>
+
+<section class="legend" aria-label="What the labels mean">
+  <h2>What the labels mean</h2>
+  <div><span class="k-chip is-production">Production</span> <span>Live in the app. The mockup matches what people use.</span></div>
+  <div><span class="k-chip is-locked">Locked</span> <span>Decided, not built yet.</span></div>
+  <div><span class="k-chip">Draft</span> <span>Still being explored.</span></div>
+  <div><span class="k-chip">Earlier</span> <span>A variation or older version, listed under the screen it came from.</span></div>
+</section>
 
 <p class="foot">These pages sign no one in, store nothing and load no tracking. Sample names and items are made up. Colours and fonts for every page live in <code>theme.css</code>.</p>
 </body>

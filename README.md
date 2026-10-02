@@ -19,6 +19,16 @@ scripts/       check-hub.sh
 
 One folder per screen, with its own `index.html`. A different version of the same screen goes in a subfolder of that screen (`join/v1/`), not at the top level.
 
+## Status and variations
+
+Every screen on the hub carries one label:
+
+- **Production**: live in the app; the mockup matches it.
+- **Locked**: decided, not built yet.
+- **Draft**: still being explored (no other label).
+
+A variation or an older version lives in a subfolder of the screen it came from (`join/v1/`) and is listed under that screen's card on the hub, not as a card of its own. The hub is the one place the status is written, so changing a screen's status is one edit to its card.
+
 ## Change the look once
 
 Colours, fonts and base rules live in `theme.css`. Every page links it and adds only its own layout, so changing the accent colour or a font is one edit there and every page follows. The pages use the theme's variables (`var(--accent)`, `var(--bg)`, ...) and do not carry their own copies.
