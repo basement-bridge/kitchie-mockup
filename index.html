@@ -83,6 +83,13 @@ h2{font-size:2.1rem;line-height:1.06;font-weight:800;letter-spacing:-.015em;marg
 details{background:var(--surface);border:1px solid var(--border);border-radius:1rem;margin-top:1rem}
 summary{cursor:pointer;min-height:44px;display:flex;align-items:center;padding:0 1.1rem;font-weight:700}
 details div{padding:0 1.1rem 1rem;color:var(--muted);display:flex;flex-direction:column;gap:.6rem}
+/* demo-only: switch between the two kinds of invite link */
+.vh{position:absolute;opacity:0;pointer-events:none}
+#k-own:checked ~ main .j,#k-join:checked ~ main .o{display:none}
+.banner{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem .7rem}
+.banner label{display:inline-flex;align-items:center;min-height:36px;padding:0 .9rem;border:1px solid var(--border);border-radius:999px;color:var(--fg);font-weight:700;cursor:pointer}
+#k-join:checked ~ .banner label[for=k-join],#k-own:checked ~ .banner label[for=k-own]{background:var(--accent);border-color:var(--accent);color:var(--bg)}
+#k-join:focus-visible ~ .banner label[for=k-join],#k-own:focus-visible ~ .banner label[for=k-own]{outline:3px solid var(--accent);outline-offset:3px}
 /* demo-only: what the sign-in button does in this mockup */
 .demo{position:fixed;inset:0;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(0,0,0,.6);z-index:10}
 .demo:target{display:flex}
@@ -92,7 +99,9 @@ details div{padding:0 1.1rem 1rem;color:var(--muted);display:flex;flex-direction
 </style>
 </head>
 <body>
-<div class="banner">Mockup only. Nothing here signs you in or stores anything.</div>
+<input class="vh" type="radio" name="kind" id="k-join" checked aria-label="Preview: invite to an existing household">
+<input class="vh" type="radio" name="kind" id="k-own" aria-label="Preview: invite to start your own household">
+<div class="banner"><span>Mockup only. Preview the invite as:</span><label for="k-join">Join a household</label><label for="k-own">Start your own</label></div>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
 <symbol id="g" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"></path><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"></path><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"></path><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"></path></symbol>
@@ -105,15 +114,19 @@ details div{padding:0 1.1rem 1rem;color:var(--muted);display:flex;flex-direction
 <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12h18a9 9 0 0 1-18 0z"></path><path d="M8 8c0-1.5 1.5-1.5 1.5-3M13 8c0-1.5 1.5-1.5 1.5-3"></path></svg>
 <span>Kitchie</span>
 </div>
-<p class="eyebrow">You&rsquo;re invited to Our kitchen</p>
+<p class="eyebrow j">Invited by Jane &middot; Our kitchen</p>
+<p class="eyebrow o">Invited by Jane</p>
 <h1>Do we have any&hellip;?</h1>
 <p class="sub">Never ask that question again.</p>
-<p class="lead"><strong>Come and join our household.</strong> Kitchie is one live view of what&rsquo;s in stock, plus an AI that reads every shelf.</p>
+<p class="lead j"><strong>Come and join our household.</strong> Kitchie is one live view of what&rsquo;s in stock, plus an AI that reads every shelf.</p>
+<p class="lead o"><strong>Jane&rsquo;s got her own kitchen going. Start yours.</strong> Kitchie is one live view of what&rsquo;s in stock, plus an AI that reads every shelf.</p>
 
 <div class="join">
-<p class="label">Join in one tap</p>
+<p class="label j">Join in one tap</p>
+<p class="label o">Start yours in one tap</p>
 <a class="gbtn" href="#demo"><svg width="20" height="20" aria-hidden="true"><use href="#g"></use></svg><span>Sign in with Google</span></a>
-<small>Anonymous: no email, no name kept. This invite link works once.</small>
+<small class="j">Anonymous: no email, no name kept. This invite link works once.</small>
+<small class="o">Yours begins empty and only the people you invite will see it. Jane won&rsquo;t be a member and can&rsquo;t see your items. This invite link works once.</small>
 </div>
 <a class="more" href="#how">Or see how it works first &darr;</a>
 </section>
@@ -175,8 +188,8 @@ details div{padding:0 1.1rem 1rem;color:var(--muted);display:flex;flex-direction
 
 <section>
 <div class="step"><b>5 / 5</b><span>Joining is anonymous</span></div>
-<h2>Come in as Sleepy Wombat.</h2>
-<p class="copy">Kitchie never asks Google for your email or your name. You get a made-up one and can swap it any time.</p>
+<h2>We&rsquo;ll give you a funny name.</h2>
+<p class="copy">No need to think what to call yourself. Kitchie never asks Google for your email or your name, so you arrive as something like this, and can swap it any time.</p>
 <div class="card name">
 <div class="avatar">SW</div>
 <b>Sleepy Wombat</b>
@@ -219,7 +232,8 @@ details div{padding:0 1.1rem 1rem;color:var(--muted);display:flex;flex-direction
 <section class="join final">
 <p class="label">Ready when you are</p>
 <h2>Your kitchen is waiting.</h2>
-<p>You&rsquo;ll share items and the shopping list with the other members of Our kitchen.</p>
+<p class="j">You&rsquo;ll share items and the shopping list with the other members of Our kitchen.</p>
+<p class="o">Your kitchen starts empty, and only you decide who sees it.</p>
 <a class="gbtn" href="#demo"><svg width="20" height="20" aria-hidden="true"><use href="#g"></use></svg><span>Sign in with Google</span></a>
 <small>Anonymous: no email, no name kept. This invite link works once.</small>
 </section>
