@@ -98,7 +98,7 @@
   function load() {
     timers.forEach(clearTimeout); timers = [];
     t0 = performance.now(); $("#loadlog").innerHTML = "";
-    data = []; phase = "cache"; state = { pin: "", clock: true, area: "", cat: "", ribbon: false };
+    data = []; phase = "cache"; state = { pin: "", clock: true, area: "", cat: "", ribbon: false }; hold = false;
     // 1. instant: what was cached on this phone last time (the expiring items only)
     data = expiring.slice(); render(); log("Cache: painted " + expiring.length + " expiring items, no waiting for the server");
     // 2. the server answers: the expiring items are refreshed (a new one has arrived)
@@ -116,10 +116,11 @@
   }
 
   /* ---------- the ribbon gets out of the way ---------- */
-  var idle = 0;
+  var idle = 0, hold = false;   // hold: a value was just picked with Use by on, so the ribbon stays 3 s (not 5) before it goes
   function touch() {
     clearTimeout(idle);
-    if (state.pin && state.ribbon) idle = setTimeout(function () { if (state.ribbon) { state.ribbon = false; render(); log("Ribbon hid itself after 5 s"); } }, 5000);
+    var ms = hold ? 3000 : 5000;
+    if (state.pin && state.ribbon) idle = setTimeout(function () { if (state.ribbon) { state.ribbon = false; hold = false; render(); log("Ribbon hid itself after " + ms / 1000 + " s"); } }, ms);
   }
   function picked() { return state.pin === "cat" ? state.cat : state.pin === "loc" ? state.area : ""; }
 
@@ -186,7 +187,8 @@
     if (t) {
       e.preventDefault(); var keep = $("nav.tabs").scrollLeft, v = t.getAttribute("data-tab");
       if (state.pin === "cat") state.cat = v; else state.area = v;
-      if (v && state.clock) { state.ribbon = false; log("Value picked with Use by on: ribbon hid to give the list room"); }
+      hold = Boolean(v && state.clock);
+      if (hold) log("Value picked with Use by on: ribbon stays 3 s, then hides to give the list room");
       render(); if ($("nav.tabs")) $("nav.tabs").scrollLeft = keep; return;
     }
     if (e.target.closest("a.rowlink, a[href='#']")) { e.preventDefault(); return; }
@@ -197,7 +199,7 @@
     if (b) {
       var k = b.getAttribute("data-pin");
       if (state.pin === k) { state.pin = ""; state.area = ""; state.cat = ""; state.ribbon = false; render(); toast("Location and Category cleared"); return; }
-      state.pin = k; state.ribbon = true; render();
+      state.pin = k; state.ribbon = true; hold = false; render();
     }
   });
   document.addEventListener("scroll", function (e) { if (e.target.classList && e.target.classList.contains("tabs")) touch(); }, true);
