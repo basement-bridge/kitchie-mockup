@@ -88,8 +88,9 @@ details b{color:var(--fg)}
 /* joining an existing household: the pitch is optional, shown on request */
 .story{display:contents}
 #k-join:checked ~ main:not(:has(#how:target)) .story,#k-join:checked ~ main:not(:has(#how:target)) .story-end{display:none}
-.more.j{text-align:center;text-wrap:balance}
-h1.j{font-size:2.6rem;line-height:1.05}
+.more.j{text-align:center;text-wrap:balance;margin-top:1.4rem}
+h1.j{font-size:2.6rem;line-height:1.05;margin-bottom:1.4rem}
+.sub.j.under{margin:1.2rem 0 0;text-align:center;font-size:1.1rem;color:var(--muted)}
 h1.j small{display:block;white-space:nowrap;margin-bottom:.5rem;font-family:"DM Sans",system-ui,sans-serif;font-size:min(1.15rem,3.8vw);font-weight:700;letter-spacing:0;line-height:1.3;color:var(--muted)}
 h1.o{font-size:2.5rem;line-height:1.04}
 .sub.j{font-size:1.15rem;margin-bottom:1.2rem}
@@ -128,7 +129,6 @@ h1.o{font-size:2.5rem;line-height:1.04}
 <h1 class="o">Your kitchen. Now your AI knows what&rsquo;s in&nbsp;it.</h1>
 <p class="lead o">One live view of your fridge, pantry and shopping list, for your household and your AI. Ask what you have, what needs using, what to cook tonight.</p>
 <h1 class="j"><small>Jane&rsquo;s got the kitchen in order&hellip; almost.</small>Grab your spot.</h1>
-<p class="sub j">See what&rsquo;s in the fridge, pantry and shelves. Share the shopping list. Now you can stay on top of it together.</p>
 
 <div class="join">
 <p class="label j">Join Jane&rsquo;s kitchen</p>
@@ -137,6 +137,7 @@ h1.o{font-size:2.5rem;line-height:1.04}
 <small class="j">Private. No profile to fill in. We&rsquo;ll give you a ridiculous name.</small>
 <small class="o">Free while we&rsquo;re building Kitchie. No name or email needed.</small>
 </div>
+<p class="sub j under">See what&rsquo;s in the fridge, pantry and shelves. Share the shopping list. Now you can stay on top of it together.</p>
 <a class="more o" href="#how">Or see how it works first &darr;</a>
 <a class="more j" href="#how">Don&rsquo;t take Jane&rsquo;s word for it. Take the 60-second tour. &darr;</a>
 </section>
