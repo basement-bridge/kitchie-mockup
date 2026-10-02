@@ -2,9 +2,35 @@
 
 Public, interactive design mockups for Kitchie, as plain HTML and CSS. The product's server code is in a separate private repository and is not here.
 
-- `index.html`: the invite landing page, told as a short story before the sign-in button.
-- `inventory/index.html`: the kitchen list with each location (Fridge, Pantry, Freezer) as a section that opens and closes. Anything added in the last 24 hours (a new item or a top-up of one already there) gets a plain green up arrow beside its name. No running item counts anywhere: a closed section shows only how many different items were added in it, in a green pill, and shows nothing when none were. Sections start open.
-- `home/index.html`: the home screen (the Kitchen list). Clickable with made-up items: area tabs, sort, search (typed and by voice), swipe or tap to use one or mark used up, add an item, Undo, and the derived shopping list. A "Scenarios" strip at the top switches between a full kitchen, an empty kitchen and the read-only view, and between phone, light and dark themes. Its styles are copied from the Kitchie page shell, so it matches the product.
+Start at the hub, `index.html`: it lists every mockup with a line on what it shows.
+
+## How it is laid out
+
+```
+index.html     the hub: one card per mockup
+theme.css      the shared theme: colours (light and dark), fonts, base rules, a few small pieces
+fonts/         the font files theme.css loads (SIL Open Font License; licences beside them)
+join/          the invite landing page            (join/v1/ is the earlier version)
+inventory/     the kitchen list
+home/          the home screen, clickable
+_template/     a starter page for the next mockup
+scripts/       check-hub.sh
+```
+
+One folder per screen, with its own `index.html`. A different version of the same screen goes in a subfolder of that screen (`join/v1/`), not at the top level.
+
+## Change the look once
+
+Colours, fonts and base rules live in `theme.css`. Every page links it and adds only its own layout, so changing the accent colour or a font is one edit there and every page follows. The pages use the theme's variables (`var(--accent)`, `var(--bg)`, ...) and do not carry their own copies.
+
+A page may set `--page-width` or `--head` in its own `:root` when it genuinely differs (the join pages are narrower and use Nunito for headings).
+
+## Add a mockup
+
+1. Copy `_template/` to a new folder named for the screen.
+2. Edit the page; use the theme's variables for colour.
+3. Add a card for it to `index.html`.
+4. Run `scripts/check-hub.sh`. It fails if a page is not on the hub.
 
 These pages are mockups. They do not sign anyone in, store anything or load any tracking. Sample names and items are made up.
 
@@ -16,13 +42,15 @@ So the tabs, sort, Recent, search, profile and bottom buttons are drawn as the a
 
 Earlier variations that were looked at and dropped (the arrow inside a pill, the list without collapsible sections, and a copy of the list as it is today) are in the Git history up to commit `3acf03f`.
 
-The fonts in `inventory/fonts/` (DM Sans, Bricolage Grotesque) are the files the app serves, under the SIL Open Font License; the licence texts are beside them.
+The fonts in `fonts/` (DM Sans, Bricolage Grotesque, Nunito) are the files the app serves, under the SIL Open Font License; the licence texts are beside them.
 
 ## View it
 
-Open `index.html` in a browser, or serve the repository root with GitHub Pages (Settings, Pages, deploy from the `main` branch, root folder).
+Open `index.html` in a browser (the pages find `theme.css` and `fonts/` by relative path, so open them from the repository), or serve the repository root with GitHub Pages (Settings, Pages, deploy from the `main` branch, root folder).
 
 ## Versions
 
-- `index.html`: current page, rebuilt to the marketing review (problem, then the AI moment, then real-life moments, then shared household and privacy).
-- `v1/index.html`: the page as it was before that review, kept for comparing and for backing out. Also tagged `v1-before-marketing-review`.
+- `join/index.html`: current invite page, rebuilt to the marketing review (problem, then the AI moment, then real-life moments, then shared household and privacy).
+- `join/v1/index.html`: the page as it was before that review, kept for comparing and for backing out. Also tagged `v1-before-marketing-review`. The old `v1/` address redirects here.
+
+The invite page used to be the repository's front page; it is now `join/`, and the front page is the hub.

@@ -1,0 +1,69 @@
+/*
+  Kitchie mockups: the shared theme.
+  Every mockup page links this file first, then adds only its own layout.
+  Change a colour, a font or a base rule HERE and every page follows.
+
+  Page-level knobs a page may set in its own :root (after this file):
+    --page-width   how wide the page column is (default 44rem; the invite pages use 30rem)
+    --head         the heading font (default Bricolage Grotesque; the invite pages use Nunito)
+*/
+
+/* Fonts: the files the app serves, under the SIL Open Font License (licences are in fonts/). */
+@font-face { font-family: "DM Sans"; src: url("fonts/dm-sans.woff2") format("woff2"); font-weight: 100 1000; font-style: normal; font-display: swap; }
+@font-face { font-family: "Bricolage Grotesque"; src: url("fonts/bricolage-grotesque.woff2") format("woff2"); font-weight: 100 1000; font-style: normal; font-display: swap; }
+@font-face { font-family: "Nunito"; src: url("fonts/nunito.woff2") format("woff2"); font-weight: 200 1000; font-style: normal; font-display: swap; }
+@font-face { font-family: "Nunito"; src: url("fonts/nunito-italic.woff2") format("woff2"); font-weight: 200 1000; font-style: italic; font-display: swap; }
+
+/* Colours. Dark is the base; light applies when the phone is in light mode, or when a page sets data-theme="light". */
+:root {
+  color-scheme: dark;
+  --bg: #0F1E19; --surface: #172A23; --border: #24403A;
+  --fg: #F3EEE3; --muted: #A9B8AE;
+  --accent: #F2B84B; --danger: #FF9A8F; --sage: #9CCBA8;
+  --font-body: "DM Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --head: "Bricolage Grotesque", "DM Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --page-width: 44rem;
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    color-scheme: light;
+    --bg: #F6F1E6; --surface: #FFFFFF; --border: #D9D1BF;
+    --fg: #1D2A24; --muted: #56645B;
+    --accent: #8A5600; --danger: #B42318; --sage: #2F6B45;
+  }
+}
+:root[data-theme="light"] {
+  color-scheme: light;
+  --bg: #F6F1E6; --surface: #FFFFFF; --border: #D9D1BF;
+  --fg: #1D2A24; --muted: #56645B;
+  --accent: #8A5600; --danger: #B42318; --sage: #2F6B45;
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #0F1E19; --surface: #172A23; --border: #24403A;
+  --fg: #F3EEE3; --muted: #A9B8AE;
+  --accent: #F2B84B; --danger: #FF9A8F; --sage: #9CCBA8;
+}
+
+/* Base rules every page shares. */
+*, *::before, *::after { box-sizing: border-box; }
+body {
+  margin: 0 auto;
+  max-width: var(--page-width);
+  padding: 1.25rem 20px 3rem;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-body);
+  line-height: 1.5;
+}
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+[hidden] { display: none !important; }
+h1, h2, h3 { font-family: var(--head); }
+
+/* Small shared pieces for new pages. The k- prefix keeps them from clashing with the older pages' own class names. */
+.k-banner { margin: -1.25rem -20px 1.25rem; padding: .6rem 20px; background: var(--surface); border-bottom: 1px solid var(--border); font-size: .85rem; color: var(--muted); }
+.k-card { display: block; padding: 1.1rem 1.2rem; border: 1px solid var(--border); border-radius: 1.2rem; background: var(--surface); color: inherit; }
+.k-chip { display: inline-block; padding: .1rem .6rem; border: 1px solid var(--border); border-radius: 999px; font-size: .72rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.k-chip.is-current { background: var(--accent); border-color: var(--accent); color: var(--bg); }
+.k-btn { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 1rem; border: 1px solid var(--border); border-radius: .8rem; background: var(--surface); color: var(--fg); font: inherit; text-decoration: none; cursor: pointer; }
+.k-btn:hover { border-color: var(--accent); }

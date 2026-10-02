@@ -3,314 +3,53 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Kitchie: join page mockup</title>
-<meta name="description" content="Interactive mockup of the Kitchie invite landing page. Not the live product.">
+<title>Kitchie mockups</title>
+<meta name="description" content="Every Kitchie design mockup in one place. Not the live product.">
 <meta name="robots" content="noindex">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,700;0,800;1,800&amp;family=DM+Sans:wght@400;500;700&amp;family=Roboto:wght@500&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="theme.css">
 <style>
-:root{color-scheme:dark;--bg:#0F1E19;--surface:#172A23;--border:#24403A;--fg:#F3EEE3;--muted:#A9B8AE;--accent:#F2B84B;--danger:#FF9A8F;--sage:#9CCBA8;--ink:#F3EEE3;--head:"Nunito","DM Sans",system-ui,sans-serif}
-@media (prefers-color-scheme:light){:root{color-scheme:light;--bg:#F6F1E6;--surface:#FFFFFF;--border:#D9D1BF;--fg:#1D2A24;--ink:#4A2E1B;--muted:#56645B;--accent:#8A5600;--danger:#B42318;--sage:#2F6B45}}
-*{box-sizing:border-box}
-html{scroll-behavior:smooth}
-@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
-body{margin:0 auto;max-width:30rem;padding:1.25rem 20px 3rem;background:var(--bg);color:var(--fg);font-family:"DM Sans",system-ui,sans-serif;line-height:1.5}
-h1,h2,h3{font-family:var(--head);margin:0}h1,h2{color:var(--ink)}h1 em,h2 em{font-weight:800}
-.banner{margin:0 -20px 1.5rem;padding:.6rem 20px;background:var(--surface);border-bottom:1px solid var(--border);font-size:.85rem;color:var(--muted)}
-.landing{display:flex;flex-direction:column;gap:4.5rem}
-.brand{display:flex;align-items:center;gap:.6rem;font-family:var(--head);font-weight:700;font-size:1.4rem;margin-bottom:1.5rem}
-.brand svg{color:var(--sage)}
-.invite{display:inline-flex;align-items:center;gap:.6rem;max-width:100%;margin:0 0 1rem;padding:.35rem 1rem .35rem .35rem;border:1px solid var(--border);border-radius:999px;background:var(--surface);font-weight:700;line-height:1.3}
-.invite i{flex:0 0 auto;display:flex;align-items:center;justify-content:center;width:2rem;height:2rem;border-radius:50%;background:var(--accent);color:var(--bg);font-style:normal;font-family:var(--head);font-weight:800}
-.invite.j,.invite.o{display:inline-flex}
-#k-own:checked ~ main .invite.j,#k-join:checked ~ main .invite.o{display:none}
-.eyebrow{margin:0 0 .6rem;font-size:.8rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
-h1{font-size:3.4rem;line-height:1;font-weight:800;letter-spacing:-.025em;margin-bottom:.5rem}
-.sub{margin:0 0 1rem;font-family:var(--head);font-size:1.45rem;font-weight:700;color:var(--accent)}
-h2{font-size:2.1rem;line-height:1.06;font-weight:800;letter-spacing:-.015em;margin-bottom:.9rem}
-.lead{font-size:1.15rem;color:var(--muted);margin:0 0 1.6rem}
-.lead strong{color:var(--fg)}
-.more{display:flex;align-items:center;justify-content:center;gap:.4rem;min-height:44px;margin-top:.6rem;color:var(--muted);font-weight:700;text-decoration:none}
-:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
-
-/* The sign-up panel: set apart from the pitch on purpose, and the button follows Google's familiar look. */
-.join{display:flex;flex-direction:column;gap:.9rem;padding:1.3rem;border:2px solid color-mix(in srgb,var(--accent) 32%,var(--bg));border-radius:1.5rem;background:var(--surface);box-shadow:0 10px 30px rgba(0,0,0,.12)}
-.join .hh{margin:-.55rem 0 0;font-family:"DM Sans",system-ui,sans-serif;font-size:1.02rem;font-weight:600;line-height:1.3;color:var(--muted)}
-.join .jn{display:flex;align-items:baseline;flex-wrap:nowrap;white-space:nowrap;gap:.2rem .6rem;font-size:min(.8rem,3.3vw)}.join .jn b{font-family:"DM Sans",system-ui,sans-serif;font-size:min(1.02rem,4.1vw);font-weight:600;letter-spacing:0;text-transform:none;color:var(--muted)}
-.join .label{margin:0;font-size:.8rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
-.join h2{font-size:1.7rem;margin:0}
-.join p{margin:0;color:var(--muted);font-size:.98rem}
-.gbtn{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;min-height:48px;padding:0 16px;border:1px solid #747775;border-radius:4px;background:#fff;color:#1f1f1f;font:500 15px/20px Roboto,Arial,sans-serif;letter-spacing:.25px;text-decoration:none;cursor:pointer}
-.gbtn:hover{background:#f2f2f2}
-.gbtn svg{flex:0 0 auto}
-.join small{text-align:center;font-size:.88rem;color:var(--muted)}
-.join.final{padding:1.8rem 1.4rem;text-align:center}
-.join.final h2.wait{display:flex;align-items:baseline;justify-content:center;gap:.5rem;white-space:nowrap;font-size:min(2rem,8vw)}.join.final h2.wait span{font-family:"DM Sans",system-ui,sans-serif;font-size:min(1rem,4vw);font-weight:400;letter-spacing:0;color:var(--muted)}
-.join.final h2{font-size:2rem}
-
-.step{display:flex;align-items:baseline;gap:.8rem;margin-bottom:.8rem}
-.step b{font-family:var(--head);font-weight:800;color:var(--accent)}
-.step span{font-size:.8rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
-.copy{margin:0 0 1.2rem;font-size:1.1rem;color:var(--muted)}
-.card{background:var(--surface);border:1px solid var(--border);border-radius:1.2rem;padding:1.1rem;display:flex;flex-direction:column;gap:.8rem}
-.chip{align-self:flex-end;font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);border:1px solid var(--border);border-radius:999px;padding:.15rem .6rem}
-.chat{display:flex;flex-direction:column;gap:.6rem}
-.bubble{max-width:85%;padding:.7rem 1rem;border-radius:1.1rem;background:var(--surface);border:1px solid var(--border)}
-.bubble.me{align-self:flex-end;background:var(--border);border-bottom-right-radius:.3rem}
-.bubble.them{align-self:flex-start;border-bottom-left-radius:.3rem}
-.who{align-self:flex-start;font-size:.78rem;color:var(--muted);padding-left:.4rem}
-.moments{display:flex;flex-direction:column;gap:.7rem;margin:0 0 1.2rem}
-.moment{padding:1rem 1.1rem;border:1px solid var(--border);border-left:4px solid var(--accent);border-radius:1rem;background:var(--surface)}
-.moment b{display:block;font-family:var(--head);font-size:1.15rem}
-.moment span{color:var(--muted);font-size:.98rem}
-.loc{font-size:.8rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--sage);margin-top:.3rem}
-.row{display:flex;justify-content:space-between;align-items:center;gap:.6rem;padding-bottom:.7rem;border-bottom:1px solid var(--border)}
-.row:last-child{border-bottom:0;padding-bottom:0}
-.row small{color:var(--muted);font-size:.85rem}
-.soon{font-size:.8rem;font-weight:700;color:var(--danger);border:1px solid var(--danger);border-radius:999px;padding:.05rem .6rem}
-.ai{display:flex;gap:.6rem;align-items:flex-start}
-.qa details{background:none;border:0;margin:0}.qa summary{justify-content:center;padding:0;min-height:44px;font-size:.9rem;font-weight:500;color:var(--muted);text-decoration:underline;text-underline-offset:3px}.qa details div{font-size:.92rem}
-.ai i{flex:0 0 auto;width:2rem;height:2rem;border-radius:50%;background:var(--accent);color:var(--bg);display:flex;align-items:center;justify-content:center}
-.items{display:flex;flex-direction:column;gap:1rem;margin:0;padding:0;list-style:none}
-.items li{display:flex;gap:1rem;align-items:flex-start}
-.num{flex:0 0 auto;width:2.2rem;height:2.2rem;border-radius:50%;background:var(--accent);color:var(--bg);font-weight:800;display:flex;align-items:center;justify-content:center}
-.items strong{display:block;font-size:1.1rem}
-.items span{color:var(--muted)}
-.name{align-items:center;text-align:center}
-.avatar{width:4.5rem;height:4.5rem;border-radius:50%;background:var(--sage);color:var(--bg);display:flex;align-items:center;justify-content:center;font-family:var(--head);font-weight:800;font-size:1.7rem}
-.name b{font-family:var(--head);font-size:1.5rem}
-.name span{color:var(--muted);font-size:.9rem}
-.qa h3{margin:0 0 .4rem;font-family:var(--head);font-size:1.25rem}
-.qa p{margin:0 0 .6rem;color:var(--muted)}
-.qa p:last-child{margin-bottom:0}
-details{background:var(--surface);border:1px solid var(--border);border-radius:1rem;margin-top:1rem}
-summary{cursor:pointer;min-height:44px;display:flex;align-items:center;padding:0 1.1rem;font-weight:700}
-details div{padding:0 1.1rem 1rem;color:var(--muted);display:flex;flex-direction:column;gap:.6rem}
-details b{color:var(--fg)}
-
-/* Illustrations of other apps: a messaging app (chapter 1) and a ChatGPT-style chat (chapters 2 and 4). Fixed colours on purpose, so they read as the real thing in light and dark. */
-.app{--a-bg:#fff;--a-fg:#0d0d0d;--a-mute:#6e6e73;--a-line:#e5e5ea;--a-in:#e9e9eb;--a-out:#0b84ff;--a-user:#f4f4f4;border:1px solid var(--border);border-radius:1.6rem;overflow:hidden;background:var(--a-bg);color:var(--a-fg);box-shadow:0 10px 30px rgba(0,0,0,.22);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:.95rem;line-height:1.4}
-@media (prefers-color-scheme:dark){.app{--a-bg:#1c1c1e;--a-fg:#f2f2f7;--a-mute:#9a9aa1;--a-line:#38383a;--a-in:#2c2c2e;--a-user:#303030}.app.gp{--a-bg:#212121;--a-fg:#ececec;--a-line:#3a3a3a}}
-.app-h{display:flex;align-items:center;justify-content:center;gap:.5rem;min-height:52px;padding:.5rem .9rem;border-bottom:1px solid var(--a-line);font-weight:600;position:relative}
-.app-h small{display:block;font-weight:400;font-size:.72rem;color:var(--a-mute)}
-.app-h .l,.app-h .r{position:absolute;top:50%;transform:translateY(-50%);color:var(--a-mute);display:flex}
-.app-h .l{left:.9rem}.app-h .r{right:.9rem}
-.app-b{display:flex;flex-direction:column;gap:.45rem;padding:.9rem .9rem 1rem}
-.app-t{align-self:center;font-size:.72rem;color:var(--a-mute);margin-bottom:.2rem}
-.sms-av{display:flex;margin-right:.1rem}.sms-av i{width:1.6rem;height:1.6rem;margin-left:-.4rem;border:2px solid var(--a-bg);border-radius:50%;display:flex;align-items:center;justify-content:center;font-style:normal;font-size:.62rem;font-weight:700;color:#fff}
-.sms-who{margin:.3rem 0 -.2rem .5rem;font-size:.72rem;color:var(--a-mute)}
-.sms-m{max-width:78%;padding:.5rem .85rem;border-radius:1.2rem;background:var(--a-in);align-self:flex-start;border-bottom-left-radius:.35rem}
-.sms-m.me{align-self:flex-end;background:var(--a-out);color:#fff;border-bottom-left-radius:1.2rem;border-bottom-right-radius:.35rem}
-.app-in{display:flex;align-items:center;gap:.5rem;margin:0 .8rem .8rem;padding:.35rem .4rem .35rem .9rem;border:1px solid var(--a-line);border-radius:999px;color:var(--a-mute)}
-.app-in span{flex:1}.app-in b{display:flex;align-items:center;justify-content:center;width:1.8rem;height:1.8rem;border-radius:50%;background:var(--a-out);color:#fff}
-.gp-u{align-self:flex-end;max-width:82%;padding:.55rem .95rem;border-radius:1.3rem;background:var(--a-user)}
-.gp-t{display:inline-flex;align-items:center;gap:.25rem;font-size:1.02rem}.gp-t svg{color:var(--a-mute)}
-.gp-r{display:flex;flex-direction:column;gap:.4rem}.gp-r p{margin:0}.gp-tool{display:inline-flex;align-items:center;gap:.4rem;align-self:flex-start;font-size:.82rem;color:var(--a-mute)}
-.gp-a{display:none}
-.gp-a i{flex:0 0 auto;width:1.8rem;height:1.8rem;margin-top:.1rem;border:1px solid var(--a-line);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--a-fg)}
-.gp-a p{margin:0}
-.gp-acts{display:flex;gap:1rem;margin-top:.1rem;color:var(--a-mute)}
-.gp .app-in{background:var(--a-user);border-color:transparent;color:var(--a-mute)}.gp .app-in{padding:.4rem .4rem .4rem .8rem;gap:.55rem}.gp .app-in b{background:var(--a-fg);color:var(--a-bg);width:2.2rem;height:2.2rem}
-.app-cap{margin:.5rem 0 0;text-align:center;font-size:.78rem;color:var(--muted)}
-
-/* From the tour onward: a soft pastel band with organic shapes behind everything. The hero and sign-in panel above it stay plain. */
-.tour{--t1:#FBEFE2;--t2:#EEF3E6;display:flex;flex-direction:column;gap:2rem;margin:0 -20px;padding:2.25rem 20px 3.5rem;background:linear-gradient(var(--bg),rgba(246,241,230,0) 9rem),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-100 -100 200 200'%3E%3Cpath transform='rotate(35) scale(1,1)' fill='%23F6C7A5' fill-opacity='0.5' d='M43.2,-58.6C55.6,-49.9 65,-36.5 70.6,-21.4C76.2,-6.3 78,10.4 71.4,23.6C64.8,36.8 49.8,46.5 35.3,55.1C20.8,63.7 6.9,71.2 -8.7,72.5C-24.2,73.8 -41.3,68.9 -53.3,58.3C-65.3,47.7 -72.1,31.4 -73.6,15.3C-75.1,-0.8 -71.3,-16.7 -63,-29.3C-54.7,-41.9 -41.9,-51.2 -28.2,-59.4C-14.5,-67.6 -1.9,-74.7 11.1,-72.5C24.1,-70.3 30.8,-67.3 43.2,-58.6Z'/%3E%3C/svg%3E") right -110px top 40px / 340px no-repeat,url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-100 -100 200 200'%3E%3Cpath transform='rotate(120) scale(-1,1)' fill='%23BAD8BE' fill-opacity='0.55' d='M43.2,-58.6C55.6,-49.9 65,-36.5 70.6,-21.4C76.2,-6.3 78,10.4 71.4,23.6C64.8,36.8 49.8,46.5 35.3,55.1C20.8,63.7 6.9,71.2 -8.7,72.5C-24.2,73.8 -41.3,68.9 -53.3,58.3C-65.3,47.7 -72.1,31.4 -73.6,15.3C-75.1,-0.8 -71.3,-16.7 -63,-29.3C-54.7,-41.9 -41.9,-51.2 -28.2,-59.4C-14.5,-67.6 -1.9,-74.7 11.1,-72.5C24.1,-70.3 30.8,-67.3 43.2,-58.6Z'/%3E%3C/svg%3E") left -120px top 760px / 300px no-repeat,url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-100 -100 200 200'%3E%3Cpath transform='rotate(200) scale(1,1)' fill='%23F3DC93' fill-opacity='0.5' d='M43.2,-58.6C55.6,-49.9 65,-36.5 70.6,-21.4C76.2,-6.3 78,10.4 71.4,23.6C64.8,36.8 49.8,46.5 35.3,55.1C20.8,63.7 6.9,71.2 -8.7,72.5C-24.2,73.8 -41.3,68.9 -53.3,58.3C-65.3,47.7 -72.1,31.4 -73.6,15.3C-75.1,-0.8 -71.3,-16.7 -63,-29.3C-54.7,-41.9 -41.9,-51.2 -28.2,-59.4C-14.5,-67.6 -1.9,-74.7 11.1,-72.5C24.1,-70.3 30.8,-67.3 43.2,-58.6Z'/%3E%3C/svg%3E") right -130px top 1500px / 360px no-repeat,url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-100 -100 200 200'%3E%3Cpath transform='rotate(300) scale(-1,1)' fill='%23B3DAD6' fill-opacity='0.5' d='M43.2,-58.6C55.6,-49.9 65,-36.5 70.6,-21.4C76.2,-6.3 78,10.4 71.4,23.6C64.8,36.8 49.8,46.5 35.3,55.1C20.8,63.7 6.9,71.2 -8.7,72.5C-24.2,73.8 -41.3,68.9 -53.3,58.3C-65.3,47.7 -72.1,31.4 -73.6,15.3C-75.1,-0.8 -71.3,-16.7 -63,-29.3C-54.7,-41.9 -41.9,-51.2 -28.2,-59.4C-14.5,-67.6 -1.9,-74.7 11.1,-72.5C24.1,-70.3 30.8,-67.3 43.2,-58.6Z'/%3E%3C/svg%3E") left -110px top 2250px / 320px no-repeat,url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-100 -100 200 200'%3E%3Cpath transform='rotate(60) scale(1,1)' fill='%23F6C7A5' fill-opacity='0.5' d='M43.2,-58.6C55.6,-49.9 65,-36.5 70.6,-21.4C76.2,-6.3 78,10.4 71.4,23.6C64.8,36.8 49.8,46.5 35.3,55.1C20.8,63.7 6.9,71.2 -8.7,72.5C-24.2,73.8 -41.3,68.9 -53.3,58.3C-65.3,47.7 -72.1,31.4 -73.6,15.3C-75.1,-0.8 -71.3,-16.7 -63,-29.3C-54.7,-41.9 -41.9,-51.2 -28.2,-59.4C-14.5,-67.6 -1.9,-74.7 11.1,-72.5C24.1,-70.3 30.8,-67.3 43.2,-58.6Z'/%3E%3C/svg%3E") right -120px top 3000px / 340px no-repeat,url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-100 -100 200 200'%3E%3Cpath transform='rotate(250) scale(-1,1)' fill='%23BAD8BE' fill-opacity='0.55' d='M43.2,-58.6C55.6,-49.9 65,-36.5 70.6,-21.4C76.2,-6.3 78,10.4 71.4,23.6C64.8,36.8 49.8,46.5 35.3,55.1C20.8,63.7 6.9,71.2 -8.7,72.5C-24.2,73.8 -41.3,68.9 -53.3,58.3C-65.3,47.7 -72.1,31.4 -73.6,15.3C-75.1,-0.8 -71.3,-16.7 -63,-29.3C-54.7,-41.9 -41.9,-51.2 -28.2,-59.4C-14.5,-67.6 -1.9,-74.7 11.1,-72.5C24.1,-70.3 30.8,-67.3 43.2,-58.6Z'/%3E%3C/svg%3E") left -100px top 3700px / 300px no-repeat,linear-gradient(var(--t1),var(--t2))}
-@media (prefers-color-scheme:dark){.tour{--t1:#13251E;--t2:#10211C;background:linear-gradient(var(--bg),rgba(15,30,25,0) 9rem),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-100 -100 200 200'%3E%3Cpath transform='rotate(35) scale(1,1)' fill='%237A4A3A' fill-opacity='0.4' d='M43.2,-58.6C55.6,-49.9 65,-36.5 70.6,-21.4C76.2,-6.3 78,10.4 71.4,23.6C64.8,36.8 49.8,46.5 35.3,55.1C20.8,63.7 6.9,71.2 -8.7,72.5C-24.2,73.8 -41.3,68.9 -53.3,58.3C-65.3,47.7 -72.1,31.4 -73.6,15.3C-75.1,-0.8 -71.3,-16.7 -63,-29.3C-54.7,-41.9 -41.9,-51.2 -28.2,-59.4C-14.5,-67.6 -1.9,-74.7 11.1,-72.5C24.1,-70.3 30.8,-67.3 43.2,-58.6Z'/%3E%3C/svg%3E") right -110px top 40px / 340px no-repeat,url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-100 -100 200 200'%3E%3Cpath transform='rotate(120) scale(-1,1)' fill='%232F5B4A' fill-opacity='0.6' d='M43.2,-58.6C55.6,-49.9 65,-36.5 70.6,-21.4C76.2,-6.3 78,10.4 71.4,23.6C64.8,36.8 49.8,46.5 35.3,55.1C20.8,63.7 6.9,71.2 -8.7,72.5C-24.2,73.8 -41.3,68.9 -53.3,58.3C-65.3,47.7 -72.1,31.4 -73.6,15.3C-75.1,-0.8 -71.3,-16.7 -63,-29.3C-54.7,-41.9 -41.9,-51.2 -28.2,-59.4C-14.5,-67.6 -1.9,-74.7 11.1,-72.5C24.1,-70.3 30.8,-67.3 43.2,-58.6Z'/%3E%3C/svg%3E") left -120px top 760px / 300px no-repeat,url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-100 -100 200 200'%3E%3Cpath transform='rotate(200) scale(1,1)' fill='%238A5A1E' fill-opacity='0.35' d='M43.2,-58.6C55.6,-49.9 65,-36.5 70.6,-21.4C76.2,-6.3 78,10.4 71.4,23.6C64.8,36.8 49.8,46.5 35.3,55.1C20.8,63.7 6.9,71.2 -8.7,72.5C-24.2,73.8 -41.3,68.9 -53.3,58.3C-65.3,47.7 -72.1,31.4 -73.6,15.3C-75.1,-0.8 -71.3,-16.7 -63,-29.3C-54.7,-41.9 -41.9,-51.2 -28.2,-59.4C-14.5,-67.6 -1.9,-74.7 11.1,-72.5C24.1,-70.3 30.8,-67.3 43.2,-58.6Z'/%3E%3C/svg%3E") right -130px top 1500px / 360px no-repeat,url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-100 -100 200 200'%3E%3Cpath transform='rotate(300) scale(-1,1)' fill='%231F4F55' fill-opacity='0.5' d='M43.2,-58.6C55.6,-49.9 65,-36.5 70.6,-21.4C76.2,-6.3 78,10.4 71.4,23.6C64.8,36.8 49.8,46.5 35.3,55.1C20.8,63.7 6.9,71.2 -8.7,72.5C-24.2,73.8 -41.3,68.9 -53.3,58.3C-65.3,47.7 -72.1,31.4 -73.6,15.3C-75.1,-0.8 -71.3,-16.7 -63,-29.3C-54.7,-41.9 -41.9,-51.2 -28.2,-59.4C-14.5,-67.6 -1.9,-74.7 11.1,-72.5C24.1,-70.3 30.8,-67.3 43.2,-58.6Z'/%3E%3C/svg%3E") left -110px top 2250px / 320px no-repeat,url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-100 -100 200 200'%3E%3Cpath transform='rotate(60) scale(1,1)' fill='%237A4A3A' fill-opacity='0.4' d='M43.2,-58.6C55.6,-49.9 65,-36.5 70.6,-21.4C76.2,-6.3 78,10.4 71.4,23.6C64.8,36.8 49.8,46.5 35.3,55.1C20.8,63.7 6.9,71.2 -8.7,72.5C-24.2,73.8 -41.3,68.9 -53.3,58.3C-65.3,47.7 -72.1,31.4 -73.6,15.3C-75.1,-0.8 -71.3,-16.7 -63,-29.3C-54.7,-41.9 -41.9,-51.2 -28.2,-59.4C-14.5,-67.6 -1.9,-74.7 11.1,-72.5C24.1,-70.3 30.8,-67.3 43.2,-58.6Z'/%3E%3C/svg%3E") right -120px top 3000px / 340px no-repeat,url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-100 -100 200 200'%3E%3Cpath transform='rotate(250) scale(-1,1)' fill='%232F5B4A' fill-opacity='0.6' d='M43.2,-58.6C55.6,-49.9 65,-36.5 70.6,-21.4C76.2,-6.3 78,10.4 71.4,23.6C64.8,36.8 49.8,46.5 35.3,55.1C20.8,63.7 6.9,71.2 -8.7,72.5C-24.2,73.8 -41.3,68.9 -53.3,58.3C-65.3,47.7 -72.1,31.4 -73.6,15.3C-75.1,-0.8 -71.3,-16.7 -63,-29.3C-54.7,-41.9 -41.9,-51.2 -28.2,-59.4C-14.5,-67.6 -1.9,-74.7 11.1,-72.5C24.1,-70.3 30.8,-67.3 43.2,-58.6Z'/%3E%3C/svg%3E") left -100px top 3700px / 300px no-repeat,linear-gradient(var(--t1),var(--t2))}}
-.more.o{justify-content:center;padding:0;min-width:44px}
-/* joining an existing household: the pitch is optional, shown on request */
-.story{display:contents}
-#k-join:checked ~ main:not(:has(#how:target)) .tour{display:none}
-.more.j{justify-content:center;padding:0;min-height:44px;min-width:44px;font-size:1.5rem !important;margin-top:1.3rem;min-height:44px;white-space:nowrap;font-size:min(1.15rem,3.8vw);font-weight:700;color:var(--muted);text-decoration:none}
-h1.j{font-size:min(2.6rem,10.2vw);line-height:1.05;margin-bottom:1.4rem}
-.rows{width:fit-content;max-width:100%;margin:1.3rem auto 0;padding-left:.4rem;display:flex;flex-direction:column;gap:.7rem;color:var(--muted);font-size:min(.98rem,4vw)}.rows div{display:flex;gap:.7rem;align-items:center;justify-content:flex-start;white-space:nowrap}.rows svg{flex:0 0 auto;color:var(--accent)}
-h1.j small{display:block;white-space:nowrap;margin-bottom:.5rem;font-family:"DM Sans",system-ui,sans-serif;font-size:min(1.15rem,3.8vw);font-weight:700;letter-spacing:0;line-height:1.3;color:var(--muted)}
-/* join: the first screen fills the phone screen, with the arrow pinned to the bottom as a "more below" cue */
-#k-join:checked ~ main > section:first-of-type{display:flex;flex-direction:column;min-height:calc(100svh - 8.5rem)}
-#k-join:checked ~ main > section:first-of-type .rows{flex:1;gap:1rem}
-#k-join:checked ~ main > section:first-of-type .more.j{margin-top:auto;padding-bottom:.4rem}
-h1.o{font-size:2.5rem;line-height:1.04}
-.sub.j{font-size:1.15rem;margin-bottom:1.2rem}
-/* demo-only: switch between the two kinds of invite link */
-.vh{position:absolute;opacity:0;pointer-events:none}
-#k-own:checked ~ main .j,#k-join:checked ~ main .o{display:none}
-.banner{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem .7rem}
-.banner label{display:inline-flex;align-items:center;min-height:36px;padding:0 .9rem;border:1px solid var(--border);border-radius:999px;color:var(--fg);font-weight:700;cursor:pointer}
-#k-join:checked ~ .banner label[for=k-join],#k-own:checked ~ .banner label[for=k-own]{background:var(--accent);border-color:var(--accent);color:var(--bg)}
-#k-join:focus-visible ~ .banner label[for=k-join],#k-own:focus-visible ~ .banner label[for=k-own]{outline:3px solid var(--accent);outline-offset:3px}
-/* demo-only: what the sign-in button does in this mockup */
-.demo{position:fixed;inset:0;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(0,0,0,.6);z-index:10}
-.demo:target{display:flex}
-.demo div{max-width:22rem;background:var(--surface);border:1px solid var(--accent);border-radius:1.3rem;padding:1.4rem;text-align:center}
-.demo p{margin:.6rem 0 1.1rem;color:var(--muted)}
-.demo a{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:0 1.5rem;border-radius:1rem;background:var(--accent);color:var(--bg);font-weight:700;text-decoration:none}
+:root{--page-width:40rem}
+h1{font-size:2.9rem;line-height:1.02;font-weight:700;margin:.5rem 0 .6rem}
+.lead{margin:0 0 1.6rem;color:var(--muted)}
+.list{display:grid;gap:.9rem;list-style:none;margin:0;padding:0}
+.list h2{font-size:1.35rem;margin:0 0 .35rem}
+.list h2 a{color:var(--fg);text-decoration:none}
+.list h2 a:hover{color:var(--accent)}
+.list p{margin:0 0 .8rem;color:var(--muted)}
+.row{display:flex;flex-wrap:wrap;gap:.5rem .9rem;align-items:center}
+.row a{color:var(--accent)}
+.foot{margin:1.8rem 0 0;font-size:.9rem;color:var(--muted)}
 </style>
 </head>
 <body>
-<input class="vh" type="radio" name="kind" id="k-join" checked aria-label="Preview: invite to an existing household">
-<input class="vh" type="radio" name="kind" id="k-own" aria-label="Preview: invite to start your own household">
-<div class="banner"><span>Mockup only. Preview the invite as:</span><label for="k-join">Join a household</label><label for="k-own">Start your own</label></div>
+<div class="k-banner"><strong>Mockups</strong> &middot; not the live product</div>
+<h1>Kitchie mockups</h1>
+<p class="lead">Every design mockup in one place. Open one to try it on your phone.</p>
 
-<svg width="0" height="0" style="position:absolute" aria-hidden="true">
-<symbol id="g" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"></path><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"></path><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"></path><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"></path></symbol>
-</svg>
+<ul class="list">
+  <li>
+    <article class="k-card">
+      <h2><a href="join/index.html">Join page</a></h2>
+      <p>The invite landing page, told as a short story before the sign-in button.</p>
+      <div class="row"><span class="k-chip is-current">Current</span> <a href="join/v1/index.html">Earlier version, before the marketing review</a></div>
+    </article>
+  </li>
+  <li>
+    <article class="k-card">
+      <h2><a href="inventory/index.html">Kitchen list</a></h2>
+      <p>The list with each location as a section that opens and closes, a green arrow on anything added in the last 24 hours, and no running item counts.</p>
+      <div class="row"><span class="k-chip is-current">Current</span></div>
+    </article>
+  </li>
+  <li>
+    <article class="k-card">
+      <h2><a href="home/index.html">Home screen</a></h2>
+      <p>The Kitchen list you can use: area tabs, sort, search by typing or voice, swipe to use one or mark used up, add an item, Undo and the shopping list. Switch between a full kitchen, an empty one and the read-only view.</p>
+      <div class="row"><span class="k-chip is-current">Current</span></div>
+    </article>
+  </li>
+</ul>
 
-<main class="landing">
-
-<section>
-<div class="brand">
-<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="2.5" width="12" height="19" rx="2.5"></rect><path d="M6 10h12M9 6v1.5M9 13v3"></path></svg>
-<span>Kitchie</span>
-</div>
-<p class="invite o"><i aria-hidden="true">J</i><span>Jane&rsquo;s kitchen is in order. Now it&rsquo;s your turn.</span></p>
-<h1 class="o">Your kitchen. Now your AI knows what&rsquo;s in&nbsp;it.</h1>
-<p class="lead o">You can drive Kitchie on the web, or with your favourite AI.</p>
-<h1 class="j"><small>Jane&rsquo;s got the kitchen in order&hellip; almost.</small>Grab your spot.</h1>
-
-<div class="join">
-<p class="label j jn"><span>You&rsquo;re joining</span><b>&#127969; Casa Jane</b></p>
-<p class="label o">Start my kitchen</p>
-<a class="gbtn" href="#demo"><svg width="20" height="20" aria-hidden="true"><use href="#g"></use></svg><span>Sign in with Google</span></a>
-<small class="j">Totally private. We&rsquo;ll even give you a ridiculous name.</small>
-<small class="o">Free while we&rsquo;re building Kitchie. No name or email needed.</small>
-</div>
-<div class="rows j">
-<div><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="2.5" width="12" height="19" rx="2.5"></rect><path d="M6 10h12M9 6v1.5M9 13v3"></path></svg><span>See what&rsquo;s in the fridge or the pantry</span></div>
-<div><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6h11M9 12h11M9 18h11M4 6l1 1 2-2M4 12l1 1 2-2M4 18l1 1 2-2"></path></svg><span>Share the shopping list</span></div>
-<div><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3"></circle><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6M16 5a3 3 0 0 1 0 6M18 14c2 .6 3.5 2.4 3.5 5"></path></svg><span>Stay on top of it together</span></div>
-<a class="more j" href="#how" aria-label="See how it works first"><svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4.5v14M5.5 12.5l6.5 6.5 6.5-6.5"/></svg></a>
-</div>
-<a class="more o" href="#how" aria-label="See how it works first"><svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4.5v14M5.5 12.5l6.5 6.5 6.5-6.5"/></svg></a>
-</section>
-
-<div class="tour">
-<div class="story">
-
-<section id="how">
-<div class="step"><b>1 / 5</b><span>The problem</span></div>
-<h2>Every household has this conversation.</h2>
-<div class="app">
-<div class="app-h"><span class="sms-av"><i style="background:#ff9f0a">J</i><i style="background:#30b0c7">S</i><i style="background:#af52de">Y</i></span><span>Home<small>3 people</small></span></div>
-<div class="app-b">
-<span class="app-t">Today 5:42 PM</span>
-<span class="sms-who">Jane</span>
-<div class="sms-m">Are we out of eggs?</div>
-<div class="sms-m me">Think so. Can you check?</div>
-<span class="sms-who">Sam</span>
-<div class="sms-m">I&rsquo;m at the shop. I bought another litre of milk, just in case.</div>
-</div>
-<div class="app-in"><span>Message</span><b><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6"></path></svg></b></div>
-</div>
-<p class="copy" style="margin-top:1.2rem">Somebody has to remember what&rsquo;s in the kitchen. Usually it&rsquo;s the same somebody.</p>
-</section>
-
-<section>
-<div class="step"><b>2 / 5</b><span>The magic</span></div>
-<h2 class="o">What&rsquo;s for dinner?</h2>
-<h2 class="j">Just ask what&rsquo;s in the fridge.</h2>
-<div class="app gp">
-<div class="app-h"><span class="l"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h16M4 16h10"></path></svg></span><span class="gp-t">ChatGPT <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg></span><span class="r"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5H6a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2v-6"></path><path d="M18.5 3.5a2.1 2.1 0 0 1 3 3L12 16l-4 1 1-4z"></path></svg></span></div>
-<div class="app-b">
-<div class="gp-u">What can I cook tonight? No DoorDash, no last-minute grocery trip.</div>
-<div class="gp-r"><div class="gp-tool"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="2.5" width="12" height="19" rx="2.5"></rect><path d="M6 10h12M9 6v1.5M9 13v3"></path></svg><span>Used Kitchie</span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg></div><p>The chicken will go off soon. You&rsquo;ve got eggs and rice too, so chicken and egg fried rice would use what you already have. Nothing else to buy.</p><div class="gp-acts"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"></rect><path d="M5 15V6a2 2 0 0 1 2-2h8"></path></svg><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 11v9H4v-9zM7 11l4-8c1.5 0 2.5 1 2.2 2.6L12.8 9H19a2 2 0 0 1 2 2.3l-1.2 7A2 2 0 0 1 17.8 20H7"></path></svg><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 13V4h3v9zM17 13l-4 8c-1.5 0-2.5-1-2.2-2.6L11.2 15H5a2 2 0 0 1-2-2.3l1.2-7A2 2 0 0 1 6.2 4H17"></path></svg><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9zM16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"></path></svg></div></div>
-</div>
-<div class="app-in"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg><span>Ask anything</span><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="12" rx="3"></rect><path d="M5 11a7 7 0 0 0 14 0M12 18v3"></path></svg><b><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M4 10v4M8 7v10M12 4v16M16 8v8M20 10v4"></path></svg></b></div>
-</div>
-<p class="copy" style="margin:1.2rem 0 0">Everyone&rsquo;s got an app. Yours works with ChatGPT, so you just talk to it, and it knows what&rsquo;s really in your kitchen.</p>
-</section>
-
-<section>
-<div class="step"><b>3 / 5</b><span>Real life</span></div>
-<h2>No more <em>&ldquo;Are we out of&hellip;?&rdquo;</em></h2>
-<div class="moments">
-<div class="moment"><b>At the supermarket</b><span>&ldquo;Do we already have eggs?&rdquo; Check Kitchie instead of messaging home.</span></div>
-<div class="moment"><b>At 5:30 pm</b><span>&ldquo;What can I make without going shopping?&rdquo; Kitchie starts with what&rsquo;s already in your kitchen.</span></div>
-<div class="moment"><b>Before food goes bad</b><span>&ldquo;What needs using?&rdquo; Kitchie knows what&rsquo;s been sitting there.</span></div>
-</div>
-</section>
-
-<section>
-<div class="step"><b>4 / 5</b><span>Staying current</span></div>
-<h2>Just tell it what changed.</h2>
-<div class="app gp">
-<div class="app-h"><span class="l"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h16M4 16h10"></path></svg></span><span class="gp-t">ChatGPT <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg></span><span class="r"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5H6a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2v-6"></path><path d="M18.5 3.5a2.1 2.1 0 0 1 3 3L12 16l-4 1 1-4z"></path></svg></span></div>
-<div class="app-b">
-<div class="gp-u">We&rsquo;re out of milk.</div>
-<div class="gp-r"><div class="gp-tool"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="2.5" width="12" height="19" rx="2.5"></rect><path d="M6 10h12M9 6v1.5M9 13v3"></path></svg><span>Used Kitchie</span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg></div><p>Added milk to your shopping list.</p></div>
-<div class="gp-u">We used two eggs.</div>
-<div class="gp-r"><div class="gp-tool"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="2.5" width="12" height="19" rx="2.5"></rect><path d="M6 10h12M9 6v1.5M9 13v3"></path></svg><span>Used Kitchie</span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg></div><p>Done. Two eggs removed from the fridge.</p></div>
-<div class="gp-u">I bought chicken.</div>
-<div class="gp-r"><div class="gp-tool"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="2.5" width="12" height="19" rx="2.5"></rect><path d="M6 10h12M9 6v1.5M9 13v3"></path></svg><span>Used Kitchie</span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg></div><p>Added chicken to the fridge.</p></div>
-</div>
-<div class="app-in"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg><span>Ask anything</span><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="12" rx="3"></rect><path d="M5 11a7 7 0 0 0 14 0M12 18v3"></path></svg><b><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M4 10v4M8 7v10M12 4v16M16 8v8M20 10v4"></path></svg></b></div>
-</div>
-<p class="copy" style="margin:1.2rem 0 0">Say it out loud or type it. The kitchen updates itself, so the mental load stops landing on one person, and keeping track never becomes another admin job.</p>
-</section>
-
-<section>
-<div class="step"><b>5 / 5</b><span>One household</span></div>
-<h2>Everyone shares the same kitchen.</h2>
-<p class="copy">One fridge. One pantry. One shopping list. Several humans. Possibly one Sleepy Wombat.</p>
-<div class="card">
-<span class="loc">Fridge</span>
-<div class="row"><span>Chicken</span><span class="soon">Use soon</span></div>
-<div class="row"><span>Eggs</span><small>added by Brave Teapot</small></div>
-<span class="loc">Pantry</span>
-<div class="row"><span>Rice</span><small>added by Sleepy Wombat</small></div>
-<div class="row"><span>Lentils</span><small>added by Cheerful Kettle</small></div>
-</div>
-<div class="card name" style="margin-top:.8rem">
-<div class="avatar">SW</div>
-<b>Sleepy Wombat</b>
-<span>That&rsquo;s you. Rename any time, emoji welcome.</span>
-</div>
-</section>
-
-<section>
-<h2>Privacy? It&rsquo;s your pantry, for God&rsquo;s sake.</h2>
-<p class="copy" style="margin-bottom:0">We aren&rsquo;t going to steal your data. Or sell you ads.</p>
-<details>
-<summary>Our bold claims on privacy &rarr;</summary>
-<div>
-<span><b>We just use Google to sign you in.</b> We don&rsquo;t know your name. We don&rsquo;t know your email.</span>
-<span><b>You get a made-up name,</b> and you can change it any time. The old one isn&rsquo;t kept.</span>
-<span><b>No trackers, no ads, no third-party scripts.</b> Nothing on the page phones anyone else.</span>
-<span><b>Invite links work once</b> and expire after 48 hours.</span>
-<span class="o"><b>Your kitchen starts empty.</b> Only the people you invite will see it. Jane won&rsquo;t be a member and can&rsquo;t see your items.</span>
-<span class="j"><b>You&rsquo;ll share items and the shopping list</b> with the other members of Casa Jane.</span>
-</div>
-</details>
-</section>
-
-</div>
-
-<section class="join final story-end">
-<h2 class="o">Your kitchen is waiting.</h2>
-<h2 class="j wait">Casa Jane <span>is waiting.</span></h2>
-<a class="gbtn" href="#demo"><svg width="20" height="20" aria-hidden="true"><use href="#g"></use></svg><span>Sign in with Google</span></a>
-<small class="j">Totally private.</small>
-<small class="o">Free while we&rsquo;re building Kitchie.</small>
-</section>
-
-<section class="qa story-end">
-<details>
-<summary>How do we plan to stay afloat?</summary>
-<div>
-<span>We don&rsquo;t make money yet. Kitchie is an idea we&rsquo;re building and testing, and you&rsquo;re helping shape it.</span>
-<span><b>How will you pay for it later?</b> We don&rsquo;t know yet, but not by selling your data or showing you ads. We dislike those ideas as much as you do. If Kitchie turns out to be genuinely useful, we&rsquo;ll look at donations, a subscription, or a free version with optional premium features.</span>
-</div>
-</details>
-</section>
-
-</div>
-</main>
-
-<div class="demo" id="demo" role="dialog" aria-label="Mockup notice">
-<div>
-<strong>This is a mockup</strong>
-<p>In the real app this button signs you in with Google, anonymously.</p>
-<a href="#">Back to the page</a>
-</div>
-</div>
+<p class="foot">These pages sign no one in, store nothing and load no tracking. Sample names and items are made up. Colours and fonts for every page live in <code>theme.css</code>.</p>
 </body>
 </html>

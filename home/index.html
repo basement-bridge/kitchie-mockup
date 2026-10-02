@@ -6,17 +6,10 @@
 <title>Kitchie: home screen mockup</title>
 <meta name="description" content="Interactive mockup of the Kitchie home screen. Not the live product.">
 <meta name="robots" content="noindex">
+<link rel="stylesheet" href="../theme.css">
 <style>
-@font-face{font-family:"DM Sans";src:url(../inventory/fonts/dm-sans.woff2) format("woff2");font-weight:100 1000;font-style:normal;font-display:swap}
-@font-face{font-family:"Bricolage Grotesque";src:url(../inventory/fonts/bricolage-grotesque.woff2) format("woff2");font-weight:100 1000;font-style:normal;font-display:swap}
 /* The app's own page styles, copied from the Kitchie page shell (layout.ts, commit 9190276) so this mockup looks like the product. */
-:root{color-scheme:dark;--bg:#0F1E19;--surface:#172A23;--border:#24403A;--fg:#F3EEE3;--muted:#A9B8AE;--accent:#F2B84B;--danger:#FF9A8F;--head:"Bricolage Grotesque","DM Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
-@media (prefers-color-scheme: light){:root:not([data-theme=dark]){color-scheme:light;--bg:#F6F1E6;--surface:#FFFFFF;--border:#D9D1BF;--fg:#1D2A24;--muted:#56645B;--accent:#8A5600;--danger:#B42318}}
-:root[data-theme=light]{color-scheme:light;--bg:#F6F1E6;--surface:#FFFFFF;--border:#D9D1BF;--fg:#1D2A24;--muted:#56645B;--accent:#8A5600;--danger:#B42318}
-:root[data-theme=dark]{color-scheme:dark;--bg:#0F1E19;--surface:#172A23;--border:#24403A;--fg:#F3EEE3;--muted:#A9B8AE;--accent:#F2B84B;--danger:#FF9A8F}
 :root[data-motion=reduce] *,:root[data-motion=reduce] *::before,:root[data-motion=reduce] *::after{transition:none!important;animation:none!important;scroll-behavior:auto!important}
-*{box-sizing:border-box}
-body{background:var(--bg);color:var(--fg);font-family:"DM Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;margin:0 auto;max-width:44rem;padding:1.25rem 20px 3rem;line-height:1.5}
 h1{font-family:var(--head);font-size:2.9rem;line-height:1.02;font-weight:700;margin:.1rem 0 1rem}
 h2{font-family:var(--head);font-size:1.4rem;margin:0;font-weight:700}
 h2.section{margin:1.8rem 0 .6rem}
