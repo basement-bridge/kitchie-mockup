@@ -21,6 +21,10 @@ h1,h2,h3{font-family:var(--head);margin:0}
 .landing{display:flex;flex-direction:column;gap:4.5rem}
 .brand{display:flex;align-items:center;gap:.6rem;font-family:var(--head);font-weight:700;font-size:1.4rem;margin-bottom:1.5rem}
 .brand svg{color:var(--sage)}
+.invite{display:inline-flex;align-items:center;gap:.6rem;max-width:100%;margin:0 0 1rem;padding:.35rem 1rem .35rem .35rem;border:1px solid var(--border);border-radius:999px;background:var(--surface);font-weight:700;line-height:1.3}
+.invite i{flex:0 0 auto;display:flex;align-items:center;justify-content:center;width:2rem;height:2rem;border-radius:50%;background:var(--accent);color:var(--bg);font-style:normal;font-family:var(--head);font-weight:800}
+.invite.j,.invite.o{display:inline-flex}
+#k-own:checked ~ main .invite.j,#k-join:checked ~ main .invite.o{display:none}
 .eyebrow{margin:0 0 .6rem;font-size:.8rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
 h1{font-size:3.4rem;line-height:1;font-weight:800;letter-spacing:-.025em;margin-bottom:.5rem}
 .sub{margin:0 0 1rem;font-family:var(--head);font-size:1.45rem;font-weight:700;color:var(--accent)}
@@ -111,16 +115,16 @@ details b{color:var(--fg)}
 <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12h18a9 9 0 0 1-18 0z"></path><path d="M8 8c0-1.5 1.5-1.5 1.5-3M13 8c0-1.5 1.5-1.5 1.5-3"></path></svg>
 <span>Kitchie</span>
 </div>
-<p class="eyebrow j">Invited by Jane &middot; Our kitchen</p>
-<p class="eyebrow o">Invited by Jane</p>
+<p class="invite j"><i aria-hidden="true">J</i><span>Jane saved you a seat at Our kitchen.</span></p>
+<p class="invite o"><i aria-hidden="true">J</i><span>Jane&rsquo;s already cooking. Your turn.</span></p>
 <h1>Do we have any&hellip;?</h1>
 <p class="sub">Never ask that question again.</p>
 <p class="lead j"><strong>Come and join our household.</strong> Kitchie is one live view of what&rsquo;s in stock, plus an AI that reads every shelf.</p>
-<p class="lead o"><strong>Jane&rsquo;s got her own kitchen going. Start yours.</strong> Kitchie is one live view of what&rsquo;s in stock, plus an AI that reads every shelf.</p>
+<p class="lead o"><strong>Start a kitchen of your own.</strong> Kitchie is one live view of what&rsquo;s in stock, plus an AI that reads every shelf.</p>
 
 <div class="join">
-<p class="label j">Join in one tap</p>
-<p class="label o">Start yours in one tap</p>
+<p class="label j">Take your seat</p>
+<p class="label o">Fire up your kitchen</p>
 <a class="gbtn" href="#demo"><svg width="20" height="20" aria-hidden="true"><use href="#g"></use></svg><span>Sign in with Google</span></a>
 <small class="j">Anonymous: no email, no name kept. This invite link works once.</small>
 <small class="o">Yours begins empty and only the people you invite will see it. Jane won&rsquo;t be a member and can&rsquo;t see your items. This invite link works once.</small>
