@@ -27,7 +27,7 @@ Every screen on the hub carries one label:
 - **Locked**: decided, not built yet.
 - **Draft**: still being explored (no other label).
 
-A variation or an older version lives in a subfolder of the screen it came from (`join/v1/`) and is listed under that screen's card on the hub, not as a card of its own. The hub is the one place the status is written, so changing a screen's status is one edit to its card.
+A variation or an older version lives in a subfolder of the screen it came from (`join/v1/`) and is listed under that screen's card on the hub, not as a card of its own. A variation can have variations of its own: put it in a subfolder of its parent variation (`join/v1/v1a/`) and nest its entry inside the parent's `<li>` on the hub, as another `<ul class="vars">`. The hub is the one place the status is written, so changing a screen's status is one edit to its card.
 
 ## Change the look once
 
