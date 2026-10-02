@@ -66,6 +66,7 @@ h1, h2, h3 { font-family: var(--head); }
 .k-chip { display: inline-block; padding: .1rem .6rem; border: 1px solid var(--border); border-radius: 999px; font-size: .72rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
 .k-chip.is-production { background: var(--sage); border-color: var(--sage); color: var(--bg); }  /* live in the app */
 .k-chip.is-locked { background: var(--accent); border-color: var(--accent); color: var(--bg); }    /* decided, not built yet */
+.k-chip.is-kept { border-color: var(--sage); color: var(--sage); }                                  /* a variation the owner chose to keep */
 /* no modifier = Draft: still being explored */
 .k-btn { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 1rem; border: 1px solid var(--border); border-radius: .8rem; background: var(--surface); color: var(--fg); font: inherit; text-decoration: none; cursor: pointer; }
 .k-btn:hover { border-color: var(--accent); }
