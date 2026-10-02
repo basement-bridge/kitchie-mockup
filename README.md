@@ -52,6 +52,8 @@ So the tabs, sort, Recent, search, profile and bottom buttons are drawn as the a
 
 Earlier variations that were looked at and dropped (the arrow inside a pill, the list without collapsible sections, and a copy of the list as it is today) are in the Git history up to commit `3acf03f`.
 
+`inventory/screenshots/` holds the before and after pictures of this page (phone width) that the Kitchie issues for these changes link to: the added marker, the item counts, and the collapsible locations.
+
 The fonts in `fonts/` (DM Sans, Bricolage Grotesque, Nunito) are the files the app serves, under the SIL Open Font License; the licence texts are beside them.
 
 ## View it
