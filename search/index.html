@@ -21,6 +21,8 @@ h1{font-size:2.4rem;line-height:1.05;font-weight:700;margin:.5rem 0 .6rem}
 .bar .mag{color:var(--muted);flex:none;width:1.1rem;height:1.1rem}
 .bar input{flex:1 1 7rem;min-width:5rem;border:0;outline:0;background:none;color:var(--fg);font:inherit;padding:.35rem 0}
 .bar input::placeholder{color:var(--muted)}
+/* With a pick in the bar and nothing typed, the input line folds away until the bar is tapped again. */
+.bar.settled:not(:focus-within) input{flex:0 0 0;min-width:0;width:0;padding:0;opacity:0}
 .ic{width:1rem;height:1rem;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none;display:block}
 
 .tk{display:inline-flex;align-items:center;gap:.3rem;padding:.2rem .3rem .2rem .6rem;border-radius:999px;font-size:.85rem;font-weight:700;color:var(--bg)}
@@ -145,6 +147,7 @@ h1{font-size:2.4rem;line-height:1.05;font-weight:700;margin:.5rem 0 .6rem}
     tokensEl.innerHTML=["loc","cat"].filter(function(k){return tok[k];}).map(function(k){
       return '<span class="tk '+k+'">'+(k==="loc"?PIN:TAG)+esc(tok[k])+'<button type="button" data-k="'+k+'" aria-label="Remove '+esc(tok[k])+'">✕</button></span>';
     }).join("");
+    bar.classList.toggle("settled",!!(tok.loc||tok.cat)&&!q.value);
     var text=dd.hidden?q.value.trim().toLowerCase():"";   // typed text narrows the list once the suggestions are out of the way
     var shown=ITEMS.filter(function(i){return passTokens(i)&&(!text||i.name.toLowerCase().indexOf(text)!==-1);});
     var bits=[tok.loc,tok.cat,text?"“"+q.value.trim()+"”":""].filter(Boolean);
@@ -160,6 +163,7 @@ h1{font-size:2.4rem;line-height:1.05;font-weight:700;margin:.5rem 0 .6rem}
   }
 
   q.addEventListener("input",function(){clearTimeout(timer);hide();timer=setTimeout(paint,250);});   // the list fills in after a short pause
+  q.addEventListener("blur",render);
   q.addEventListener("focus",function(){clearTimeout(timer);paint();});
   q.addEventListener("keydown",function(e){
     if(e.key==="ArrowDown"||e.key==="ArrowUp"){if(dd.hidden)paint();if(rows.length){e.preventDefault();mark((active+(e.key==="ArrowDown"?1:-1)+rows.length)%rows.length);}}
