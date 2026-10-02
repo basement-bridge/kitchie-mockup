@@ -84,6 +84,10 @@ details{background:var(--surface);border:1px solid var(--border);border-radius:1
 summary{cursor:pointer;min-height:44px;display:flex;align-items:center;padding:0 1.1rem;font-weight:700}
 details div{padding:0 1.1rem 1rem;color:var(--muted);display:flex;flex-direction:column;gap:.6rem}
 details b{color:var(--fg)}
+/* joining an existing household: the pitch is optional, shown on request */
+.story{display:contents}
+#k-join:checked ~ #k-more:not(:checked) ~ main .story,#k-join:checked ~ #k-more:not(:checked) ~ main .story-end{display:none}
+.more.j{cursor:pointer}
 /* demo-only: switch between the two kinds of invite link */
 .vh{position:absolute;opacity:0;pointer-events:none}
 #k-own:checked ~ main .j,#k-join:checked ~ main .o{display:none}
@@ -101,6 +105,7 @@ details b{color:var(--fg)}
 </head>
 <body>
 <input class="vh" type="radio" name="kind" id="k-join" checked aria-label="Preview: invite to an existing household">
+<input class="vh" type="checkbox" id="k-more" aria-label="Show the full story">
 <input class="vh" type="radio" name="kind" id="k-own" aria-label="Preview: invite to start your own household">
 <div class="banner"><span>Mockup only. Preview the invite as:</span><label for="k-join">Join a household</label><label for="k-own">Start your own</label></div>
 
@@ -117,9 +122,10 @@ details b{color:var(--fg)}
 </div>
 <p class="invite j"><i aria-hidden="true">J</i><span>Jane&rsquo;s invited you into her kitchen.</span></p>
 <p class="invite o"><i aria-hidden="true">J</i><span>Jane&rsquo;s already cooking. Your turn.</span></p>
-<h1>Do we have any&hellip;?</h1>
-<p class="sub">Never ask that question again.</p>
-<p class="lead j"><strong>Come and join our household.</strong> Kitchie is the digital twin of your fridge and pantry. Bring your AI along and put it to work.</p>
+<h1 class="o">Do we have any&hellip;?</h1>
+<p class="sub o">Never ask that question again.</p>
+<h1 class="j">Jane&rsquo;s already filled you in, right?</h1>
+<p class="sub j">So skip the pitch. Grab a funny name and come on in.</p>
 <p class="lead o"><strong>Start a kitchen of your own.</strong> Kitchie is the digital twin of your fridge and pantry. Bring your AI along and put it to work.</p>
 
 <div class="join">
@@ -129,12 +135,14 @@ details b{color:var(--fg)}
 <small class="j">Anonymous: no email, no name kept. This invite link works once.</small>
 <small class="o">Yours begins empty and only the people you invite will see it. Jane won&rsquo;t be a member and can&rsquo;t see your items. This invite link works once.</small>
 </div>
-<a class="more" href="#how">Or see how it works first &darr;</a>
+<a class="more o" href="#how">Or see how it works first &darr;</a>
+<label class="more j" for="k-more">Still curious what Kitchie is? Take a look &darr;</label>
 </section>
 
+<div class="story">
 <section id="how">
 <div class="step"><b>1 / 5</b><span>The problem</span></div>
-<h2>Every household has this chat.</h2>
+<h2>Every household has this conversation.</h2>
 <div class="chat">
 <span class="who">Group chat, 5:42pm</span>
 <div class="bubble them">Are we out of eggs?</div>
@@ -226,7 +234,9 @@ details b{color:var(--fg)}
 </div>
 </section>
 
-<section class="join final">
+</div>
+
+<section class="join final story-end">
 <p class="label">Ready when you are</p>
 <h2>Your kitchen is waiting.</h2>
 <p class="j">You&rsquo;ll share items and the shopping list with the other members of Our kitchen.</p>
