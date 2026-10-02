@@ -47,6 +47,8 @@ body.kbd-on{padding-bottom:300px}
 .pickpill{position:relative;overflow:hidden}
 .pickpill input[type=date]{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;font-size:16px}
 .pickpill:focus-within{outline:3px solid var(--accent);outline-offset:3px}
+.addbar{display:flex;flex-wrap:wrap;gap:.25rem;margin:1.4rem 0 0}
+.addbar .k-btn{margin:.25rem .25rem .25rem 0}
 .finish{margin:0 0 .5rem;color:var(--muted);font-size:.9rem}
 .kbd{position:fixed;left:0;right:0;bottom:0;height:280px;z-index:50;display:flex;align-items:center;justify-content:center;background:var(--surface);border-top:1px solid var(--border);color:var(--muted);font-size:.9rem}
 </style>
@@ -151,6 +153,12 @@ body.kbd-on{padding-bottom:300px}
       <button type="button" class="k-btn" id="usedBtn">Mark as used up</button>
     </div>
   </section>
+
+  <div class="addbar" id="addBar" hidden>
+    <button type="button" class="k-btn is-primary" id="addBtn">Add</button>
+    <button type="button" class="k-btn is-primary" id="addMoreBtn">Add and add another</button>
+    <button type="button" class="k-btn" id="addCancel">Cancel</button>
+  </div>
 </main>
 
 <div class="kbd" id="kbd" aria-hidden="true" hidden>Keyboard (simulated)</div>
@@ -227,7 +235,7 @@ body.kbd-on{padding-bottom:300px}
 
   /* ---------- Status ("Will be saved when you go back" / "Saved"), as the app's autosave says it ---------- */
   var statusEl = $("status");
-  function say(t) { statusEl.textContent = t; }
+  function say(t) { statusEl.textContent = mode === "edit" ? t : ""; }   // autosave status is for Edit only; Add has its buttons
   function touched() { say("Will be saved when you go back"); $("amountText").textContent = amountText() || "(empty)"; }
 
   /* ---------- Suggestion lists: open on the side with room, so they work above a phone keyboard ---------- */
@@ -486,6 +494,17 @@ body.kbd-on{padding-bottom:300px}
   nameEl.addEventListener("blur", function () { if (mode === "edit") checkName(true); });
   nameEl.addEventListener("keydown", function (ev) { if (ev.key === "Enter") { ev.preventDefault(); nameEl.blur(); } });
   $("back").addEventListener("click", function () { if (checkName(true)) say("Saved"); else nameEl.focus(); });
+  // Add mode: the app's own buttons (Add, Add and add another, Cancel).
+  function addItem(another) {
+    if (!checkName(true)) { nameEl.focus(); return; }
+    var msg = another ? "Added. Add the next one." : "Added to your kitchen.";
+    load(BLANK); setTab("details");
+    $("doneNotice").textContent = msg; $("doneNotice").hidden = false;
+    if (another) nameEl.focus();
+  }
+  $("addBtn").addEventListener("click", function () { addItem(false); });
+  $("addMoreBtn").addEventListener("click", function () { addItem(true); });
+  $("addCancel").addEventListener("click", function () { load(BLANK); setTab("details"); });
 
   /* ---------- Tabs ---------- */
   function setTab(t) {
@@ -533,7 +552,8 @@ body.kbd-on{padding-bottom:300px}
 
   /* ---------- Load a sample into the form ---------- */
   function load(d) {
-    $("doneNotice").hidden = true;
+    $("doneNotice").hidden = true; $("doneNotice").textContent = "Marked as used up. Its history is kept.";
+    $("addBar").hidden = mode !== "add";
     nameEl.value = d.name; nameEl.removeAttribute("aria-invalid"); $("nameErr").hidden = true;
     emoji = d.emoji; emojiIx = EMOJI.indexOf(d.emoji); renderEmoji();
     Q = parseAmount(d.amount); renderQty();
