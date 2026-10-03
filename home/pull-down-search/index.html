@@ -1,0 +1,823 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kitchie: home, pull down to search</title>
+<meta name="description" content="A Home screen variation: pull the list down to search, and the search stays as a chip. Not the live product.">
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="../../theme.css">
+<style>
+/* The app's own page styles, copied from the Kitchie page shell (layout.ts, commit 9190276) so this mockup looks like the product. */
+:root[data-motion=reduce] *,:root[data-motion=reduce] *::before,:root[data-motion=reduce] *::after{transition:none!important;animation:none!important;scroll-behavior:auto!important}
+h1{font-family:var(--head);font-size:2.9rem;line-height:1.02;font-weight:700;margin:.1rem 0 1rem}
+h2{font-family:var(--head);font-size:1.4rem;margin:0;font-weight:700}
+h2.section{margin:1.8rem 0 .6rem}
+a{color:var(--accent)}a:hover{text-decoration:none}
+.top{padding-top:.5rem;display:flex;align-items:flex-start;justify-content:space-between;gap:.75rem}
+.hdr{display:flex;gap:.5rem;padding-top:.45rem}
+html,body{overscroll-behavior-y:contain}
+/* Pull down to search: the wrap grows with the finger, the field slides into it. */
+.pullwrap{height:0;overflow:hidden;visibility:hidden}
+.pullwrap.pulling,.pullwrap.open,.pullwrap.settle{visibility:visible}
+.pullwrap.settle{transition:height .22s ease}
+.pullwrap.open{height:auto;overflow:visible}
+.searchbar{display:flex;gap:.5rem;align-items:center;padding:0 0 .9rem;opacity:var(--p,1);transform:translateY(calc((1 - var(--p,1)) * -14px))}
+.searchbar input[type=search]{flex:1 1 auto;min-width:0;max-width:none}
+.pullwrap.pulling .searchbar input{transition:border-color .15s}
+.pullwrap.armed .searchbar input{border-color:var(--accent)}
+.searchbar .cancel{flex:0 0 auto;min-height:48px;padding:0 .4rem;border:0;background:transparent;color:var(--accent);font:inherit;font-weight:700;cursor:pointer;border-radius:.6rem}
+body.is-pulling{-webkit-user-select:none;user-select:none}
+@media (prefers-reduced-motion: reduce){.pullwrap.settle{transition:none}}
+/* The search chip lives in the ribbon row, only while a search is active. */
+.qchip{flex:0 1 auto;min-width:0;display:inline-flex;align-items:center;height:36px;border:1px solid var(--accent);border-radius:999px;background:var(--surface);color:var(--fg);font-size:.9rem;font-weight:600;overflow:hidden}
+.qchip button{position:relative;border:0;background:transparent;color:inherit;font:inherit;cursor:pointer;height:100%}
+.qchip button::after{content:"";position:absolute;inset:-4px 0}
+.qchip .body{min-width:0;padding:0 .2rem 0 .8rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.qchip .x{flex:0 0 auto;width:34px;display:inline-flex;align-items:center;justify-content:center;color:var(--muted)}
+.qchip .x svg{width:16px;height:16px}
+.tabhead>.qchip{margin-left:auto}
+.demo ul.rules{margin:0;padding-left:1.1rem;display:grid;gap:.3rem}
+#search-mic[aria-pressed="true"]{color:#fff;background:#C0392B;border-color:#C0392B;animation:listen 1.2s ease-in-out infinite}
+@keyframes listen{50%{box-shadow:0 0 0 6px rgba(192,57,43,.25)}}
+@media (prefers-reduced-motion: reduce){#search-mic[aria-pressed="true"]{animation:none}}
+.sheet{position:fixed;inset:0;z-index:40;display:flex;align-items:flex-end}
+.sheet-backdrop{position:absolute;inset:0;background:rgba(0,0,0,.45);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px)}
+.sheet-body{position:relative;width:100%;max-width:44rem;margin:0 auto;max-height:90vh;overflow-y:auto;padding:1rem 20px calc(1rem + env(safe-area-inset-bottom));background:var(--surface);border:1px solid var(--border);border-radius:1.2rem 1.2rem 0 0}
+.sheet-head{display:flex;justify-content:space-between;align-items:center}
+details.more>summary{cursor:pointer;display:flex;align-items:center;min-height:44px;margin:.5rem 0;font-weight:600}details.more>summary::after{content:"\25BE";margin-left:.4rem}details.more[open]>summary::after{content:"\25B4"}
+.sheet-body input[type=text]{max-width:none;margin-top:.5rem}
+table{border-collapse:collapse;width:100%;background:var(--surface);border:1px solid var(--border);border-radius:.9rem;overflow:hidden}
+.tablewrap{overflow-x:auto}
+th,td{text-align:left;padding:.65rem .7rem;border-bottom:1px solid var(--border)}
+tr:last-child td{border-bottom:0}
+th{font-size:.75rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:600}
+.note{color:var(--muted);font-size:.9rem}
+.banner{background:var(--surface);border:1px solid var(--accent);border-radius:1rem;padding:.7rem 1rem;margin:0 0 1rem}
+.hdr{position:relative}.profile>summary{list-style:none}.profile>summary::-webkit-details-marker{display:none}
+.profile .menu{position:absolute;right:0;top:calc(100% + .35rem);z-index:20;min-width:14rem;box-shadow:0 8px 24px rgba(0,0,0,.12);margin:0;padding:.4rem;border:1px solid var(--border);border-radius:1rem;background:var(--surface);display:grid}
+.profile .menu a,.profile .menu button{display:flex;align-items:center;min-height:44px;padding:0 .8rem;border:0;border-radius:.6rem;background:transparent;color:var(--fg);font:inherit;text-decoration:none;text-align:left;width:100%;cursor:pointer}
+.profile .menu a:hover,.profile .menu button:hover{background:var(--bg)}.profile .menu form{margin:0}
+.banner form button{font:inherit;font-size:.9rem;background:transparent;color:var(--fg);border:1px solid var(--border);border-radius:.6rem;cursor:pointer;min-height:44px;padding:0 .9rem}.banner details summary{cursor:pointer;min-height:44px;display:flex;align-items:center}
+.invite-card{position:relative;padding-right:3.4rem;display:flex;flex-wrap:wrap;gap:.5rem 1rem;align-items:center;justify-content:space-between}.invite-card p{margin:.2rem 0 0}.invite-card .close{position:absolute;top:.2rem;right:.2rem;width:44px;height:44px;border:0;border-radius:.6rem;background:transparent;color:var(--muted);font-size:1.6rem;line-height:1;cursor:pointer}.invite-card .close:hover{color:var(--fg)}.invite-card form{margin:0}
+details.shopping{margin:1rem 0}details.shopping>summary{display:flex;align-items:center;min-height:44px;cursor:pointer;font-weight:600}
+.error{background:var(--surface);border:1px solid var(--danger);color:var(--danger);border-radius:1rem;padding:.7rem 1rem;margin:0 0 1rem}
+form.inline{display:inline}form.inline button{font:inherit;font-size:.85rem;background:transparent;color:var(--fg);border:1px solid var(--border);border-radius:.6rem;cursor:pointer;min-height:44px;padding:0 .8rem}
+a.btn,button.btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;margin:.25rem .25rem .25rem 0;padding:0 1rem;border:1px solid var(--border);border-radius:.8rem;background:var(--surface);color:var(--fg);font:inherit;text-decoration:none;cursor:pointer}
+button.btn[type=submit]{background:var(--accent);border-color:var(--accent);color:var(--bg);font-weight:700}
+a.btn:hover,button.btn:hover{border-color:var(--accent)}
+a.add{display:flex;align-items:center;justify-content:center;min-height:52px;border-radius:1rem;background:var(--fg);color:var(--bg);font-size:1.05rem;font-weight:700;text-decoration:none;margin:0 0 .9rem}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+[hidden]{display:none!important}
+.tools{display:flex;gap:.6rem;flex-wrap:wrap;align-items:center;margin:0 0 .9rem}
+.tools input[type=search]{flex:1 1 14rem;max-width:none}
+input[type=search],input[type=text],input[type=date],select{font:inherit;width:100%;max-width:26rem;min-height:52px;padding:.4rem 1rem;background:var(--surface);color:var(--fg);border:1px solid var(--border);border-radius:1rem}
+.tools select{width:auto;min-height:52px}
+nav.tabs{position:relative;display:flex;gap:.25rem;padding:.25rem;border-radius:1rem;background:var(--surface);margin:0 0 .6rem;overflow-x:auto;scroll-snap-type:x mandatory;scroll-padding-left:.25rem;scrollbar-width:none;max-width:100%;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+nav.tabs::-webkit-scrollbar{display:none}
+nav.tabs.fitted::after{content:"";flex:0 0 0}
+nav.tabs a{scroll-snap-align:start}
+nav.tabs a.lifted{transform:scale(1.08);box-shadow:0 4px 14px rgba(0,0,0,.4);background:var(--border);z-index:1}
+nav.tabs.reordering{scroll-snap-type:none}
+nav.tabs a{flex:1 0 auto;display:flex;align-items:center;justify-content:center;min-height:44px;padding:0 1rem;border-radius:.75rem;color:var(--fg);font-weight:700;font-size:.95rem;text-decoration:none;white-space:nowrap}
+nav.tabs a[aria-current=page]{background:var(--accent);color:var(--bg)}
+.group{margin:0}
+.grouphead{display:flex;justify-content:space-between;align-items:baseline;padding:1rem .25rem 0}
+.count{font-size:.9rem;color:var(--muted)}
+ul.rows{list-style:none;margin:0;padding:0;position:relative}
+.swipe-under{position:absolute;left:0;right:0;display:flex;align-items:center;justify-content:space-between;padding:0 1.2rem;border-radius:.75rem;font-weight:700;font-size:.95rem;color:var(--bg);pointer-events:none;background:var(--accent)}
+.swipe-under[data-dir="all"]{background:var(--danger)}
+.swipe-under .su-all,.swipe-under[data-dir="all"] .su-one{display:none}.swipe-under[data-dir="all"] .su-all{display:inline}
+.swipe-under span{transition:transform .12s}.swipe-under[data-armed="yes"] span{transform:scale(1.12)}
+li[data-dragging]{position:relative;z-index:1;background:var(--bg);box-shadow:0 4px 14px rgba(0,0,0,.12);border-radius:.75rem}
+li.snap{transition:transform .22s cubic-bezier(.2,.9,.3,1.25),opacity .18s}
+@media (prefers-reduced-motion: reduce){li.snap{transition:none}}
+li[data-row]{display:flex;align-items:stretch;gap:.25rem;min-height:68px;border-bottom:1px solid var(--border)}
+li .rowlink{flex:1 1 auto;display:flex;align-items:center;gap:.75rem;min-width:0;padding:.65rem .5rem;border-radius:.75rem;color:inherit;text-decoration:none}
+li a.rowlink:hover{background:var(--surface)}
+li a.rowlink:active{background:var(--border)}
+li a.rowlink:focus-visible,li a.iconbtn:focus-visible{outline:3px solid var(--accent);outline-offset:-3px}
+li .main{flex:1 1 auto;min-width:0}
+li .name{font-size:1.06rem;font-weight:600;text-transform:lowercase}
+html[data-size="small"] li .name{font-size:.95rem}html[data-size="large"] li .name{font-size:1.3rem}
+html[data-compact] li[data-row]{min-height:52px}html[data-compact] li .rowlink{padding-top:.3rem;padding-bottom:.3rem}
+html[data-hide~="useby"] li .due{display:none}
+.sortmenu{position:relative}.sortmenu>summary{list-style:none;display:flex;align-items:center;min-height:52px;padding:0 1rem;border:1px solid var(--border);border-radius:.8rem;background:var(--surface);cursor:pointer;font:inherit}.sortmenu>summary::-webkit-details-marker{display:none}.sortmenu>summary::after{content:"\25BE";margin-left:.6rem;color:var(--muted)}
+.sortpanel{position:absolute;left:0;top:calc(100% + .35rem);z-index:20;min-width:15rem;padding:.4rem;border:1px solid var(--border);border-radius:1rem;background:var(--surface);box-shadow:0 8px 24px rgba(0,0,0,.12)}
+.sortrow{display:flex;align-items:center}.sortrow button{display:flex;align-items:center;gap:.6rem;min-height:44px;padding:0 .8rem;border:0;border-radius:.6rem;background:transparent;color:var(--fg);font:inherit;cursor:pointer;text-align:left}.sortrow .pick{flex:1 1 auto}.sortrow .pick[aria-checked="true"]{font-weight:700}.sortrow .pick[aria-checked="true"]::before{content:"\2713";color:var(--accent)}.sortrow .pick[aria-checked="false"]::before{content:"";display:inline-block;width:1em}.sortrow .tri{width:44px;justify-content:center;color:var(--accent)}.sortrow button:hover{background:var(--bg)}
+.srow{display:flex;align-items:center;justify-content:space-between;gap:1rem;min-height:48px}.srow input[type=checkbox]{width:1.4rem;height:1.4rem}
+
+table td:first-child{text-transform:lowercase}
+li .meta{font-size:.9rem;color:var(--muted);margin-top:.1rem}
+li .cue{display:inline-block;font-size:.72rem;font-weight:700;letter-spacing:.02em;text-transform:uppercase;padding:.05rem .4rem;border-radius:.6rem;background:var(--accent,#2f7d5b);color:#fff;vertical-align:.1em}
+li .due{font-size:.9rem;color:var(--muted);white-space:nowrap}
+li .chev{display:inline-flex;color:var(--muted)}
+li a.iconbtn{flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;align-self:center;width:48px;height:48px;border-radius:.75rem;color:var(--accent)}
+li a.iconbtn:hover{background:var(--surface)}
+li a.iconbtn:active,li button.usebtn:active{background:var(--border)}
+li .usef{display:flex;align-self:center;margin:0}
+li button.usebtn{display:inline-flex;align-items:center;justify-content:center;width:48px;height:48px;padding:0;border:0;border-radius:.75rem;background:transparent;color:var(--muted);cursor:pointer}
+li button.usebtn:hover{background:var(--surface);color:var(--fg)}
+li button.usebtn:focus-visible{outline:3px solid var(--accent);outline-offset:-3px}
+li[data-reduce]{touch-action:pan-y;position:relative}
+li[data-swipe="one"]{box-shadow:inset 4px 0 0 var(--accent)}
+li[data-swipe="all"]{box-shadow:inset -4px 0 0 var(--danger)}
+@media (hover:hover){li[data-reduce] .usef,li[data-reduce] a.iconbtn{opacity:0;transition:opacity .12s}li[data-reduce]:hover .usef,li[data-reduce]:hover a.iconbtn,li[data-reduce]:focus-within .usef,li[data-reduce]:focus-within a.iconbtn{opacity:1}}
+:root[data-swipe-on] li[data-reduce] .usef,:root[data-swipe-on] li[data-reduce] a.iconbtn{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}:root[data-swipe-on] li[data-reduce] .usef:focus-within,:root[data-swipe-on] li[data-reduce] a.iconbtn:focus{position:static;width:auto;height:auto;overflow:visible;clip:auto}
+.undo{position:fixed;top:0;left:0;right:0;display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:.6rem .6rem .6rem 1.1rem;padding-top:calc(.6rem + env(safe-area-inset-top));background:rgba(242,184,75,.88);color:#1D2A24;font-weight:600;z-index:20;-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);box-shadow:0 6px 24px rgba(0,0,0,.28);animation:undo-in .18s ease-out}
+@keyframes undo-in{from{transform:translateY(-100%)}to{transform:none}}
+@media (prefers-reduced-motion:reduce){.undo{animation:none}}
+.undo[hidden],.undo button[hidden]{display:none}
+.undo form{margin:0}
+.undo button{min-height:48px;min-width:88px;padding:0 1.2rem;border:0;border-radius:.7rem;background:#1D2A24;color:#F3EEE3;font:inherit;font-weight:700;cursor:pointer}
+@media (max-width:40rem){h1{font-size:2.5rem}}
+nav.dock{position:fixed;left:0;right:0;bottom:0;display:flex;justify-content:center;gap:.6rem;margin:0;padding:.25rem 20px calc(.25rem + env(safe-area-inset-bottom));background:none;pointer-events:none;z-index:5;transition:transform .2s ease}
+nav.dock .icon{pointer-events:auto;background:var(--surface);box-shadow:0 1px 5px rgba(0,0,0,.2)}
+nav.dock.away{transform:translateY(100%)}
+@media (prefers-reduced-motion:reduce){nav.dock{transition:none}}
+body:has(nav.dock){padding-bottom:calc(4.4rem + env(safe-area-inset-bottom))}
+.icon{display:inline-flex;align-items:center;justify-content:center;width:48px;height:48px;border-radius:.9rem;border:1px solid var(--border);background:transparent;color:var(--fg);cursor:pointer;text-decoration:none;padding:0}
+.icon:hover{border-color:var(--accent);color:var(--accent)}
+.offline-note{position:sticky;top:0;z-index:30;margin:-1.25rem -20px 1rem;padding:.6rem 20px;background:var(--surface);border-bottom:2px solid var(--danger);color:var(--fg);font-weight:600}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:5.5rem;background:var(--fg);color:var(--bg);padding:.6rem 1rem;border-radius:.8rem;font-weight:600;z-index:10}
+#sentinel{height:1px}
+pre[hidden]{display:none!important}
+label{display:block;margin:.9rem 0 .25rem;font-weight:600}
+.namerow{display:flex;align-items:center;gap:.4rem}.namerow input[name=name]{flex:1 1 auto;min-width:0;max-width:none}.namerow .emo-in{flex:0 0 auto;width:3.6rem;min-width:0;padding:.4rem .2rem;text-align:center;font-size:1.4rem}.namerow .emo-clear{flex:0 0 auto;width:44px;height:44px;border:1px solid var(--border);border-radius:.75rem;background:var(--surface);color:var(--muted);font:inherit;font-size:1.2rem;cursor:pointer}.namerow .emo-clear[hidden]{display:none}
+.req{color:var(--accent);font-weight:700}
+.combo-wrap{position:relative;max-width:26rem}
+.combo-wrap input{max-width:none}
+ul.combo{position:absolute;z-index:5;left:0;right:0;top:calc(100% + .25rem);margin:0;padding:.25rem;list-style:none;max-height:14rem;overflow-y:auto;background:var(--surface);border:1px solid var(--border);border-radius:1rem;box-shadow:0 8px 24px rgba(0,0,0,.35);-webkit-overflow-scrolling:touch}
+ul.combo[hidden]{display:none}
+ul.combo li{display:flex;justify-content:space-between;align-items:center;gap:.75rem;min-height:44px;padding:0 .75rem;border-radius:.75rem;cursor:pointer}
+ul.combo li[aria-selected="true"]{background:var(--border)}
+ul.combo li .hint{color:var(--muted);font-size:.85rem}
+input[aria-invalid="true"]{border-color:var(--danger)}
+label.check{display:flex;gap:.6rem;align-items:center;font-weight:400;min-height:44px}
+input[type=checkbox]{width:1.2rem;height:1.2rem;accent-color:var(--accent)}
+code{word-break:break-all}
+
+/* Mockup-only styles: the demo strip at the top and small helpers. None of this exists in the product. */
+.demo{margin:-1.25rem -20px 1rem;border-bottom:1px solid var(--border);background:var(--surface);font-size:.85rem;color:var(--muted)}
+.demo>summary{display:flex;align-items:center;justify-content:space-between;gap:.75rem;min-height:44px;padding:0 20px;cursor:pointer;list-style:none}
+.demo>summary::-webkit-details-marker{display:none}
+.demo>summary b{color:var(--fg);font-weight:700}
+.demo>summary::after{content:"\25BE";color:var(--muted)}
+.demo[open]>summary::after{content:"\25B4"}
+.demo .panel{display:grid;gap:.9rem;padding:.2rem 20px 1rem}
+.demo fieldset{border:0;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:.4rem;align-items:center}
+.demo legend{display:block;float:none;width:100%;margin:0 0 .15rem;padding:0;font-weight:700;color:var(--fg)}
+.demo fieldset{flex-direction:row}
+html{overflow-x:clip}
+.demo .seg{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 .9rem;border:1px solid var(--border);border-radius:.8rem;background:transparent;color:var(--fg);font:inherit;font-size:.9rem;cursor:pointer}
+.demo .seg[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--bg);font-weight:700}
+.demo p{margin:0}
+.flash{animation:flash 1.6s ease-out}
+@keyframes flash{0%,35%{background:color-mix(in srgb,var(--accent) 38%,transparent)}100%{background:transparent}}
+@media (prefers-reduced-motion:reduce){.flash{animation:none}}
+.sheet-body label:first-of-type{margin-top:.6rem}
+.sheet-body .hint-err{margin:.35rem 0 0;color:var(--danger);font-size:.9rem}
+.sheet-body input[type=number]{font:inherit;width:100%;max-width:26rem;min-height:52px;padding:.4rem 1rem;background:var(--surface);color:var(--fg);border:1px solid var(--border);border-radius:1rem}
+.profile summary.icon{list-style:none}
+table td:nth-child(2){white-space:nowrap}
+
+/* Filter toggle: the ribbon shows Location or Category, and a two-state switch decides which. */
+.tabhead{display:flex;align-items:center;justify-content:space-between;gap:.8rem;margin:0 .1rem .5rem}
+.tabhead b{font-family:var(--head);font-size:1.3rem;font-weight:700}
+.bin{position:relative;display:grid;grid-template-columns:1fr 1fr;width:5.6rem;height:44px;padding:3px;border:1px solid var(--border);border-radius:999px;background:var(--surface);color:var(--fg);font:inherit;cursor:pointer}
+.bin i{position:absolute;top:3px;left:3px;width:calc(50% - 3px);height:calc(100% - 6px);border-radius:999px;background:var(--accent);transition:transform .2s ease,background .2s ease}
+.bin[aria-checked="true"] i{transform:translateX(100%);background:var(--sage)}
+.bin span{position:relative;z-index:1;display:grid;place-items:center;color:var(--muted)}
+.bin[aria-checked="false"] span:first-of-type,.bin[aria-checked="true"] span:last-of-type{color:var(--bg)}
+.bin svg{width:1.1rem;height:1.1rem;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+nav.tabs.dim-cat a[aria-current=page]{background:var(--sage)}
+</style>
+</head>
+<body>
+
+<details class="demo" id="demo">
+  <summary><span><b>Mockup</b> &middot; sample data</span><span>Scenarios and notes</span></summary>
+  <div class="panel">
+    <fieldset aria-label="View"><legend>View</legend>
+      <button type="button" class="seg" data-scenario="full" aria-pressed="true">Full kitchen</button>
+      <button type="button" class="seg" data-scenario="empty" aria-pressed="false">Empty kitchen</button>
+      <button type="button" class="seg" data-scenario="readonly" aria-pressed="false">Read-only view</button>
+    </fieldset>
+    <fieldset aria-label="Theme"><legend>Theme</legend>
+      <button type="button" class="seg" data-theme-pick="auto" aria-pressed="true">Phone</button>
+      <button type="button" class="seg" data-theme-pick="light" aria-pressed="false">Light</button>
+      <button type="button" class="seg" data-theme-pick="dark" aria-pressed="false">Dark</button>
+    </fieldset>
+    <p>Try: pull the list down from the top to search. Tap the chip to edit, &times; to clear. Also: swipe a row right (use one) or left (used up), tap the &minus; or tick on a row, the plus to add, the pin and tag switch (Location or Category), the ribbon (scroll it; press and hold a chip to reorder) and Sort. Undo appears for 5 seconds after a change.</p>
+    <!-- hint design: open -->
+    <ul class="rules">
+      <li>Pull down from the top: the search field slides in at the top of the list. Let go past the line to open it, short of it to spring back.</li>
+      <li>Search is one more filter. It narrows the list live on top of the Location or Category tab and the sort, and never resets them.</li>
+      <li>Close the field with Cancel, the Search key, a tap outside, or by scrolling down. Closing keeps the search as a chip in the ribbon row.</li>
+      <li>Tap the chip to edit that search (field pre-filled). Tap its &times; to clear it. Neither touches Location or Category.</li>
+      <li>Pulling down again always starts a new, empty search and drops the old one. Cancel on an empty field leaves no chip.</li>
+      <li>Costs: no icon, no search row until you pull; one chip only while a search is active.</li>
+    </ul>
+    <p><button type="button" class="seg" id="reset">Reset sample items</button></p>
+  </div>
+</details>
+
+<div class="top"><h1>Kitchen</h1><div class="hdr" id="hdr"></div></div>
+<p class="note" id="readonly-note" hidden>Read-only view. Items are added and changed through ChatGPT. This is a provisional review space, not a final household baseline.</p>
+<div class="pullwrap" id="searchwrap">
+  <div class="searchbar" id="searchbar" role="search">
+    <input id="q" type="search" placeholder="Search your kitchen" aria-label="Search your kitchen" maxlength="80" autocomplete="off" enterkeyhint="search" tabindex="-1">
+    <button type="button" class="icon" id="search-mic" aria-label="Search by voice" aria-pressed="false" title="Search by voice"></button>
+    <button type="button" class="cancel" id="search-cancel">Cancel</button>
+  </div>
+</div>
+<p id="add-from-search-wrap" hidden><a id="add-from-search" class="btn" href="#">Add as a new item</a></p>
+<div class="tools" id="tools"><select id="sort" aria-label="Sort"><option value="name">Name A to Z</option><option value="useby">Use by, soonest</option><option value="updated">Recently updated</option></select><span id="count" class="note"></span></div>
+<div id="tabs"></div>
+<div id="list"></div>
+<details class="shopping" id="shopping"></details>
+<p class="note" id="footnote"></p>
+
+<div id="quick-add" class="sheet" role="dialog" aria-modal="true" aria-labelledby="qa-title" hidden>
+  <div class="sheet-backdrop" data-close-sheet></div>
+  <form class="sheet-body" id="add-form" novalidate>
+    <div class="sheet-head"><h2 id="qa-title">Add an item</h2><button type="button" class="icon" data-close-sheet aria-label="Close" title="Close" id="sheet-x"></button></div>
+    <label for="f-name">Name <span class="req">*</span></label>
+    <div class="namerow"><input id="f-name" name="name" type="text" maxlength="60" autocomplete="off" required><input id="f-emoji" class="emo-in" name="emoji" type="text" maxlength="4" aria-label="Emoji" placeholder="&#128512;"></div>
+    <p class="hint-err" id="f-err" role="alert" hidden>Give it a name.</p>
+    <label for="f-qty">Amount</label>
+    <input id="f-qty" name="quantity" type="text" maxlength="40" placeholder="for example 2 or 500 g" autocomplete="off">
+    <label for="f-area">Area</label>
+    <select id="f-area" name="area"><option>Fridge</option><option>Pantry</option><option>Freezer</option><option>Other</option></select>
+    <label for="f-place">Spot</label>
+    <input id="f-place" name="place" type="text" maxlength="40" placeholder="for example Door or Top shelf" autocomplete="off">
+    <details class="more"><summary>More</summary>
+      <label for="f-cat">Category</label>
+      <input id="f-cat" name="category" type="text" maxlength="40" autocomplete="off">
+      <label for="f-useby">Use by</label>
+      <input id="f-useby" name="use_by" type="date">
+      <label for="f-min">Minimum stock</label>
+      <input id="f-min" name="minimum" type="number" min="0" max="999" inputmode="numeric" placeholder="optional, a whole number">
+      <label class="check"><input type="checkbox" id="f-single" name="single_use"> Single use</label>
+    </details>
+    <p><button class="btn" type="submit">Add</button></p>
+  </form>
+</div>
+
+<div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+<div id="undo-bar" class="undo" role="status" aria-live="polite" hidden><span id="undo-text"></span><button type="button" id="undo-button">Undo</button></div>
+<nav class="dock" id="dock" aria-label="Add, share and export"></nav>
+
+<script>
+(function () {
+  "use strict";
+
+  /* ---------- small helpers ---------- */
+  var $ = function (s, r) { return (r || document).querySelector(s); };
+  var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
+  function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
+  function pad(n) { return n < 10 ? "0" + n : "" + n; }
+  function dayStr(offset) { var d = new Date(); d.setDate(d.getDate() + offset); return d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate()); }
+  function fold(t) { return String(t).normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase(); }
+  function icon(paths) { return '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">' + paths + "</svg>"; }
+  var ICONS = {
+    cart: icon('<circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/><path d="M3 4h2.5l2.2 10.2a1 1 0 0 0 1 .8h8.8a1 1 0 0 0 1-.8L20 8H6.2"/>'),
+    list: icon('<path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.5" cy="6" r="1"/><circle cx="4.5" cy="12" r="1"/><circle cx="4.5" cy="18" r="1"/>'),
+    code: icon('<path d="M8 7l-5 5 5 5M16 7l5 5-5 5"/>'),
+    check: icon('<path d="M5 12.5l4.5 4.5L19 7.5"/>'),
+    minus: icon('<path d="M6 12h12"/>'),
+    chevron: icon('<path d="M9 6l6 6-6 6"/>'),
+    search: icon('<circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/>'),
+    plus: icon('<path d="M12 5v14M5 12h14"/>'),
+    mic: icon('<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3"/>'),
+    close: icon('<path d="M6 6l12 12M18 6L6 18"/>'),
+    retry: icon('<path d="M20 12a8 8 0 1 1-2.6-5.9"/><path d="M20 4v5h-5"/>'),
+    person: icon('<circle cx="12" cy="8" r="3.5"/><path d="M5 20c0-3.6 3.1-6 7-6s7 2.4 7 6"/>')
+  };
+  var AREA_ORDER = ["Fridge", "Pantry", "Freezer"];
+  var CUE_MS = 24 * 3600000;
+
+  /* ---------- sample data (made up) ---------- */
+  var uid = 0;
+  function mk(name, qty, area, place, category, emoji, o) {
+    o = o || {};
+    return { id: "m" + (++uid), name: name, qty: qty, area: area, place: place, category: category, emoji: emoji || "", useBy: o.useBy || "", minimum: o.minimum == null ? null : o.minimum, staple: !!o.staple, singleUse: !!o.singleUse, kind: o.kind || "", updated: o.updated || Date.now(), recent: o.recent || null };
+  }
+  function seed() {
+    var h = 3600000, now = Date.now();
+    return {
+      items: [
+        mk("eggs", "6", "Fridge", "Door", "Dairy & eggs", "🥚", { minimum: 4, updated: now - 30 * h }),
+        mk("milk", "1 litre", "Fridge", "Door", "Dairy & eggs", "🥛", { useBy: dayStr(4), updated: now - 5 * h }),
+        mk("cheddar cheese", "1 block", "Fridge", "Shelf 2", "Dairy & eggs", "🧀", { useBy: dayStr(9), updated: now - 80 * h }),
+        mk("spinach", "1 bag", "Fridge", "Crisper", "Fruit & veg", "🥬", { useBy: dayStr(1), updated: now - 60 * h }),
+        mk("curry", "2 serves", "Fridge", "Shelf 1", "Meals", "🍛", { kind: "leftover", useBy: dayStr(2), updated: now - 20 * h, recent: { at: now - 20 * h, kind: "new" } }),
+        mk("rice", "2 kg", "Pantry", "Top shelf", "Grains & pasta", "🍚", { staple: true, updated: now - 200 * h }),
+        mk("pasta", "1", "Pantry", "Top shelf", "Grains & pasta", "🍝", { minimum: 2, updated: now - 100 * h }),
+        mk("canned tomatoes", "4 cans", "Pantry", "Middle shelf", "Tins & jars", "🥫", { minimum: 2, updated: now - 150 * h }),
+        mk("olive oil", "1 bottle", "Pantry", "Bottom shelf", "Oils & sauces", "", { staple: true, updated: now - 300 * h }),
+        mk("soy sauce sachets", "8", "Pantry", "Drawer", "Oils & sauces", "", { singleUse: true, updated: now - 120 * h }),
+        mk("peas", "2 bags", "Freezer", "Top drawer", "Fruit & veg", "", { updated: now - 90 * h }),
+        mk("meatballs", "12", "Freezer", "Middle drawer", "Meat", "", { updated: now - 70 * h }),
+        mk("sourdough", "1 loaf", "Freezer", "Bottom drawer", "Bakery", "🍞", { updated: now - 2 * h, recent: { at: now - 2 * h, kind: "more" } })
+      ],
+      removed: [{ name: "butter", qty: "1 block", area: "Fridge", place: "Door", at: now - 26 * h }]
+    };
+  }
+
+  /* ---------- state ---------- */
+  var state = { scenario: "full", theme: "auto", dim: "area", cat: "", area: "", sort: "name", query: "", items: [], removed: [], undo: null };
+  var fresh = seed(); state.items = fresh.items; state.removed = fresh.removed;
+
+  /* ---------- rules copied from the product ---------- */
+  // Same rule as server/src/reduce.ts: a plain count of 2 or more goes down by one; anything else is used up.
+  function reduceQuantity(q) {
+    var m = /^(\d{1,4})(?=$|\s)([\s\S]*)$/.exec(String(q).trim());
+    if (!m) return { kind: "all" };
+    var n = Number(m[1]);
+    if (n < 2) return { kind: "all" };
+    return { kind: "one", quantity: String(n - 1) + m[2] };
+  }
+  function isPlain(q) { return /^\d{1,4}$/.test(String(q).trim()); }
+  function metaLine(i) {
+    var parts = [[i.qty, i.place].filter(Boolean).join(" · "), i.category, i.kind === "leftover" ? "Leftover" : "", i.minimum !== null ? "Minimum " + i.minimum : i.staple ? "Staple" : "", i.singleUse ? "Single use" : ""].filter(Boolean);
+    return parts.join(" · ");
+  }
+  // The shopping list is worked out from the items, never typed in: below the minimum, or used up.
+  function shoppingList() {
+    var out = [], byName = {};
+    state.items.forEach(function (i) { (byName[fold(i.name)] = byName[fold(i.name)] || []).push(i); });
+    Object.keys(byName).forEach(function (k) {
+      var group = byName[k], min = null, have = 0, plain = true;
+      group.forEach(function (i) { if (i.minimum !== null) min = min === null ? i.minimum : Math.max(min, i.minimum); if (isPlain(i.qty)) have += Number(i.qty); else plain = false; });
+      if (min !== null && plain && have < min) out.push({ name: group[0].name, qty: group[0].qty, area: group[0].area, place: group[0].place, why: "Low: " + have + " of " + min });
+    });
+    state.removed.forEach(function (r) {
+      if (byName[fold(r.name)]) return;
+      out.push({ name: r.name, qty: r.qty, area: r.area, place: r.place, why: new Date(r.at).toLocaleDateString("en-AU", { day: "numeric", month: "short", year: "numeric" }) });
+    });
+    return out;
+  }
+
+  /* ---------- search ---------- */
+  var FILLER = /^(search|find|show|look|looking|for|me|the|a|an|my|where|where's|is|are|do|does|we|have|got|any|some|in|on|at|of|and|please|what|whats|what's|s|i|need|to|check|if|there)$/;
+  function tokens(q) {
+    var words = fold(q).replace(/[.,!?;:"]/g, " ").split(/\s+/).filter(Boolean);
+    var kept = words.filter(function (w) { return !FILLER.test(w); });
+    return kept.length ? kept : words;
+  }
+  function rank(i, q) {
+    var ts = tokens(q); if (!ts.length) return 0;
+    var tiers = [[i.name], [i.category || ""], [i.area, i.place], [i.qty, i.useBy || ""]], total = 0;
+    for (var a = 0; a < ts.length; a++) {
+      var best = -1;
+      for (var t = 0; t < tiers.length && best < 0; t++) if (tiers[t].some(function (v) { return fold(v).indexOf(ts[a]) !== -1; })) best = t;
+      if (best < 0) return -1;
+      total += best;
+    }
+    return total;
+  }
+  function byName(a, b) { return a.name.localeCompare(b.name, undefined, { sensitivity: "base" }); }
+  function sorter() {
+    if (state.sort === "useby") return function (a, b) { if (a.useBy === b.useBy) return byName(a, b); if (!a.useBy) return 1; if (!b.useBy) return -1; return a.useBy < b.useBy ? -1 : 1; };
+    if (state.sort === "updated") return function (a, b) { return b.updated - a.updated || byName(a, b); };
+    return byName;
+  }
+  function groups(list) {
+    var map = {};
+    list.forEach(function (i) { var k = i.area || "Other"; (map[k] = map[k] || []).push(i); });
+    var keys = Object.keys(map).sort(function (x, y) {
+      var px = AREA_ORDER.indexOf(x), py = AREA_ORDER.indexOf(y);
+      if (px !== -1 || py !== -1) return (px === -1 ? 99 : px) - (py === -1 ? 99 : py);
+      return x.localeCompare(y);
+    });
+    return keys.map(function (k) { return [k, map[k]]; });
+  }
+
+
+  /* ---------- filter ribbon ---------- */
+  // Default order: the value with the most items first, then by name. A saved order (per view, in this browser only) wins over that.
+  var RIBBON_KEY = function () { return "kitchie.tabs." + state.dim; };
+  function readOrder() { try { var v = JSON.parse(localStorage.getItem(RIBBON_KEY()) || "[]"); return Array.isArray(v) ? v.filter(function (x) { return typeof x === "string"; }) : []; } catch (e) { return []; } }
+  function saveOrder(order) { try { localStorage.setItem(RIBBON_KEY(), JSON.stringify(order)); } catch (e) { /* storage blocked: the order is just not remembered */ } }
+  function ribbonValues(list) {
+    var count = {};
+    list.forEach(function (i) { var k = state.dim === "cat" ? i.category : (i.area || "Other"); if (k) count[k] = (count[k] || 0) + 1; });
+    var vals = Object.keys(count).sort(function (a, b) { return count[b] - count[a] || a.localeCompare(b); });
+    var saved = readOrder();
+    if (!saved.length) return vals;
+    var rank = function (v) { var n = saved.indexOf(v); return n === -1 ? 1e6 + vals.indexOf(v) : n; };   // values new since the last save keep their usual place after the saved ones
+    return vals.slice().sort(function (a, b) { return rank(a) - rank(b); });
+  }
+  var ribbonLater = null;
+  window.addEventListener("resize", function () { if (ribbonLater) ribbonLater(); });
+  function initRibbon() {
+    var nav = $("nav.tabs"); ribbonLater = null;
+    if (!nav) return;
+    var links = function () { return $$("a", nav); };
+    var movable = function () { return links().filter(function (a) { return !a.hasAttribute("data-fixed"); }); };
+    var timer = 0, mine = false, dragging = null, press = null, suppress = false;
+    function fit() {   // only whole buttons are visible at the right edge
+      var from = nav.scrollLeft;
+      nav.style.scrollSnapType = "none"; nav.style.width = "";
+      var avail = nav.getBoundingClientRect().width, items = links();
+      var done = function () { requestAnimationFrame(function () { nav.style.scrollSnapType = ""; setTimeout(function () { mine = false; }, 60); }); };
+      nav.classList.remove("fitted");
+      if (nav.scrollWidth <= avail + 1) { nav.scrollLeft = 0; done(); return; }
+      nav.classList.add("fitted");
+      var pad = parseFloat(getComputedStyle(nav).paddingLeft) || 0;
+      var start = items.slice().sort(function (a, b) { return Math.abs(a.offsetLeft - pad - from) - Math.abs(b.offsetLeft - pad - from); })[0];
+      var scroll = start.offsetLeft - pad, w = 0;
+      items.forEach(function (a) { if (a.offsetLeft < start.offsetLeft) return; var need = a.offsetLeft + a.offsetWidth + pad - scroll; if (need <= avail && need > w) w = need; });
+      if (w > 0) { nav.style.width = Math.ceil(w) + "px"; mine = true; nav.scrollLeft = scroll; }
+      done();
+    }
+    function later() { clearTimeout(timer); timer = setTimeout(fit, 120); }
+    ribbonLater = later;
+    nav.addEventListener("scroll", function () { if (mine) { mine = false; return; } if (!dragging) later(); }, { passive: true });
+    var cur = nav.querySelector("[aria-current]");   // keep the chosen chip in view after a redraw
+    if (cur && cur.offsetLeft + cur.offsetWidth > nav.clientWidth) nav.scrollLeft = cur.offsetLeft - 8;
+    fit();
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(later);
+    // long press to reorder; the order is saved for this view
+    var HOLD = 500, MOVE = 8;
+    function cancelPress() { if (press) { clearTimeout(press.t); press = null; } }
+    function startDrag(a) { dragging = a; nav.classList.add("reordering"); a.classList.add("lifted"); if (navigator.vibrate) { try { navigator.vibrate(15); } catch (e) { /* not supported */ } } }
+    function endDrag() { if (!dragging) return; dragging.classList.remove("lifted"); nav.classList.remove("reordering"); dragging = null; saveOrder(movable().map(function (a) { return a.getAttribute("data-tab"); })); fit(); }
+    nav.addEventListener("pointerdown", function (e) {
+      var a = e.target.closest && e.target.closest("a[data-tab]");
+      if (!a || a.hasAttribute("data-fixed") || (e.pointerType === "mouse" && e.button !== 0)) return;
+      press = { a: a, x: e.clientX, y: e.clientY, t: setTimeout(function () { var p = press; press = null; if (p) startDrag(p.a); }, HOLD) };
+    });
+    nav.addEventListener("pointermove", function (e) {
+      if (press && (Math.abs(e.clientX - press.x) > MOVE || Math.abs(e.clientY - press.y) > MOVE)) cancelPress();
+      if (!dragging) return;
+      var over = movable().filter(function (a) { return a !== dragging; }).filter(function (a) { var r = a.getBoundingClientRect(); return e.clientX >= r.left && e.clientX <= r.right; })[0];
+      if (over) { var before = over.compareDocumentPosition(dragging) & Node.DOCUMENT_POSITION_FOLLOWING; nav.insertBefore(dragging, before ? over : over.nextSibling); }
+      var box = nav.getBoundingClientRect();
+      if (e.clientX < box.left + 28) nav.scrollLeft -= 8; else if (e.clientX > box.right - 28) nav.scrollLeft += 8;
+    });
+    ["pointerup", "pointercancel"].forEach(function (n) { nav.addEventListener(n, function () { cancelPress(); if (dragging) { suppress = true; setTimeout(function () { suppress = false; }, 50); endDrag(); } }); });
+    nav.addEventListener("touchmove", function (e) { if (dragging) e.preventDefault(); }, { passive: false });
+    nav.addEventListener("contextmenu", function (e) { if (press || dragging) e.preventDefault(); });
+    nav.addEventListener("click", function (e) { if (suppress) { e.preventDefault(); e.stopPropagation(); } }, true);
+  }
+
+  /* ---------- rendering ---------- */
+  var editing = function () { return state.scenario !== "readonly"; };
+
+  function rowHtml(i) {
+    var ed = editing(), now = Date.now();
+    var cue = i.recent && now - i.recent.at < CUE_MS ? ' <span class="cue">' + (i.recent.kind === "new" ? "New" : "More") + "</span>" : "";
+    var due = i.useBy ? '<span class="due">Use by ' + esc(i.useBy) + "</span>" : "";
+    var body = '<div class="main"><div class="name">' + (i.emoji ? '<span class="emo" aria-hidden="true">' + esc(i.emoji) + "</span> " : "") + esc(i.name) + cue + '</div><div class="meta">' + esc(metaLine(i)) + "</div></div>" + due;
+    var inner = ed
+      ? '<a class="rowlink" href="#" data-na="The edit page" draggable="false">' + body + '<span class="chev">' + ICONS.chevron + '</span></a><form class="usef" onsubmit="return false"><button type="button" class="usebtn" data-use="' + esc(i.id) + '" aria-label="Use one of ' + esc(i.name) + '" title="Use one">' + ICONS.minus + '</button></form><a class="iconbtn" href="#" data-used-up="' + esc(i.id) + '" aria-label="Mark ' + esc(i.name) + ' as used up" title="Used up">' + ICONS.check + "</a>"
+      : '<div class="rowlink">' + body + "</div>";
+    return '<li data-row data-id="' + esc(i.id) + '"' + (ed ? " data-reduce" : "") + ">" + inner + "</li>";
+  }
+
+  function update() {
+    var ed = editing(), all = state.items, empty = all.length === 0, q = state.query.trim();
+    var areaSel = state.dim === "area" ? state.area : "", catSel = state.dim === "cat" ? state.cat : "";   // only the view in front filters
+    var visible = all.filter(function (i) { return (!q || rank(i, q) >= 0) && (!catSel || i.category === catSel); });
+    var cmp = sorter();
+    var gs = groups(all);
+    if (state.area && !gs.some(function (g) { return g[0] === state.area; })) state.area = "";
+    if (state.cat && !all.some(function (i) { return i.category === state.cat; })) state.cat = "";
+
+    // header icons
+    var profile = ed ? '<details class="profile"><summary class="icon" aria-label="Profile" title="Profile">' + ICONS.person + '</summary><div class="menu"><a href="#" data-na="Household">Household</a><a href="#" data-na="History">History</a><a href="#" data-na="Settings">Settings</a><button type="button" data-na="Create invite link">Create invite link</button><a href="#" data-na="Download CSV">Download CSV</a><a href="#" data-na="JSON">JSON</a><button type="button" data-na="Sign out">Sign out</button></div></details>' : "";
+    var openProfile = $("details.profile") && $("details.profile").open;
+    $("#hdr").innerHTML = profile;
+    if (openProfile && $("details.profile")) $("details.profile").open = true;
+
+    $("#readonly-note").hidden = ed;
+    if (empty && fieldOpen) closeField(true);
+    $("#tools").hidden = empty;
+    $("#count").textContent = q ? visible.length + " of " + all.length : "";
+    $("#sort").value = state.sort;
+
+    // filter ribbon: the pin | tag switch picks Location or Category; chips are whole buttons, scroll sideways and can be reordered
+    var PIN = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.2A7 7 0 0 1 19 9.8C19 14.8 12 21 12 21z"/><circle cx="12" cy="10" r="2.5"/></svg>';
+    var TAG = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12V4h8l10 10-8 8L3 12z"/><circle cx="7.5" cy="8.5" r="1.3"/></svg>';
+    var isCat = state.dim === "cat", sel = isCat ? state.cat : state.area, title = isCat ? "Category" : "Location";
+    var vals = ribbonValues(all);
+    var chip = q && !fieldOpen ? '<span class="qchip"><button type="button" class="body" data-chip-edit aria-label="Edit search: ' + esc(q) + '" title="Edit search">“' + esc(q) + '”</button><button type="button" class="x" data-chip-clear aria-label="Clear search" title="Clear search">' + ICONS.close + "</button></span>" : "";
+    $("#tabs").innerHTML = empty ? "" : '<div class="tabhead"><b>' + title + '</b>' + chip + '<button type="button" class="bin" role="switch" aria-checked="' + isCat + '" aria-label="Filter by category" data-flip><i></i><span>' + PIN + '</span><span>' + TAG + '</span></button></div>' +
+      '<nav class="tabs' + (isCat ? " dim-cat" : "") + '" aria-label="' + title + '"><a href="#" data-tab="" data-fixed ' + (sel === "" ? 'aria-current="page"' : "") + ' draggable="false">All</a>' +
+      vals.slice(0, 20).map(function (v) { return '<a href="#" data-tab="' + esc(v) + '" ' + (v === sel ? 'aria-current="page"' : "") + ' draggable="false">' + esc(v) + "</a>"; }).join("") + "</nav>";
+    initRibbon();
+
+    // list
+    var html = "";
+    if (empty) html = "<p>Nothing here yet.</p>";
+    else if (visible.length === 0) html = '<p class="note">Nothing matches “' + esc(q) + "”.</p>";
+    else {
+      html = groups(visible).filter(function (g) { return !areaSel || g[0] === areaSel; }).map(function (g) {
+        var list = g[1].slice();
+        if (q) { var base = list.slice().sort(cmp); list = base.map(function (r, n) { return { r: r, n: n, k: rank(r, q) }; }).sort(function (a, b) { return a.k - b.k || a.n - b.n; }).map(function (x) { return x.r; }); }
+        else list.sort(cmp);
+        return '<section class="group" data-group="' + esc(g[0]) + '"><div class="grouphead"><h2>' + esc(g[0]) + '</h2><span class="count">' + list.length + '</span></div><ul class="rows">' + list.map(rowHtml).join("") + "</ul></section>";
+      }).join("");
+      if (areaSel && !html) html = '<p class="note">Nothing matches “' + esc(q) + "” in " + esc(state.area) + ".</p>";
+    }
+    $("#list").innerHTML = html;
+
+    // add-from-search
+    var exact = all.some(function (i) { return fold(i.name) === fold(q); });
+    $("#add-from-search-wrap").hidden = !(ed && q && !exact);
+
+    // shopping list
+    var shop = shoppingList(), sh = $("#shopping");
+    sh.hidden = shop.length === 0;
+    var wasOpen = sh.open;
+    sh.innerHTML = "<summary>" + shop.length + " to buy</summary>" + (shop.length ? '<div class="tablewrap"><table><thead><tr><th>Item</th><th>Amount</th><th>Spot</th><th>Why</th></tr></thead><tbody>' + shop.map(function (e) { return "<tr><td>" + esc(e.name) + "</td><td>" + esc(e.qty) + "</td><td>" + esc(e.area) + " / " + esc(e.place) + "</td><td>" + esc(e.why) + "</td></tr>"; }).join("") + "</tbody></table></div>" : "");
+    sh.open = wasOpen;
+
+    $("#footnote").innerHTML = all.length + " item" + (all.length === 1 ? "" : "s") + ' &middot; <a href="#" data-na="The shopping list JSON">shopping list JSON</a> &middot; <span id="version">Kitchie mockup</span>';
+
+    // bottom bar
+    $("#dock").innerHTML = (ed ? '<a class="icon" href="#" data-open-add aria-label="Add an item" title="Add an item">' + ICONS.plus + "</a>" : "") +
+      '<button type="button" class="icon" data-share="Shopping list" aria-label="Share shopping list" title="Share shopping list">' + ICONS.cart + "</button>" +
+      '<button type="button" class="icon" data-share="Kitchen list" aria-label="Copy kitchen list" title="Copy kitchen list">' + ICONS.list + "</button>" +
+      (ed ? "" : '<a class="icon" href="#" data-na="JSON" aria-label="JSON" title="JSON">' + ICONS.code + "</a>");
+  }
+
+  /* ---------- toast and undo ---------- */
+  var toastTimer = 0, undoTimer = 0;
+  function toast(msg) {
+    var t = $("#toast"); t.textContent = msg; t.hidden = false;
+    clearTimeout(toastTimer); toastTimer = setTimeout(function () { t.hidden = true; }, 2400);
+  }
+  function snapshot() { return JSON.stringify({ items: state.items, removed: state.removed }); }
+  function offerUndo(text, before) {
+    state.undo = before;
+    $("#undo-text").textContent = text;
+    $("#undo-bar").hidden = false;
+    clearTimeout(undoTimer); undoTimer = setTimeout(hideUndo, 5000);
+  }
+  function hideUndo() { $("#undo-bar").hidden = true; state.undo = null; }
+  $("#undo-button").addEventListener("click", function () {
+    if (!state.undo) return;
+    var s = JSON.parse(state.undo); state.items = s.items; state.removed = s.removed;
+    hideUndo(); update(); toast("Undone");
+  });
+
+  /* ---------- changes ---------- */
+  function find(id) { return state.items.filter(function (i) { return i.id === id; })[0]; }
+  function useOne(id) {
+    var i = find(id); if (!i) return;
+    var r = reduceQuantity(i.qty);
+    if (r.kind === "all") return usedUp(id);
+    var before = snapshot();
+    i.qty = r.quantity; i.updated = Date.now();
+    update();
+    var low = shoppingList().some(function (e) { return fold(e.name) === fold(i.name) && /^Low/.test(e.why); });
+    offerUndo("Used one of " + i.name + ". " + i.qty + " left." + (low ? " Added to the shopping list." : ""), before);
+  }
+  function usedUp(id) {
+    var i = find(id); if (!i) return;
+    var before = snapshot();
+    state.items = state.items.filter(function (x) { return x.id !== id; });
+    var listed = i.staple || i.minimum !== null;
+    if (listed) state.removed.push({ name: i.name, qty: i.qty, area: i.area, place: i.place, at: Date.now() });
+    update();
+    offerUndo(cap(i.name) + " used up." + (listed ? " Added to the shopping list." : " Its history is kept."), before);
+  }
+  function cap(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
+
+  /* ---------- click handling ---------- */
+  var suppressClick = false;
+  document.addEventListener("click", function (e) {
+    if (suppressClick) { e.preventDefault(); e.stopPropagation(); return; }
+    var t = e.target;
+    var na = t.closest("[data-na]");
+    if (na) { e.preventDefault(); toast(na.getAttribute("data-na") + " isn’t part of this mockup."); var p = $("details.profile"); if (p) p.open = false; return; }
+    var use = t.closest("[data-use]"); if (use) { e.preventDefault(); useOne(use.getAttribute("data-use")); return; }
+    var done = t.closest("[data-used-up]"); if (done) { e.preventDefault(); usedUp(done.getAttribute("data-used-up")); return; }
+    var flip = t.closest("[data-flip]"); if (flip) { e.preventDefault(); state.dim = state.dim === "area" ? "cat" : "area"; state.area = ""; state.cat = ""; update(); var again = $("[data-flip]"); if (again) again.focus(); return; }
+    var tab = t.closest("[data-tab]"); if (tab) { e.preventDefault(); if (state.dim === "cat") state.cat = tab.getAttribute("data-tab"); else state.area = tab.getAttribute("data-tab"); update(); return; }
+    var sc = t.closest("[data-scenario]"); if (sc) { setScenario(sc.getAttribute("data-scenario")); return; }
+    var th = t.closest("[data-theme-pick]"); if (th) { setTheme(th.getAttribute("data-theme-pick")); return; }
+    var sh = t.closest("[data-share]"); if (sh) { toast(sh.getAttribute("data-share") + " copied (mockup: nothing is shared)."); return; }
+    if (t.closest("[data-open-add]")) { e.preventDefault(); openSheet(""); return; }
+    if (t.closest("[data-chip-clear]")) { e.preventDefault(); clearSearch(); return; }
+    if (t.closest("[data-chip-edit]")) { e.preventDefault(); openField(true); return; }
+    if (t.closest("#add-from-search")) { e.preventDefault(); openSheet($("#q").value.trim()); return; }
+    var prof = $("details.profile"); if (prof && prof.open && !prof.contains(t)) prof.open = false;
+  });
+
+  function setScenario(s) {
+    state.scenario = s;
+    var fresh = seed();
+    if (s === "empty") { state.items = []; state.removed = []; }
+    else { state.items = fresh.items; state.removed = fresh.removed; }
+    state.area = ""; state.cat = ""; state.query = ""; $("#q").value = ""; if (fieldOpen) closeField(true); hideUndo();
+    $$("[data-scenario]").forEach(function (b) { b.setAttribute("aria-pressed", String(b.getAttribute("data-scenario") === s)); });
+    update();
+  }
+  function setTheme(t) {
+    state.theme = t;
+    if (t === "auto") document.documentElement.removeAttribute("data-theme"); else document.documentElement.setAttribute("data-theme", t);
+    $$("[data-theme-pick]").forEach(function (b) { b.setAttribute("aria-pressed", String(b.getAttribute("data-theme-pick") === t)); });
+  }
+  $("#reset").addEventListener("click", function () { setScenario(state.scenario); toast("Sample items reset."); });
+  $("#sort").addEventListener("change", function () { state.sort = this.value; update(); });
+
+  /* ---------- search field: pull down to open, Cancel / Search key / tap outside / scroll to close ---------- */
+  var micTimer = 0, fieldOpen = false, suppressScroll = false;
+  var wrap = $("#searchwrap"), qEl = $("#q"), barEl = $("#searchbar");
+  var FIELD_H = 64, ARM = 80, RESIST = 0.6;   // full height of the field row, pull distance that arms it, finger-to-field ratio
+  var reduced = function () { return window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches; };
+  $("#search-mic").innerHTML = ICONS.mic;
+  $("#sheet-x").innerHTML = ICONS.close;
+  function listening(on) {
+    var m = $("#search-mic"); m.setAttribute("aria-pressed", String(on));
+    m.setAttribute("aria-label", on ? "Stop listening" : "Search by voice");
+    qEl.placeholder = on ? "Listening…" : "Search your kitchen";
+  }
+  function listen() {
+    listening(true);
+    micTimer = setTimeout(function () {
+      listening(false); qEl.value = "do we have cheese in the fridge"; state.query = qEl.value; update();
+    }, 1400);
+  }
+  // fresh = start a new search (pull down); otherwise edit the current term (tap the chip)
+  function openField(edit) {
+    if (!state.items.length) return;
+    fieldOpen = true;
+    wrap.classList.remove("pulling", "armed", "settle"); wrap.style.height = ""; barEl.style.removeProperty("--p");
+    wrap.classList.add("open");
+    qEl.tabIndex = 0;
+    if (edit) qEl.value = state.query; else { qEl.value = ""; state.query = ""; }
+    update();
+    qEl.focus();
+    var n = qEl.value.length; try { qEl.setSelectionRange(n, n); } catch (e) { /* not supported on this type */ }
+  }
+  function closeField(silent, instant) {
+    if (!fieldOpen && !wrap.classList.contains("pulling")) return;
+    fieldOpen = false;
+    clearTimeout(micTimer); listening(false);
+    state.query = qEl.value.trim(); qEl.value = state.query;   // closing keeps the term; it shows as a chip
+    qEl.blur(); qEl.tabIndex = -1;
+    wrap.classList.remove("open", "pulling", "armed", "settle"); wrap.style.height = ""; barEl.style.removeProperty("--p");
+    if (!silent) update();
+  }
+  function clearSearch() { state.query = ""; qEl.value = ""; update(); }
+  qEl.addEventListener("input", function () { state.query = this.value; update(); });
+  qEl.addEventListener("keydown", function (e) { if (e.key === "Enter") { e.preventDefault(); closeField(); } });
+  $("#search-mic").addEventListener("click", function () { if ($("#search-mic").getAttribute("aria-pressed") === "true") { clearTimeout(micTimer); listening(false); } else { qEl.value = ""; state.query = ""; update(); listen(); } });
+  $("#search-cancel").addEventListener("click", function () { closeField(); });
+  document.addEventListener("click", function (e) { if (fieldOpen && !suppressClick && !wrap.contains(e.target) && e.target.closest("#list")) { e.preventDefault(); e.stopPropagation(); closeField(); } }, true);   // a tap on the list only closes the field (no row opens)
+  document.addEventListener("click", function (e) { if (fieldOpen && !suppressClick && !wrap.contains(e.target) && !e.target.closest("[data-chip-edit]")) closeField(); });   // tap outside; the tap still does its own job
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") {
+      if (!$("#quick-add").hidden) closeSheet();
+      else if (fieldOpen) closeField();
+    }
+  });
+  window.addEventListener("scroll", function () {
+    if (fieldOpen && window.scrollY > wrap.offsetHeight) { suppressScroll = true; closeField(); requestAnimationFrame(function () { lastY = window.scrollY; suppressScroll = false; }); }
+  }, { passive: true });
+
+  /* pull gesture: touch, and mouse drag for the desktop. Only from the very top of the page. */
+  var pull = null;
+  function canPull(t) {
+    if (fieldOpen || !state.items.length || window.scrollY > 0 || !$("#quick-add").hidden) return false;
+    if (t.closest && t.closest("input,select,textarea,summary,.sheet,nav.tabs.reordering,details.profile[open]")) return false;
+    return true;
+  }
+  function pullStart(x, y, t) { pull = canPull(t) ? { x: x, y: y, on: false, d: 0 } : null; }
+  function pullMove(x, y, e) {
+    if (!pull) return;
+    var dx = x - pull.x, dy = y - pull.y;
+    if (!pull.on) {
+      if (Math.abs(dx) > 10 && Math.abs(dx) > Math.abs(dy)) { pull = null; return; }
+      if (dy < -6 || window.scrollY > 0) { pull = null; return; }
+      if (dy < 8) { if (dy > 0 && e.cancelable) e.preventDefault(); return; }   // claim the gesture early, or the browser starts its own overscroll
+      pull.on = true; document.body.classList.add("is-pulling");
+      wrap.classList.remove("settle"); wrap.classList.add("pulling");
+    }
+    if (e.cancelable) e.preventDefault();
+    pull.d = Math.max(0, dy);
+    var h = Math.min(FIELD_H, pull.d * RESIST);
+    wrap.style.height = h + "px"; barEl.style.setProperty("--p", String(h / FIELD_H));
+    wrap.classList.toggle("armed", pull.d >= ARM);
+  }
+  function pullEnd() {
+    if (!pull) return;
+    var p = pull; pull = null; document.body.classList.remove("is-pulling");
+    if (!p.on) return;
+    suppressClick = true; setTimeout(function () { suppressClick = false; }, 60);
+    if (p.d >= ARM) { openField(false); return; }
+    // short of the line: spring back
+    wrap.classList.remove("armed");
+    if (reduced()) { wrap.classList.remove("pulling"); wrap.style.height = ""; barEl.style.removeProperty("--p"); return; }
+    wrap.classList.add("settle"); wrap.style.height = "0px"; barEl.style.setProperty("--p", "0");
+    setTimeout(function () { if (!fieldOpen) { wrap.classList.remove("pulling", "settle"); wrap.style.height = ""; barEl.style.removeProperty("--p"); } }, 260);
+  }
+  var lastTouch = 0;
+  document.addEventListener("touchstart", function (e) { lastTouch = Date.now(); if (e.touches.length === 1) pullStart(e.touches[0].clientX, e.touches[0].clientY, e.target); else pull = null; }, { passive: true });
+  document.addEventListener("touchmove", function (e) { if (e.touches.length === 1) pullMove(e.touches[0].clientX, e.touches[0].clientY, e); }, { passive: false });
+  document.addEventListener("touchend", function () { lastTouch = Date.now(); pullEnd(); });
+  document.addEventListener("touchcancel", function () { pullEnd(); });
+  document.addEventListener("mousedown", function (e) { if (e.button !== 0 || Date.now() - lastTouch < 600 || e.target.closest("button,label,select,.bin,.qchip")) return; pullStart(e.clientX, e.clientY, e.target); });
+  document.addEventListener("mousemove", function (e) { if (Date.now() - lastTouch >= 600) pullMove(e.clientX, e.clientY, e); });
+  document.addEventListener("mouseup", function () { if (Date.now() - lastTouch >= 600) pullEnd(); });
+
+  /* ---------- add sheet ---------- */
+  var lastFocus = null;
+  function openSheet(name) {
+    lastFocus = document.activeElement;
+    $("#add-form").reset(); $("#f-err").hidden = true; $("#f-name").removeAttribute("aria-invalid");
+    $("#f-area").value = state.area && ["Fridge", "Pantry", "Freezer"].indexOf(state.area) !== -1 ? state.area : "Fridge";
+    $("#f-name").value = name || "";
+    $("#quick-add").hidden = false;
+    $("#f-name").focus();
+  }
+  function closeSheet() { $("#quick-add").hidden = true; if (lastFocus && lastFocus.focus) lastFocus.focus(); }
+  $$("[data-close-sheet]").forEach(function (el) { el.addEventListener("click", closeSheet); });
+  $("#add-form").addEventListener("submit", function (e) {
+    e.preventDefault();
+    var name = $("#f-name").value.trim();
+    if (!name) { $("#f-name").setAttribute("aria-invalid", "true"); $("#f-err").hidden = false; $("#f-name").focus(); return; }
+    var qty = $("#f-qty").value.trim(), area = $("#f-area").value, place = $("#f-place").value.trim();
+    var minRaw = $("#f-min").value.trim(), min = /^\d{1,3}$/.test(minRaw) ? Number(minRaw) : null;
+    var before = snapshot(), now = Date.now(), target = null, note;
+    var same = state.items.filter(function (i) { return fold(i.name) === fold(name) && i.area === area; })[0];
+    if (same && isPlain(same.qty) && isPlain(qty)) {
+      same.qty = String(Number(same.qty) + Number(qty)); same.updated = now; same.recent = { at: now, kind: "more" }; target = same; note = "Added more " + name + ". Now " + same.qty + ".";
+    } else {
+      target = mk(name, qty, area, place, $("#f-cat").value.trim(), $("#f-emoji").value.trim(), { useBy: $("#f-useby").value, minimum: min, singleUse: $("#f-single").checked, updated: now, recent: { at: now, kind: "new" } });
+      state.items.push(target); note = "Added " + name + ".";
+    }
+    state.removed = state.removed.filter(function (r) { return fold(r.name) !== fold(name); });
+    state.area = ""; state.cat = ""; closeSheet(); update();
+    var li = $('li[data-id="' + target.id + '"]');
+    if (li) { li.scrollIntoView({ block: "center", behavior: "smooth" }); li.classList.add("flash"); }
+    offerUndo(note, before);
+  });
+  $("#f-name").addEventListener("input", function () { this.removeAttribute("aria-invalid"); $("#f-err").hidden = true; });
+
+  /* ---------- swipe: right = use one, left = used up ---------- */
+  var THRESHOLD = 72, sw = null;
+  document.addEventListener("pointerdown", function (e) {
+    var li = e.target.closest && e.target.closest("li[data-reduce]");
+    if (!li || e.target.closest("button,a.iconbtn,form")) return;
+    if (e.pointerType === "mouse" && e.button !== 0) return;
+    sw = { li: li, x: e.clientX, y: e.clientY, dx: 0, on: false, under: null, id: e.pointerId };
+  });
+  document.addEventListener("pointermove", function (e) {
+    if (!sw) return;
+    var dx = e.clientX - sw.x, dy = e.clientY - sw.y;
+    if (!sw.on) {
+      if (Math.abs(dy) > 10 && Math.abs(dy) >= Math.abs(dx)) { sw = null; return; }
+      if (Math.abs(dx) > 10 && Math.abs(dx) > Math.abs(dy) * 1.5) {
+        sw.on = true;
+        try { sw.li.setPointerCapture(sw.id); } catch (err) { /* not capturable: keep going */ }
+        sw.li.setAttribute("data-dragging", "");
+        var ul = sw.li.parentNode, u = document.createElement("div");
+        u.className = "swipe-under"; u.style.top = sw.li.offsetTop + "px"; u.style.height = sw.li.offsetHeight + "px";
+        u.innerHTML = "<span></span>"; ul.insertBefore(u, ul.firstChild); sw.under = u;
+        document.body.style.userSelect = "none";
+      } else return;
+    }
+    sw.dx = dx;
+    sw.li.style.transform = "translateX(" + dx + "px)";
+    var it = find(sw.li.getAttribute("data-id")), all = dx < 0 || (it && reduceQuantity(it.qty).kind === "all");
+    sw.under.setAttribute("data-dir", all ? "all" : "one");
+    sw.under.style.justifyContent = dx < 0 ? "flex-end" : "flex-start";
+    sw.under.firstChild.textContent = all ? "Used up" : "Use one";
+    sw.under.setAttribute("data-armed", Math.abs(dx) >= THRESHOLD ? "yes" : "no");
+  });
+  function endSwipe(cancel) {
+    if (!sw) return;
+    var s = sw; sw = null; document.body.style.userSelect = "";
+    if (!s.on) return;
+    suppressClick = true; setTimeout(function () { suppressClick = false; }, 60);
+    var id = s.li.getAttribute("data-id"), dx = cancel ? 0 : s.dx;
+    s.li.removeAttribute("data-dragging");
+    if (s.under && s.under.parentNode) s.under.parentNode.removeChild(s.under);
+    if (dx >= THRESHOLD) { s.li.style.transform = ""; useOne(id); }
+    else if (dx <= -THRESHOLD) { s.li.style.transform = ""; usedUp(id); }
+    else { s.li.classList.add("snap"); s.li.style.transform = ""; setTimeout(function () { s.li.classList.remove("snap"); }, 260); }
+  }
+  document.addEventListener("pointerup", function () { endSwipe(false); });
+  document.addEventListener("pointercancel", function () { endSwipe(true); });
+
+  /* ---------- bottom bar tucks away while scrolling down ---------- */
+  var lastY = window.scrollY;
+  window.addEventListener("scroll", function () {
+    var y = window.scrollY, dock = $("#dock");
+    if (suppressScroll) { lastY = y; return; }
+    if (y > lastY + 8 && y > 80) dock.classList.add("away"); else if (y < lastY - 8) dock.classList.remove("away");
+    lastY = y;
+  }, { passive: true });
+
+  if (window.matchMedia && matchMedia("(pointer:coarse)").matches) document.documentElement.setAttribute("data-swipe-on", "");
+  update();
+})();
+</script>
+</body>
+</html>
