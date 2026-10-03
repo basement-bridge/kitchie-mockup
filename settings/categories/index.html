@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kitchie: Settings, Categories mockup</title>
+<meta name="description" content="Rename or merge a category for every item at once, and how a differently stored name is shown. Sample data, not the live product.">
+<meta name="robots" content="noindex">
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="../../theme.css">
+<style>
+:root{--page-width:34rem}
+h1{font-size:2.3rem;line-height:1.05;font-weight:700;margin:.5rem 0 .4rem}
+h2{font-size:1.25rem;margin:0 0 .6rem}
+.back{display:inline-block;color:var(--accent);margin:.2rem 0 .4rem;min-height:32px}
+.rules{margin:1rem 0 1.4rem;padding:.9rem 1.1rem .9rem 2rem;border:1px dashed var(--border);border-radius:1.2rem;color:var(--muted);font-size:.92rem}
+.rules li{margin:.25rem 0}.rules strong{color:var(--fg)}
+.sample{margin:.6rem 0 0;font-size:.85rem;color:var(--muted)}
+section.k-card{margin:0 0 1.2rem}
+.cats{list-style:none;margin:0;padding:0}
+.cats li{display:flex;align-items:center;gap:.6rem;min-height:56px;border-top:1px solid var(--border)}
+.cats li:first-child{border-top:0}
+.cats .name{flex:1 1 auto;min-width:0;overflow-wrap:anywhere;font-weight:600}
+.cats .n{flex:0 0 auto;color:var(--muted);font-variant-numeric:tabular-nums}
+.total{display:flex;justify-content:space-between;margin:.4rem 0 0;padding-top:.6rem;border-top:1px solid var(--border);color:var(--muted);font-size:.9rem}
+.hist{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:.4rem .8rem;margin-top:.9rem;padding:.7rem .9rem;border:1px solid var(--border);border-radius:1rem;font-size:.92rem}
+.hist .t{color:var(--muted)}
+.hist b{color:var(--fg);font-weight:600}
+.sheetwrap{align-items:flex-end;padding:0}
+.sheet{width:100%;max-width:var(--page-width);padding:1.2rem 20px 1.4rem;border:1px solid var(--border);border-bottom:0;border-radius:1.4rem 1.4rem 0 0;background:var(--surface);box-shadow:var(--shadow)}
+.sheet h2{margin:0}
+.toast{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);z-index:70;width:calc(100% - 32px);max-width:30rem;display:flex;align-items:center;justify-content:space-between;gap:.8rem;padding:.6rem .6rem .6rem 1rem;border:1px solid var(--border);border-radius:1rem;background:var(--surface);box-shadow:var(--shadow);animation:rise .18s ease-out}
+.toast span{min-width:0;overflow-wrap:anywhere}
+.toast .k-btn{border-color:var(--accent);color:var(--accent);font-weight:700}
+@keyframes rise{from{opacity:0;transform:translate(-50%,8px)}}
+@media (prefers-reduced-motion:reduce){.toast{animation:none}}
+.row2{display:flex;gap:.5rem;align-items:flex-end}
+.row2 .grow{flex:1 1 auto;min-width:0}
+.saved{margin:.5rem 0 0;color:var(--sage);font-size:.92rem}
+.mcp{margin:.4rem 0 0;padding:.7rem .8rem;border:1px solid var(--border);border-radius:.8rem;background:var(--bg);color:var(--fg);font:.82rem/1.5 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:pre-wrap;overflow-wrap:anywhere}
+.sub{margin:1.1rem 0 0;font-weight:700;font-size:1rem}
+.k-note code{font-size:.85em}
+</style>
+</head>
+<body>
+<div class="k-banner"><strong>Mockup</strong> &middot; sample data</div>
+<a class="back" href="../../index.html">&larr; All mockups</a>
+<p class="k-note" style="margin:0">Settings</p>
+<h1>Categories</h1>
+
+<ul class="rules" aria-label="How this screen works">
+  <li><strong>Rename changes every item at once.</strong></li>
+  <li><strong>No confirmation.</strong> It applies straight away, with one Undo for the whole rename.</li>
+  <li><strong>Renaming to a name that already exists merges</strong> the two.</li>
+  <li><strong>Only capitals, spaces and plurals count as the same word,</strong> never meanings. Meat and Protein stay separate.</li>
+  <li><strong>This screen lives in Settings.</strong></li>
+</ul>
+
+<section class="k-card" aria-labelledby="h-list">
+  <h2 id="h-list">Your categories</h2>
+  <ul class="cats" id="cats" aria-label="Categories"></ul>
+  <div class="total"><span>Total</span><span id="total"></span></div>
+  <div class="hist" id="hist" aria-live="polite"></div>
+  <p class="sample">Sample data only. Nothing is saved.</p>
+</section>
+
+<section class="k-card" aria-labelledby="h-diff">
+  <h2 id="h-diff">When a name is stored differently</h2>
+  <p class="k-note" style="margin-top:0">If the name you type matches an existing category apart from capitals, spaces or a plural, the existing spelling is kept and you are told.</p>
+
+  <p class="sub">On the web edit form</p>
+  <form id="edit" novalidate>
+    <label class="k-label" for="ecat" style="margin-top:.5rem">Category</label>
+    <div class="row2">
+      <input class="k-field grow" id="ecat" name="category" autocomplete="off" value="meats">
+      <button class="k-btn is-primary" type="submit">Save</button>
+    </div>
+    <p class="saved" id="saved" role="status"></p>
+    <p class="k-note">Try <code>meats</code> (note shown) and <code>Protein</code> (no note).</p>
+  </form>
+
+  <p class="sub">As an assistant (MCP) tool response</p>
+  <pre class="mcp" aria-label="Assistant response when the name matches an existing category">category: "Meat" (you asked for "meats"; same word with different capitals, spaces or plural, so the existing spelling was kept)</pre>
+  <pre class="mcp" aria-label="Assistant response when the name is new">category: "Protein" (new category, kept as typed)</pre>
+</section>
+
+<div class="k-scrim sheetwrap" id="scrim" hidden>
+  <form class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-h" novalidate>
+    <h2 id="sheet-h">Rename category</h2>
+    <label class="k-label" for="newname" style="margin-top:.8rem">New name</label>
+    <input class="k-field" id="newname" autocomplete="off" aria-describedby="err">
+    <p class="k-error" id="err" role="alert" hidden></p>
+    <p class="k-note">Applies to every item in this category straight away. A name that already exists merges the two.</p>
+    <div class="k-actions">
+      <button class="k-btn" type="button" id="cancel">Cancel</button>
+      <button class="k-btn is-primary" type="submit">Save</button>
+    </div>
+  </form>
+</div>
+<div id="toastbox" aria-live="polite"></div>
+
+<script>
+var cats = [["Meat",9],["Dry goods",15],["Seasonings & condiments",46],["Seasoning",1],["Dairy and eggs",12],["Vegetables",18]];
+var entries = [];   // each entry: {text, before} (one per rename or merge)
+var editing = null, toastTimer = null;
+var $ = function(id){return document.getElementById(id)};
+
+// Mechanical matching only: capitals, extra spaces, plural endings. Never meaning.
+function key(s){
+  return s.trim().toLowerCase().split(/\s+/).map(function(w){
+    if (w.length > 3 && /ies$/.test(w)) return w.slice(0,-3)+"y";
+    if (w.length > 3 && /[^s]s$/.test(w)) return w.slice(0,-1);
+    return w;
+  }).join(" ");
+}
+function find(name, skip){
+  var k = key(name);
+  for (var i=0;i<cats.length;i++) if (i!==skip && key(cats[i][0])===k) return i;
+  return -1;
+}
+function items(n){return n+(n===1?" item":" items")}
+function esc(s){return s.replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+
+function render(){
+  var ul = $("cats"), t = 0;
+  ul.innerHTML = "";
+  cats.forEach(function(c,i){
+    t += c[1];
+    var li = document.createElement("li");
+    li.innerHTML = '<span class="name">'+esc(c[0])+'</span><span class="n">'+c[1]+'</span>'+
+      '<button class="k-btn" type="button" data-i="'+i+'" aria-label="Rename '+esc(c[0])+'">Rename</button>';
+    ul.appendChild(li);
+  });
+  $("total").textContent = items(t);
+  var h = $("hist"), last = entries[entries.length-1];
+  h.innerHTML = last
+    ? '<span><span class="t">Today: </span><b>'+esc(last.text)+'</b></span><button class="k-btn" type="button" id="hundo" aria-label="Undo: '+esc(last.text)+'">Undo</button>'
+    : '<span class="t">No renames yet today. The latest one will show here with Undo.</span>';
+  var b = $("hundo"); if (b) b.onclick = undo;
+}
+
+function openSheet(i){
+  editing = i;
+  $("sheet-h").textContent = "Rename " + cats[i][0];
+  $("newname").value = cats[i][0];
+  $("newname").removeAttribute("aria-invalid");
+  $("err").hidden = true;
+  $("scrim").hidden = false;
+  $("newname").focus(); $("newname").select();
+}
+function closeSheet(){
+  $("scrim").hidden = true;
+  var b = document.querySelector('[data-i="'+editing+'"]'); if (b) b.focus();
+  editing = null;
+}
+function reject(msg){
+  $("err").textContent = msg; $("err").hidden = false;
+  $("newname").setAttribute("aria-invalid","true"); $("newname").focus();
+}
+function apply(e){
+  e.preventDefault();
+  var raw = $("newname").value, name = raw.trim().replace(/\s+/g," ");
+  if (!name) return reject("Type a name.");
+  var old = cats[editing][0], n = cats[editing][1];
+  if (key(name) === key(old)) return reject("That is already its name.");
+  var before = JSON.stringify(cats), text, toast, j = find(name, editing);
+  if (j >= 0){
+    var target = cats[j][0], total = cats[j][1] + n;
+    cats[j][1] = total; cats.splice(editing,1);
+    text = old+" merged into "+target+", "+items(n);
+    toast = "Merged "+old+" into "+target+" · "+items(total);
+  } else {
+    cats[editing][0] = name;
+    text = old+" renamed to "+name+", "+items(n);
+    toast = "Renamed "+old+" to "+name+" · "+items(n);
+  }
+  entries.push({text:text, before:before});
+  closeSheet(); render(); showToast(toast);
+}
+function undo(){
+  var h = entries.pop(); if (!h) return;
+  cats = JSON.parse(h.before);
+  hideToast(); render();
+}
+function showToast(msg){
+  hideToast();
+  var d = document.createElement("div");
+  d.className = "toast"; d.id = "toast"; d.setAttribute("role","status");
+  d.innerHTML = '<span>'+esc(msg)+'</span><button class="k-btn" type="button" id="tundo">Undo</button>';
+  $("toastbox").appendChild(d);
+  $("tundo").onclick = undo;
+  toastTimer = setTimeout(hideToast, 10000);
+}
+function hideToast(){ clearTimeout(toastTimer); $("toastbox").innerHTML = ""; }
+
+$("cats").addEventListener("click", function(e){
+  var b = e.target.closest("button[data-i]"); if (b) openSheet(+b.dataset.i);
+});
+$("sheet").addEventListener("submit", apply);
+$("cancel").onclick = closeSheet;
+$("scrim").addEventListener("click", function(e){ if (e.target === $("scrim")) closeSheet(); });
+document.addEventListener("keydown", function(e){ if (e.key==="Escape" && !$("scrim").hidden) closeSheet(); });
+
+// Web edit form feedback (does not change the list above).
+$("edit").addEventListener("submit", function(e){
+  e.preventDefault();
+  var typed = $("ecat").value.trim().replace(/\s+/g," "), p = $("saved");
+  if (!typed){ p.textContent = ""; return; }
+  var j = find(typed, -1);
+  p.textContent = (j >= 0 && cats[j][0] !== typed) ? "Saved under “"+cats[j][0]+"”" : "";
+});
+render();
+</script>
+</body>
+</html>
