@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Kitchie: home, pull down to search</title>
-<meta name="description" content="A Home screen variation: pull the list down to search, and the search stays as a chip. Not the live product.">
+<meta name="description" content="A Home screen variation: pull the list down to search; while a search is on, an amber-gold banner above the list reads Results for the term and the count. Not the live product.">
 <meta name="robots" content="noindex">
 <link rel="stylesheet" href="../../theme.css">
 <style>
@@ -32,14 +32,6 @@ html,body{overscroll-behavior-y:contain}
 .searchbar .cancel{flex:0 0 auto;min-height:48px;padding:0 .4rem;border:0;background:transparent;color:var(--accent);font:inherit;font-weight:700;cursor:pointer;border-radius:.6rem}
 body.is-pulling{-webkit-user-select:none;user-select:none}
 @media (prefers-reduced-motion: reduce){.pullwrap.settle{transition:none}}
-/* The search chip lives in the ribbon row, only while a search is active. */
-.qchip{flex:0 1 auto;min-width:0;display:inline-flex;align-items:center;height:36px;border:1px solid var(--accent);border-radius:999px;background:var(--surface);color:var(--fg);font-size:.9rem;font-weight:600;overflow:hidden}
-.qchip button{position:relative;border:0;background:transparent;color:inherit;font:inherit;cursor:pointer;height:100%}
-.qchip button::after{content:"";position:absolute;inset:-4px 0}
-.qchip .body{min-width:0;padding:0 .2rem 0 .8rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.qchip .x{flex:0 0 auto;width:34px;display:inline-flex;align-items:center;justify-content:center;color:var(--muted)}
-.qchip .x svg{width:16px;height:16px}
-.qrow{display:flex;margin:0 .1rem .6rem}
 #search-mic[aria-pressed="true"]{color:#fff;background:#C0392B;border-color:#C0392B;animation:listen 1.2s ease-in-out infinite}
 @keyframes listen{50%{box-shadow:0 0 0 6px rgba(192,57,43,.25)}}
 @media (prefers-reduced-motion: reduce){#search-mic[aria-pressed="true"]{animation:none}}
@@ -197,6 +189,20 @@ table td:nth-child(2){white-space:nowrap}
 .tog[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--bg)}
 .tog[aria-pressed="true"] svg circle{fill:currentColor}.tog[aria-pressed="true"] svg path{stroke:var(--accent)}
 nav.tabs[data-view="category"] a[aria-current=page]{background:var(--sage)}
+/* Matched words inside the rows: the same words the Home matcher used, marked in the search colour. */
+mark{background:color-mix(in srgb,var(--find-gold) 38%,transparent);color:inherit;border-radius:.2em;padding:0 .06em;margin:0 -.06em}
+li .meta mark{color:var(--fg)}
+/* Results banner: set apart from the Location and Category chips. Tap the words to edit, the cross to clear. */
+.rbanner{display:flex;align-items:center;gap:.1rem;min-height:48px;margin:0 0 .6rem;padding:0 .2rem 0 .9rem;border:2px solid var(--find-gold-edge);border-radius:.9rem;background:var(--find-gold);color:var(--find-gold-ink);font-size:.95rem}
+.rbanner .rtext,.rcount .rtext{flex:1 1 auto;min-width:0;display:flex;align-items:center;min-height:44px;padding:0;border:0;background:transparent;color:inherit;font:inherit;text-align:left;cursor:pointer;border-radius:.6rem}
+.rtext .rlead,.rtext .rn{flex:none;white-space:pre}
+.rtext .rterm{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:700}
+.rx{flex:0 0 auto;width:44px;height:44px;display:grid;place-items:center;padding:0;border:0;border-radius:.7rem;background:transparent;color:inherit;cursor:pointer}
+.rx svg{width:20px;height:20px}
+.rx:hover{background:color-mix(in srgb,currentColor 12%,transparent)}
+.rbanner.solid{border-color:var(--find-gold-edge);background:var(--find-gold);color:var(--find-gold-ink)}
+.rbanner.solid :focus-visible{outline-color:var(--find-gold-ink)}
+.rbanner.solid .rx:hover{background:color-mix(in srgb,var(--find-gold-ink) 16%,transparent)}
 </style>
 </head>
 <body>
@@ -214,14 +220,12 @@ nav.tabs[data-view="category"] a[aria-current=page]{background:var(--sage)}
       <button type="button" class="seg" data-theme-pick="light" aria-pressed="false">Light</button>
       <button type="button" class="seg" data-theme-pick="dark" aria-pressed="false">Dark</button>
     </fieldset>
-    <p>Try: pull the list down from the top to search. Tap the chip to edit, &times; to clear. Also: swipe a row right (use one) or left (used up), tap the &minus; or tick on a row, the plus to add, the pin and tag toggles (Location or Category), the clock (Use by) and the ribbon (scroll it; press and hold a chip to reorder). Undo appears for 5 seconds after a change.</p>
+    <p>Try: pull the list down from the top and type milk, cheese or e.</p>
     <ul class="rules">
-      <li>Pull down from the top: the search field slides in at the top of the list. Let go past the line to open it, short of it to spring back.</li>
-      <li>Search is one more filter. It narrows the list live on top of Use by, the Location or Category you picked and the order, and never resets them.</li>
-      <li>Close the field with Cancel, the Search key, a tap outside, or by scrolling down. Closing keeps the search as a chip under the title.</li>
-      <li>Tap the chip to edit that search (field pre-filled). Tap its &times; to clear it. Neither touches Location or Category.</li>
-      <li>Pulling down again always starts a new, empty search and drops the old one. Cancel on an empty field leaves no chip.</li>
-      <li>When nothing matches it says so, with Clear search and Add as a new item. Costs: no icon and no search row until you pull; one chip only while a search is active.</li>
+      <li>Pull down from the top to search. Closing the field (Cancel, the Search key, a tap outside, scrolling) keeps the search on.</li>
+      <li>An amber-gold banner sits right above the list: Results for &ldquo;milk&rdquo; &middot; 3 items, with a &times;. Tap the words to edit the search; the field opens pre-filled.</li>
+      <li>The words that matched are marked inside each row, so you can see why it is there.</li>
+      <li>A search is temporary: the &times; or a new pull-down clears it; it never changes your Location or Category, and a refresh clears it too.</li>
     </ul>
     <p><button type="button" class="seg" id="reset">Reset sample items</button></p>
   </div>
@@ -480,10 +484,32 @@ nav.tabs[data-view="category"] a[aria-current=page]{background:var(--sage)}
   // Anything added in the last 24 hours gets one green up arrow, kept with the name's last word so it never wraps alone.
   var ADDED_LABEL = "Added in the last 24 hours";
   var ADDED_ARROW = '<svg class="added" width="17" height="17" viewBox="0 0 24 24" role="img" aria-label="' + ADDED_LABEL + '" focusable="false"><title>' + ADDED_LABEL + '</title><path d="M12 20V5M5.5 11.5L12 5l6.5 6.5"/></svg>';
+  // Highlight: the matched words (the Home matcher's tokens: folded, filler dropped) are marked inside a piece of text. Built from
+  // escaped pieces only, never from raw text, so a name like <b> shows as text.
+  function hl(text) {
+    text = String(text);
+    var ts = state.query.trim() ? tokens(state.query) : [];
+    if (!ts.length || !text) return esc(text);
+    var folded = "", map = [];   // folded character -> index of the original character it came from
+    for (var a = 0; a < text.length; a++) { var f = fold(text.charAt(a)); for (var k = 0; k < f.length; k++) { folded += f.charAt(k); map.push(a); } }
+    var marks = [];
+    ts.forEach(function (t) {
+      if (!t) return;
+      for (var at = folded.indexOf(t); at !== -1; at = folded.indexOf(t, at + t.length)) marks.push([map[at], map[at + t.length - 1] + 1]);
+    });
+    if (!marks.length) return esc(text);
+    marks.sort(function (x, y) { return x[0] - y[0]; });
+    var merged = [marks[0]];
+    marks.slice(1).forEach(function (m) { var last = merged[merged.length - 1]; if (m[0] <= last[1]) last[1] = Math.max(last[1], m[1]); else merged.push(m); });
+    var out = "", pos = 0;
+    merged.forEach(function (m) { out += esc(text.slice(pos, m[0])) + "<mark>" + esc(text.slice(m[0], m[1])) + "</mark>"; pos = m[1]; });
+    return out + esc(text.slice(pos));
+  }
+
   function nameWithMarker(name, marker) {
-    if (!marker) return esc(name);
+    if (!marker) return hl(name);
     var cut = name.search(/\s\S*$/);
-    return (cut < 0 ? "" : esc(name.slice(0, cut)) + " ") + '<span class="nw">' + esc(name.slice(cut < 0 ? 0 : cut + 1)) + marker + "</span>";
+    return (cut < 0 ? "" : hl(name.slice(0, cut)) + " ") + '<span class="nw">' + hl(name.slice(cut < 0 ? 0 : cut + 1)) + marker + "</span>";
   }
 
   function rowHtml(i, flat) {
@@ -491,7 +517,7 @@ nav.tabs[data-view="category"] a[aria-current=page]{background:var(--sage)}
     var cue = i.recent && now - i.recent.at < CUE_MS ? ADDED_ARROW : "";
     var n = i.useBy ? daysLeft(i.useBy) : null;
     var due = n !== null ? '<span class="due" data-due="' + esc(i.useBy) + '" data-tone="' + dueTone(n) + '" title="Use by ' + esc(i.useBy) + '">' + dueLabel(n) + "</span>" : "";
-    var body = '<div class="main"><div class="name">' + (i.emoji ? '<span class="emo" aria-hidden="true">' + esc(i.emoji) + "</span> " : "") + nameWithMarker(i.name, cue) + '</div><div class="meta"' + (flat ? ' data-area="' + esc(i.area || "Other") + '"' : "") + ">" + esc(metaLine(i)) + "</div></div>" + due;
+    var body = '<div class="main"><div class="name">' + (i.emoji ? '<span class="emo" aria-hidden="true">' + esc(i.emoji) + "</span> " : "") + nameWithMarker(i.name, cue) + '</div><div class="meta"' + (flat ? ' data-area="' + esc(i.area || "Other") + '"' : "") + ">" + hl(metaLine(i)) + "</div></div>" + due;
     var inner = ed
       ? '<a class="rowlink" href="#" data-na="The edit page" draggable="false">' + body + '<span class="chev">' + ICONS.chevron + '</span></a><form class="usef" onsubmit="return false"><button type="button" class="usebtn" data-use="' + esc(i.id) + '" aria-label="Use one of ' + esc(i.name) + '" title="Use one">' + ICONS.minus + '</button></form><a class="iconbtn" href="#" data-used-up="' + esc(i.id) + '" aria-label="Mark ' + esc(i.name) + ' as used up" title="Used up">' + ICONS.check + "</a>"
       : '<div class="rowlink">' + body + "</div>";
@@ -513,7 +539,7 @@ nav.tabs[data-view="category"] a[aria-current=page]{background:var(--sage)}
   }
 
   // The ribbon gets out of the way: 5 seconds with no touch, or 3 seconds after a value is picked while Use by is on. Tap the title to bring it back.
-  var idle = 0, held = false;
+  var idle = 0, held = false, counts = { n: 0, of: 0 };
   function touchRibbon() {
     clearTimeout(idle);
     if (viewNow() && state.ribbon) idle = setTimeout(function () { held = false; state.ribbon = false; drawTabs(); }, held ? 3000 : 5000);
@@ -523,10 +549,10 @@ nav.tabs[data-view="category"] a[aria-current=page]{background:var(--sage)}
   var TAG = icon('<path d="M3 12V4h8l10 10-8 8L3 12z"/><circle cx="7.5" cy="8.5" r="1.3"/>');
   var CLOCK = icon('<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.2 2"/>');
 
-  /* @@INDICATOR-ROW@@ */
-  function indicatorRow() {
+  function indicatorRow() { return ""; }
+  function indicatorBelow() {
     var q = state.query.trim();
-    return q && !fieldOpen ? '<div class="qrow"><span class="qchip"><button type="button" class="body" data-chip-edit aria-label="Edit search: ' + esc(q) + '" title="Edit search">\u201c' + esc(q) + '\u201d</button><button type="button" class="x" data-chip-clear aria-label="Clear search" title="Clear search">' + ICONS.close + "</button></span></div>" : "";
+    return q && !fieldOpen ? '<div class="rbanner solid" role="status">' + '<button type="button" class="rtext" data-chip-edit aria-label="Edit search: ' + esc(q) + '" title="Edit search"><span class="rlead">Results for </span><span class="rterm">\u201c' + esc(q) + '\u201d</span><span class="rn">' + ' \u00b7 ' + counts.n + (counts.n === 1 ? ' item' : ' items') + '</span></button><button type="button" class="rx" data-chip-clear aria-label="Clear search" title="Clear search">' + ICONS.close + "</button>" + "</div>" : "";
   }
 
   function drawTabs() {
@@ -551,7 +577,7 @@ nav.tabs[data-view="category"] a[aria-current=page]{background:var(--sage)}
       nav = '<nav class="tabs" data-view="' + by + '" aria-label="' + (by === "category" ? "Category" : "Area") + '"><a href="#" data-tab="" data-fixed ' + (sel === "" ? 'aria-current="page"' : "") + ' draggable="false">All</a>' +
         ribbonValues(state.items, by).slice(0, 12).map(function (x) { return '<a href="#" data-tab="' + esc(x) + '" ' + (x === sel ? 'aria-current="page"' : "") + ' draggable="false">' + esc(x) + "</a>"; }).join("") + "</nav>";
     }
-    $("#tabs").innerHTML = empty ? "" : head + indicatorRow() + nav;
+    $("#tabs").innerHTML = empty ? "" : head + indicatorRow() + nav + indicatorBelow();
     if (nav) initRibbon(by);
     touchRibbon();
   }
@@ -566,6 +592,7 @@ nav.tabs[data-view="category"] a[aria-current=page]{background:var(--sage)}
     var areaSel = by === "location" ? state.area : "", catSel = by === "category" ? state.cat : "";
     var inView = all.filter(function (i) { return (!areaSel || (i.area || "Other") === areaSel) && (!catSel || i.category === catSel); });
     var visible = inView.filter(function (i) { return !q || rank(i, q) >= 0; });
+    counts = { n: visible.length, of: inView.length };
 
     // header icons
     var profile = ed ? '<details class="profile"><summary class="icon" aria-label="Profile" title="Profile">' + ICONS.person + '</summary><div class="menu"><a href="#" data-na="Household">Household</a><a href="#" data-na="History">History</a><a href="#" data-na="Settings">Settings</a><button type="button" data-na="Create invite link">Create invite link</button><a href="#" data-na="Download CSV">Download CSV</a><a href="#" data-na="JSON">JSON</a><button type="button" data-na="Sign out">Sign out</button></div></details>' : "";
@@ -796,7 +823,7 @@ nav.tabs[data-view="category"] a[aria-current=page]{background:var(--sage)}
   document.addEventListener("touchmove", function (e) { if (e.touches.length === 1) pullMove(e.touches[0].clientX, e.touches[0].clientY, e); }, { passive: false });
   document.addEventListener("touchend", function () { lastTouch = Date.now(); pullEnd(); });
   document.addEventListener("touchcancel", function () { pullEnd(); });
-  document.addEventListener("mousedown", function (e) { if (e.button !== 0 || Date.now() - lastTouch < 600 || e.target.closest("button,label,select,.iseg,.qchip")) return; pullStart(e.clientX, e.clientY, e.target); });
+  document.addEventListener("mousedown", function (e) { if (e.button !== 0 || Date.now() - lastTouch < 600 || e.target.closest("button,label,select,.iseg,.rbanner,.rcount")) return; pullStart(e.clientX, e.clientY, e.target); });
   document.addEventListener("mousemove", function (e) { if (Date.now() - lastTouch >= 600) pullMove(e.clientX, e.clientY, e); });
   document.addEventListener("mouseup", function () { if (Date.now() - lastTouch >= 600) pullEnd(); });
 
