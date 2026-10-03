@@ -50,6 +50,8 @@
 .munit .k-field{padding:.4rem .8rem}
 .mfoot{display:flex;align-items:center;justify-content:space-between;gap:.5rem;margin:.5rem 0 0}
 .mfoot .k-note{margin:0}
+.fadein{animation:fadein .35s ease}
+@keyframes fadein{from{opacity:0}to{opacity:1}}
 .fracs{display:flex;gap:.3rem;margin:.5rem 0 0}
 .fracs .k-pill{min-height:40px;flex:1 1 0;padding:0}
 /* Sheets and full screen */
@@ -65,6 +67,7 @@
 .bigval{margin:.2rem 0 .8rem;text-align:center;font-family:var(--head);font-size:2.6rem;font-weight:700}
 .chips{display:flex;flex-wrap:wrap;gap:.35rem;margin:.6rem 0 0}
 .chips .k-pill{min-height:40px}
+.k-list li[aria-selected="true"]{font-weight:700}
 .table{width:100%;border-collapse:collapse;font-size:.9rem}
 .table th,.table td{padding:.3rem .4rem;border-bottom:1px solid var(--border);text-align:left}
 .table th{color:var(--muted);font-weight:600}
@@ -119,7 +122,7 @@ details.rules summary{cursor:pointer;font-weight:600;color:var(--fg)}
             <ul class="k-list is-right" id="mUnitList" role="listbox" aria-label="Unit" hidden></ul></div>
         </div>
         <div class="fracs" id="mFracs" role="group" aria-label="Fractions" hidden></div>
-        <p class="k-note" id="mHelp">Type a unit (kg, g, L, pack&hellip;) after the number for steppers and fractions.</p>
+        <p class="k-note" id="mHelp">Type a unit (kg, g, L, pack&hellip;) after the number. It moves into the unit picker once you pause.</p>
         <div class="mfoot"><span></span><button type="button" class="k-btn is-primary" id="mDone">Done</button></div>
       </div>
     </li>
@@ -159,7 +162,7 @@ details.rules summary{cursor:pointer;font-weight:600;color:var(--fg)}
     </div>
     <div class="fracs" id="msFracs" role="group" aria-label="Fractions" hidden></div>
     <div class="chips" id="msUnits" role="group" aria-label="Unit" hidden></div>
-    <p class="k-note" id="msHelp">Type a unit (kg, g, L, pack&hellip;) after the number for steppers and fractions.</p>
+    <p class="k-note" id="msHelp">Type a unit (kg, g, L, pack&hellip;) after the number. It moves into the unit picker once you pause.</p>
     <div class="k-actions"><button type="button" class="k-btn" id="msCancel">Cancel</button><button type="button" class="k-btn is-primary" id="msSave">Done</button></div>
   </div>
 </div>
@@ -272,11 +275,11 @@ details.rules summary{cursor:pointer;font-weight:600;color:var(--fg)}
   var UNIT_RE = null;
   function parseQty(text) {
     var t = String(text).trim().replace(",", ".");
-    var m = /^(\d{1,4}(?:\.\d{1,2})?|\d{0,4}\s*[¼½¾]|\d{1,4}\s+\d\/\d)\s*([A-Za-z]+)$/.exec(t);
+    var m = /^(\d{1,4}(?:\.\d{0,2})?|\d{0,4}\s*[¼½¾]|\d{1,4}\s+\d\/\d)[\s\-]*([A-Za-z]+)$/.exec(t);
     if (!m) return null;
     var unit = UNITS.filter(function (u) { return u.toLowerCase() === m[2].toLowerCase(); })[0];
     if (!unit) return null;
-    var n = parseNum(m[1]);
+    var n = parseNum(m[1].replace(/\.$/, ""));
     return n === null ? null : { n: n, unit: unit };
   }
   function parseNum(s) {
@@ -291,57 +294,98 @@ details.rules summary{cursor:pointer;font-weight:600;color:var(--fg)}
   function stepFor(unit) { return unit === "g" || unit === "mL" ? 50 : FAMILY[unit] ? 0.25 : 1; }
   function fractionsOk(unit) { return unit === "kg" || unit === "L" || !FAMILY[unit]; }
 
-  /* One editor "view" object per option; both share the same text and the same rules. */
+  /* One editor per option; both share the same rules.
+     Gentle switch: letters after a number are left alone while typing. Only when they settle into a listed unit (a pause of
+     about 0.7 s, or leaving the box) does the unit leave the text and move into the unit picker, selected. "No unit" in the
+     picker puts it back as plain text. */
+  var SETTLE = 700;
   function qEditor(ui) {
-    var inp = $(ui.num), minus = $(ui.minus), plus = $(ui.plus), fr = $(ui.fracs), help = $(ui.help);
-    function sync() {
-      var q = parseQty(inp.value), on = q !== null;
-      minus.hidden = plus.hidden = !on; fr.hidden = !(on && fractionsOk(q.unit)); help.hidden = on;
-      ui.syncUnit(q);
+    var inp = $(ui.num), minus = $(ui.minus), plus = $(ui.plus), fr = $(ui.fracs), help = $(ui.help), timer = null;
+    var st = { mode: "plain", unit: "" };
+    function paint(animate) {
+      var on = st.mode === "unit";
+      minus.hidden = plus.hidden = !on; fr.hidden = !(on && fractionsOk(st.unit)); help.hidden = on;
+      inp.inputMode = on ? "decimal" : "text";
+      ui.paintUnit(on, st.unit, animate);
     }
-    function write(n, unit) { inp.value = plain(n) + " " + unit; sync(); }
-    minus.addEventListener("click", function () { var q = parseQty(inp.value); if (q) write(Math.max(0, round2(q.n - stepFor(q.unit))), q.unit); });
-    plus.addEventListener("click", function () { var q = parseQty(inp.value); if (q) write(round2(q.n + stepFor(q.unit)), q.unit); });
+    function settle() {
+      clearTimeout(timer);
+      var q = parseQty(inp.value);
+      if (st.mode === "plain" && q) { st.mode = "unit"; st.unit = q.unit; inp.value = plain(q.n); paint(true); }
+      else if (st.mode === "unit") {
+        if (q) { st.unit = q.unit; inp.value = plain(q.n); paint(false); }            // they typed a unit again: follow it
+        else if (parseNum(inp.value) === null && inp.value.trim() !== "") { st.mode = "plain"; inp.value = (inp.value + " " + st.unit).trim(); paint(false); }
+      }
+    }
+    function num() { var n = parseNum(inp.value); return n === null ? 0 : n; }
+    function setNum(n) { inp.value = plain(Math.max(0, n)); }
+    minus.addEventListener("click", function () { setNum(round2(num() - stepFor(st.unit))); });
+    plus.addEventListener("click", function () { setNum(round2(num() + stepFor(st.unit))); });
     [["¼", 0.25], ["½", 0.5], ["¾", 0.75]].forEach(function (f) {
       var b = document.createElement("button"); b.type = "button"; b.className = "k-pill"; b.textContent = f[0]; b.setAttribute("aria-label", "Make it " + f[0]);
-      b.addEventListener("click", function () { var q = parseQty(inp.value); if (q) write(Math.floor(q.n) + f[1], q.unit); }); fr.appendChild(b);
+      b.addEventListener("click", function () { setNum(Math.floor(num()) + f[1]); }); fr.appendChild(b);
     });
-    inp.addEventListener("input", sync);
-    return { sync: sync, setUnit: function (u) { var q = parseQty(inp.value); if (q) write(q.n, u); }, input: inp };
+    inp.addEventListener("input", function () { clearTimeout(timer); timer = setTimeout(settle, SETTLE); });
+    inp.addEventListener("blur", settle);
+    return {
+      settle: settle,
+      load: function (text) {
+        clearTimeout(timer); var q = parseQty(text);
+        if (q) { st.mode = "unit"; st.unit = q.unit; inp.value = plain(q.n); } else { st.mode = "plain"; st.unit = ""; inp.value = text; }
+        paint(false);
+      },
+      setUnit: function (u) {                       // u === "" is "No unit"
+        if (u === "") { st.mode = "plain"; st.unit = ""; } else { st.mode = "unit"; st.unit = u; if (parseNum(inp.value) === null) inp.value = inp.value.trim() === "" ? "1" : inp.value; }
+        paint(false);
+      },
+      text: function () { settle(); return st.mode === "unit" ? plain(num()) + " " + st.unit : inp.value; }
+    };
   }
   var ul = $("mUnitList");
   var A = qEditor({ num: "mNum", minus: "mMinus", plus: "mPlus", fracs: "mFracs", help: "mHelp",
-    syncUnit: function (q) { $("mUnitWrap").hidden = !q; if (q) $("mUnitText").textContent = q.unit; closeList(); } });
+    paintUnit: function (on, unit, animate) {
+      var w = $("mUnitWrap"); w.hidden = !on; $("mUnitText").textContent = unit; closeList();
+      Array.prototype.forEach.call(ul.children, function (li) { li.setAttribute("aria-selected", String(li.dataset.u === unit)); });
+      if (on && animate) { w.classList.remove("fadein"); void w.offsetWidth; w.classList.add("fadein"); }
+    } });
   var B = qEditor({ num: "msNum", minus: "msMinus", plus: "msPlus", fracs: "msFracs", help: "msHelp",
-    syncUnit: function (q) { $("msUnits").hidden = !q; Array.prototype.forEach.call($("msUnits").children, function (b) { b.setAttribute("aria-pressed", String(!!q && b.textContent === q.unit)); }); } });
-  UNITS.forEach(function (u) {
-    var li = document.createElement("li"); li.setAttribute("role", "option"); li.textContent = u;
+    paintUnit: function (on, unit, animate) {
+      var c = $("msUnits"); c.hidden = !on;
+      Array.prototype.forEach.call(c.children, function (b) { b.setAttribute("aria-pressed", String(b.dataset.u === unit)); });
+      if (on && animate) { c.classList.remove("fadein"); void c.offsetWidth; c.classList.add("fadein"); }
+    } });
+  ["", ].concat(UNITS).forEach(function (u) {
+    var label = u === "" ? "No unit" : u;
+    var li = document.createElement("li"); li.setAttribute("role", "option"); li.dataset.u = u; li.textContent = label;
     li.addEventListener("mousedown", function (e) { e.preventDefault(); });
     li.addEventListener("click", function () { A.setUnit(u); });
     ul.appendChild(li);
-    var b = document.createElement("button"); b.type = "button"; b.className = "k-pill"; b.textContent = u;
+    var b = document.createElement("button"); b.type = "button"; b.className = "k-pill"; b.dataset.u = u; b.textContent = label;
     b.addEventListener("click", function () { B.setUnit(u); }); $("msUnits").appendChild(b);
   });
   function closeList() { ul.hidden = true; $("mUnit").setAttribute("aria-expanded", "false"); }
-  $("mUnit").addEventListener("click", function () { var open = ul.hidden; ul.hidden = !open; $("mUnit").setAttribute("aria-expanded", String(open)); });
+  $("mUnit").addEventListener("click", function () {
+    var open = ul.hidden; ul.hidden = !open; $("mUnit").setAttribute("aria-expanded", String(open));
+    if (open) { var sel = ul.querySelector('[aria-selected="true"]'); if (sel) sel.scrollIntoView({ block: "nearest" }); }   // opens on the unit they typed
+  });
 
   function commitQ(text) {
     text = text.replace(/\s+/g, " ").trim();
     if (text !== item.text) { item.text = text; saved("Quantity"); }
     renderM();
   }
-  function closeA(save) { if (save) commitQ($("mNum").value); $("mEditInline").hidden = true; $("mRead").hidden = false; $("mRead").focus(); closeList(); }
+  function closeA(save) { if (save) commitQ(A.text()); $("mEditInline").hidden = true; $("mRead").hidden = false; $("mRead").focus(); closeList(); }
   $("mNum").addEventListener("keydown", function (e) { if (e.key === "Enter") { e.preventDefault(); closeA(true); } else if (e.key === "Escape") closeA(false); });
   $("mDone").addEventListener("click", function () { closeA(true); });
   // Tapping anywhere else finishes the edit and returns to the read view
   document.addEventListener("pointerdown", function (e) { if (!$("mEditInline").hidden && !$("mEditInline").contains(e.target)) closeA(true); });
-  $("msSave").addEventListener("click", function () { commitQ($("msNum").value); $("mSheet").hidden = true; $("mRead").focus(); });
+  $("msSave").addEventListener("click", function () { commitQ(B.text()); $("mSheet").hidden = true; $("mRead").focus(); });
   $("msCancel").addEventListener("click", function () { $("mSheet").hidden = true; $("mRead").focus(); });
   $("msNum").addEventListener("keydown", function (e) { if (e.key === "Enter") { e.preventDefault(); $("msSave").click(); } });
 
   $("mRead").addEventListener("click", function () {
-    if (mUi === "inline") { $("mRead").hidden = true; $("mEditInline").hidden = false; $("mNum").value = item.text; A.sync(); $("mNum").focus(); $("mNum").select(); return; }
-    $("msNum").value = item.text; B.sync(); $("mSheet").hidden = false; $("msNum").focus(); $("msNum").select();
+    if (mUi === "inline") { $("mRead").hidden = true; $("mEditInline").hidden = false; A.load(item.text); $("mNum").focus(); $("mNum").select(); return; }
+    B.load(item.text); $("mSheet").hidden = false; $("msNum").focus(); $("msNum").select();
   });
 
   /* ---------- Page ---------- */
