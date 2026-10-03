@@ -69,7 +69,12 @@
     return x.localeCompare(y);
   }
   function byName(a, b) { return a.name.localeCompare(b.name); }
-  function byUseBy(a, b) { return a.days === b.days ? byName(a, b) : a.days - b.days; }
+  function byUseBy(a, b) {
+    if (a.days === b.days) return byName(a, b);
+    if (a.days === null) return 1;
+    if (b.days === null) return -1;
+    return a.days - b.days;
+  }
   function metaLine(i, flat) { return [flat ? i.area : "", i.qty, i.place, i.category].filter(Boolean).join(" · "); }
   function rowHtml(i, flat) {
     var due = i.days === null ? "" : '<span class="k-due" data-tone="' + dueTone(i.days) + '" title="Use by ' + dateStr(i.days) + '">' + esc(dueLabel(i.days)) + "</span>";
@@ -83,8 +88,8 @@
   var PIN_NAME = { loc: "Location", cat: "Category" };
 
   /* ---------- loading: cache first, then the server, then the rest page by page (simulated) ---------- */
-  var expiring = ITEMS.filter(function (i) { return i.days !== null && i.days <= MONTH; });
-  var rest = ITEMS.filter(function (i) { return !(i.days !== null && i.days <= MONTH); });
+  var expiring = ITEMS.filter(function (i) { return i.days === null || i.days <= MONTH; });
+  var rest = ITEMS.filter(function (i) { return !(i.days === null || i.days <= MONTH); });
   var NEW_ITEM = { name: "cream", emoji: "🥛", qty: "300 ml", area: "Fridge", place: "Door", category: "Dairy and eggs", days: 2, age: 1 };
   var PAGE = 3;
   var data = [];            // what the page can show right now
@@ -160,11 +165,11 @@
         vals.map(function (v) { return '<a href="#" data-tab="' + esc(v) + '" ' + (v === sel ? 'aria-current="page"' : "") + ' draggable="false">' + esc(v) + "</a>"; }).join("") + "</nav>";
     }
 
-    // list: Use by on shows only what expires within a month, soonest first; off shows everything, A to Z
-    var base = state.clock ? data.filter(function (i) { return i.days !== null && i.days <= MONTH; }) : data;
+    // list: Use by on shows what expires within a month, soonest first, then undated items; off shows everything, A to Z
+    var base = state.clock ? data.filter(function (i) { return i.days === null || i.days <= MONTH; }) : data;
     var shown = base.filter(function (i) { return !sel || (isCat ? i.category : i.area) === sel; });
     var html;
-    if (!shown.length) html = '<p class="empty">' + (state.clock ? "Nothing here expires within a month." : "Nothing here.") + "</p>";
+    if (!shown.length) html = '<p class="empty">' + (state.clock ? "Nothing here expires within a month, and nothing is undated." : "Nothing here.") + "</p>";
     else if (flat) {
       html = '<ul class="rows" data-flat>' + shown.slice().sort(state.clock ? byUseBy : byName).map(function (i) { return rowHtml(i, true); }).join("") + "</ul>";
     } else {
@@ -176,7 +181,7 @@
       }).join("");
     }
     if (!state.clock && phase !== "done") html += '<p class="loading" role="status">Loading the rest…</p>';
-    if (state.clock) html += '<p class="note">Use by shows what expires within a month. Turn it off to see everything.</p>';
+    if (state.clock) html += '<p class="note">Use by shows what expires within a month, then items with no date. Turn it off to see everything.</p>';
     $("#list").innerHTML = html;
     touch();
   }
