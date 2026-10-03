@@ -112,14 +112,15 @@ details.rules summary{cursor:pointer;font-weight:600;color:var(--fg)}
       <button type="button" class="rowbtn" id="mRead" aria-label="Quantity. Tap to change"><span class="k">Quantity</span><span class="v" id="mVal"></span></button>
       <div class="medit" id="mEditInline" hidden>
         <div class="mrow">
-          <button type="button" class="k-step" id="mMinus" aria-label="Less">&minus;</button>
-          <input class="k-field mnum" id="mNum" type="text" inputmode="decimal" autocomplete="off" maxlength="9" aria-label="Quantity" enterkeyhint="done">
-          <button type="button" class="k-step" id="mPlus" aria-label="More">+</button>
-          <div class="munit"><button type="button" class="k-field" id="mUnit" aria-haspopup="listbox" aria-expanded="false" aria-label="Unit"><span id="mUnitText"></span><span class="k-caret" aria-hidden="true">&#9662;</span></button>
+          <button type="button" class="k-step" id="mMinus" aria-label="Less" hidden>&minus;</button>
+          <input class="k-field mnum" id="mNum" type="text" inputmode="text" autocomplete="off" autocapitalize="none" maxlength="80" aria-label="Quantity" enterkeyhint="done" placeholder="e.g. 1.5 kg or half a bag">
+          <button type="button" class="k-step" id="mPlus" aria-label="More" hidden>+</button>
+          <div class="munit" id="mUnitWrap" hidden><button type="button" class="k-field" id="mUnit" aria-haspopup="listbox" aria-expanded="false" aria-label="Unit"><span id="mUnitText"></span><span class="k-caret" aria-hidden="true">&#9662;</span></button>
             <ul class="k-list is-right" id="mUnitList" role="listbox" aria-label="Unit" hidden></ul></div>
         </div>
-        <div class="fracs" id="mFracs" role="group" aria-label="Fractions"></div>
-        <div class="mfoot"><p class="k-note" id="mPreview"></p><button type="button" class="k-btn is-primary" id="mDone">Done</button></div>
+        <div class="fracs" id="mFracs" role="group" aria-label="Fractions" hidden></div>
+        <p class="k-note" id="mHelp">Type a unit (kg, g, L, pack&hellip;) after the number for steppers and fractions.</p>
+        <div class="mfoot"><span></span><button type="button" class="k-btn is-primary" id="mDone">Done</button></div>
       </div>
     </li>
     <li><div class="rowbtn stub"><span class="k">Location</span><span class="v" id="sLoc"></span></div></li>
@@ -151,14 +152,14 @@ details.rules summary{cursor:pointer;font-weight:600;color:var(--fg)}
 <div class="sheetscrim" id="mSheet" hidden>
   <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="msT">
     <h2 id="msT">Quantity</h2>
-    <div class="bigval" id="msBig"></div>
     <div class="mrow">
-      <button type="button" class="k-step" id="msMinus" aria-label="Less">&minus;</button>
-      <input class="k-field mnum" id="msNum" type="text" inputmode="decimal" autocomplete="off" maxlength="9" aria-label="Quantity" style="flex:1 1 auto">
-      <button type="button" class="k-step" id="msPlus" aria-label="More">+</button>
+      <button type="button" class="k-step" id="msMinus" aria-label="Less" hidden>&minus;</button>
+      <input class="k-field mnum" id="msNum" type="text" inputmode="text" autocomplete="off" autocapitalize="none" maxlength="80" aria-label="Quantity" style="flex:1 1 auto" placeholder="e.g. 1.5 kg or half a bag">
+      <button type="button" class="k-step" id="msPlus" aria-label="More" hidden>+</button>
     </div>
-    <div class="fracs" id="msFracs" role="group" aria-label="Fractions"></div>
-    <div class="chips" id="msUnits" role="group" aria-label="Unit"></div>
+    <div class="fracs" id="msFracs" role="group" aria-label="Fractions" hidden></div>
+    <div class="chips" id="msUnits" role="group" aria-label="Unit" hidden></div>
+    <p class="k-note" id="msHelp">Type a unit (kg, g, L, pack&hellip;) after the number for steppers and fractions.</p>
     <div class="k-actions"><button type="button" class="k-btn" id="msCancel">Cancel</button><button type="button" class="k-btn is-primary" id="msSave">Done</button></div>
   </div>
 </div>
@@ -172,9 +173,10 @@ details.rules summary{cursor:pointer;font-weight:600;color:var(--fg)}
   var UNITS = ["g", "kg", "mL", "L", "pack", "tin", "jar", "bottle", "bag", "box", "carton", "bunch", "roll"];
   var FAMILY = { g: "mass", kg: "mass", mL: "volume", L: "volume" };   // everything else is a count
   var SAMPLES = [
-    { id: "short", label: "Short name", emoji: "🍊", name: "Orange", n: 3, unit: "pack", loc: "Pantry", spot: "Bottom shelf", cat: "Fruits", use: "in 6 days", min: "2" },
-    { id: "med", label: "Two lines", emoji: "🍗", name: "Chicken thigh fillets, free range", n: 1.5, unit: "kg", loc: "Freezer", spot: "Top drawer", cat: "Meat", use: "in 3 weeks", min: "" },
-    { id: "long", label: "Very long", emoji: "🥫", name: "Organic crushed Italian tomatoes with basil and a little garlic, family size, low salt", n: 400, unit: "g", loc: "Pantry", spot: "Left shelf", cat: "Cans", use: "", min: "2" }
+    { id: "short", label: "Short name", emoji: "🍊", name: "Orange", text: "3 pack", loc: "Pantry", spot: "Bottom shelf", cat: "Fruits", use: "in 6 days", min: "2" },
+    { id: "med", label: "Two lines", emoji: "🍗", name: "Chicken thigh fillets, free range", text: "1.5 kg", loc: "Freezer", spot: "Top drawer", cat: "Meat", use: "in 3 weeks", min: "" },
+    { id: "plain", label: "Plain amount", emoji: "🍚", name: "Brown rice", text: "half a bag", loc: "Pantry", spot: "Top shelf", cat: "Dry goods", use: "", min: "" },
+    { id: "long", label: "Very long", emoji: "🥫", name: "Organic crushed Italian tomatoes with basil and a little garlic, family size, low salt", text: "400 g", loc: "Pantry", spot: "Left shelf", cat: "Cans", use: "", min: "2" }
   ];
   var cur = SAMPLES[0], item = null, nameUi = "sheet", mUi = "inline";
 
@@ -264,82 +266,82 @@ details.rules summary{cursor:pointer;font-weight:600;color:var(--fg)}
     $(p[0]).addEventListener("keydown", function (e) { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); $(p[1]).click(); } });
   });
 
-  /* ---------- Quantity: read view ---------- */
-  function renderM() { $("mVal").textContent = show(item.n, item.unit); }
+  /* ---------- Quantity: one free-text field with two behaviours ----------
+     Plain text (no recognised unit after a number): just the box. Unit-driven (number then a listed unit): steppers, fractions
+     and the unit picker appear, and the read view uses the human-friendly wording. Same field, it switches as you type. */
+  var UNIT_RE = null;
+  function parseQty(text) {
+    var t = String(text).trim().replace(",", ".");
+    var m = /^(\d{1,4}(?:\.\d{1,2})?|\d{0,4}\s*[¼½¾]|\d{1,4}\s+\d\/\d)\s*([A-Za-z]+)$/.exec(t);
+    if (!m) return null;
+    var unit = UNITS.filter(function (u) { return u.toLowerCase() === m[2].toLowerCase(); })[0];
+    if (!unit) return null;
+    var n = parseNum(m[1]);
+    return n === null ? null : { n: n, unit: unit };
+  }
   function parseNum(s) {
-    s = String(s).trim().replace(",", ".");
+    s = String(s).trim();
     var m = /^(\d{1,4})?\s*([¼½¾])$/.exec(s);
     if (m) return (m[1] ? +m[1] : 0) + { "¼": 0.25, "½": 0.5, "¾": 0.75 }[m[2]];
     var f = /^(\d{1,4})\s+(\d)\/(\d)$/.exec(s);
     if (f && +f[3] > 0) return +f[1] + +f[2] / +f[3];
-    return /^\d{0,4}(\.\d{0,2})?$/.test(s) && s !== "" && s !== "." ? parseFloat(s) : null;
+    return /^\d{1,4}(\.\d{1,2})?$/.test(s) ? parseFloat(s) : null;
   }
+  function renderM() { var q = parseQty(item.text); $("mVal").textContent = q ? show(q.n, q.unit) : (item.text || "Not set"); }
   function stepFor(unit) { return unit === "g" || unit === "mL" ? 50 : FAMILY[unit] ? 0.25 : 1; }
+  function fractionsOk(unit) { return unit === "kg" || unit === "L" || !FAMILY[unit]; }
 
-  /* Draft values while editing (one object serves both editors) */
-  var d = { n: 0, unit: "" };
-  function dText() { return plain(d.n); }
-  function previewLine() { return "Reads as " + show(d.n, d.unit); }
-  function adjust(dir) { d.n = Math.max(0, round2(d.n + dir * stepFor(d.unit))); }
-  function chipsFor(box, onpick) {
-    box.textContent = "";
+  /* One editor "view" object per option; both share the same text and the same rules. */
+  function qEditor(ui) {
+    var inp = $(ui.num), minus = $(ui.minus), plus = $(ui.plus), fr = $(ui.fracs), help = $(ui.help);
+    function sync() {
+      var q = parseQty(inp.value), on = q !== null;
+      minus.hidden = plus.hidden = !on; fr.hidden = !(on && fractionsOk(q.unit)); help.hidden = on;
+      ui.syncUnit(q);
+    }
+    function write(n, unit) { inp.value = plain(n) + " " + unit; sync(); }
+    minus.addEventListener("click", function () { var q = parseQty(inp.value); if (q) write(Math.max(0, round2(q.n - stepFor(q.unit))), q.unit); });
+    plus.addEventListener("click", function () { var q = parseQty(inp.value); if (q) write(round2(q.n + stepFor(q.unit)), q.unit); });
     [["¼", 0.25], ["½", 0.5], ["¾", 0.75]].forEach(function (f) {
-      var b = document.createElement("button"); b.type = "button"; b.className = "k-pill"; b.textContent = f[0]; b.setAttribute("aria-label", "Add " + f[0]);
-      b.addEventListener("click", function () { d.n = round2(Math.floor(d.n) + f[1]); onpick(); }); box.appendChild(b);
+      var b = document.createElement("button"); b.type = "button"; b.className = "k-pill"; b.textContent = f[0]; b.setAttribute("aria-label", "Make it " + f[0]);
+      b.addEventListener("click", function () { var q = parseQty(inp.value); if (q) write(Math.floor(q.n) + f[1], q.unit); }); fr.appendChild(b);
     });
+    inp.addEventListener("input", sync);
+    return { sync: sync, setUnit: function (u) { var q = parseQty(inp.value); if (q) write(q.n, u); }, input: inp };
   }
-  function hideFracs(box) { box.hidden = !(FAMILY[d.unit] === "mass" && d.unit === "kg" || FAMILY[d.unit] === "volume" && d.unit === "L" || !FAMILY[d.unit]); }
-  function commitM() {
-    if (d.n !== item.n || d.unit !== item.unit) { item.n = d.n; item.unit = d.unit; saved("Quantity"); }
-    renderM();
-  }
-
-  /* Option A: in place */
-  function drawA() { $("mNum").value = dText(); $("mUnitText").textContent = d.unit; $("mPreview").textContent = previewLine(); hideFracs($("mFracs")); }
-  function openA() {
-    d.n = item.n; d.unit = item.unit; $("mRead").hidden = true; $("mEditInline").hidden = false; drawA(); $("mNum").focus(); $("mNum").select();
-  }
-  function closeA(save) { if (save) commitM(); $("mEditInline").hidden = true; $("mRead").hidden = false; $("mRead").focus(); closeList(); }
-  chipsFor($("mFracs"), drawA);
-  $("mMinus").addEventListener("click", function () { adjust(-1); drawA(); });
-  $("mPlus").addEventListener("click", function () { adjust(1); drawA(); });
-  $("mNum").addEventListener("input", function () { var v = parseNum($("mNum").value); if (v !== null) { d.n = v; $("mPreview").textContent = previewLine(); } });
-  $("mNum").addEventListener("keydown", function (e) { if (e.key === "Enter") { e.preventDefault(); closeA(true); } else if (e.key === "Escape") closeA(false); });
-  $("mDone").addEventListener("click", function () { closeA(true); });
   var ul = $("mUnitList");
+  var A = qEditor({ num: "mNum", minus: "mMinus", plus: "mPlus", fracs: "mFracs", help: "mHelp",
+    syncUnit: function (q) { $("mUnitWrap").hidden = !q; if (q) $("mUnitText").textContent = q.unit; closeList(); } });
+  var B = qEditor({ num: "msNum", minus: "msMinus", plus: "msPlus", fracs: "msFracs", help: "msHelp",
+    syncUnit: function (q) { $("msUnits").hidden = !q; Array.prototype.forEach.call($("msUnits").children, function (b) { b.setAttribute("aria-pressed", String(!!q && b.textContent === q.unit)); }); } });
   UNITS.forEach(function (u) {
     var li = document.createElement("li"); li.setAttribute("role", "option"); li.textContent = u;
     li.addEventListener("mousedown", function (e) { e.preventDefault(); });
-    li.addEventListener("click", function () { d.unit = u; closeList(); drawA(); });
+    li.addEventListener("click", function () { A.setUnit(u); });
     ul.appendChild(li);
+    var b = document.createElement("button"); b.type = "button"; b.className = "k-pill"; b.textContent = u;
+    b.addEventListener("click", function () { B.setUnit(u); }); $("msUnits").appendChild(b);
   });
   function closeList() { ul.hidden = true; $("mUnit").setAttribute("aria-expanded", "false"); }
   $("mUnit").addEventListener("click", function () { var open = ul.hidden; ul.hidden = !open; $("mUnit").setAttribute("aria-expanded", String(open)); });
-  // Tapping anywhere else finishes the edit and returns to the read view
-  document.addEventListener("pointerdown", function (e) {
-    if (!$("mEditInline").hidden && !$("mEditInline").contains(e.target)) closeA(true);
-  });
 
-  /* Option B: bottom sheet with the unit as chips */
-  function drawB() {
-    $("msNum").value = dText(); $("msBig").textContent = show(d.n, d.unit); hideFracs($("msFracs"));
-    Array.prototype.forEach.call($("msUnits").children, function (b) { b.setAttribute("aria-pressed", String(b.textContent === d.unit)); });
+  function commitQ(text) {
+    text = text.replace(/\s+/g, " ").trim();
+    if (text !== item.text) { item.text = text; saved("Quantity"); }
+    renderM();
   }
-  chipsFor($("msFracs"), drawB);
-  UNITS.forEach(function (u) {
-    var b = document.createElement("button"); b.type = "button"; b.className = "k-pill"; b.textContent = u;
-    b.addEventListener("click", function () { d.unit = u; drawB(); }); $("msUnits").appendChild(b);
-  });
-  $("msMinus").addEventListener("click", function () { adjust(-1); drawB(); });
-  $("msPlus").addEventListener("click", function () { adjust(1); drawB(); });
-  $("msNum").addEventListener("input", function () { var v = parseNum($("msNum").value); if (v !== null) { d.n = v; $("msBig").textContent = show(d.n, d.unit); } });
-  $("msSave").addEventListener("click", function () { commitM(); $("mSheet").hidden = true; $("mRead").focus(); });
+  function closeA(save) { if (save) commitQ($("mNum").value); $("mEditInline").hidden = true; $("mRead").hidden = false; $("mRead").focus(); closeList(); }
+  $("mNum").addEventListener("keydown", function (e) { if (e.key === "Enter") { e.preventDefault(); closeA(true); } else if (e.key === "Escape") closeA(false); });
+  $("mDone").addEventListener("click", function () { closeA(true); });
+  // Tapping anywhere else finishes the edit and returns to the read view
+  document.addEventListener("pointerdown", function (e) { if (!$("mEditInline").hidden && !$("mEditInline").contains(e.target)) closeA(true); });
+  $("msSave").addEventListener("click", function () { commitQ($("msNum").value); $("mSheet").hidden = true; $("mRead").focus(); });
   $("msCancel").addEventListener("click", function () { $("mSheet").hidden = true; $("mRead").focus(); });
   $("msNum").addEventListener("keydown", function (e) { if (e.key === "Enter") { e.preventDefault(); $("msSave").click(); } });
 
   $("mRead").addEventListener("click", function () {
-    if (mUi === "inline") return openA();
-    d.n = item.n; d.unit = item.unit; drawB(); $("mSheet").hidden = false; $("msNum").focus(); $("msNum").select();
+    if (mUi === "inline") { $("mRead").hidden = true; $("mEditInline").hidden = false; $("mNum").value = item.text; A.sync(); $("mNum").focus(); $("mNum").select(); return; }
+    $("msNum").value = item.text; B.sync(); $("mSheet").hidden = false; $("msNum").focus(); $("msNum").select();
   });
 
   /* ---------- Page ---------- */
