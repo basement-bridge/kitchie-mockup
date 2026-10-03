@@ -60,7 +60,6 @@
   /* ---------- state ----------
      pin: "" | "loc" | "cat" (never both). clock: Use by, on at every load. area / cat: the picked ribbon value ("" = All).
      ribbon: whether the ribbon is showing. It hides itself after 5 s with no touch, and at once when a value is picked while Use by is on. */
-  var MONTH = 30;
   var state = { pin: "", clock: true, area: "", cat: "", ribbon: false };
   var AREA_ORDER = ["Fridge", "Pantry", "Freezer"];
   function areaCmp(x, y) {
@@ -88,8 +87,9 @@
   var PIN_NAME = { loc: "Location", cat: "Category" };
 
   /* ---------- loading: cache first, then the server, then the rest page by page (simulated) ---------- */
-  var expiring = ITEMS.filter(function (i) { return i.days === null || i.days <= MONTH; });
-  var rest = ITEMS.filter(function (i) { return !(i.days === null || i.days <= MONTH); });
+  var byUse = ITEMS.slice().sort(byUseBy);
+  var expiring = byUse.slice(0, 8);   // the first page the cache holds: what Use by puts first
+  var rest = byUse.slice(8);
   var NEW_ITEM = { name: "cream", emoji: "🥛", qty: "300 ml", area: "Fridge", place: "Door", category: "Dairy and eggs", days: 2, age: 1 };
   var PAGE = 3;
   var data = [];            // what the page can show right now
@@ -104,11 +104,11 @@
     timers.forEach(clearTimeout); timers = [];
     t0 = performance.now(); $("#loadlog").innerHTML = "";
     data = []; phase = "cache"; state = { pin: "", clock: true, area: "", cat: "", ribbon: false }; hold = false;
-    // 1. instant: what was cached on this phone last time (the expiring items only)
-    data = expiring.slice(); render(); log("Cache: painted " + expiring.length + " expiring items, no waiting for the server");
-    // 2. the server answers: the expiring items are refreshed (a new one has arrived)
+    // 1. instant: what was cached on this phone last time (the first page only)
+    data = expiring.slice(); render(); log("Cache: painted the first " + expiring.length + " items, no waiting for the server");
+    // 2. the server answers: the first page is refreshed (a new one has arrived)
     timers.push(setTimeout(function () {
-      phase = "refreshing"; data = expiring.concat([NEW_ITEM]); render(); toast("Updated"); log("Server: expiring items refreshed (cream is new)");
+      phase = "refreshing"; data = expiring.concat([NEW_ITEM]); render(); toast("Updated"); log("Server: first page refreshed (cream is new)");
     }, 1200));
     // 3. then everything else, one page at a time, quietly
     var pages = Math.ceil(rest.length / PAGE);
@@ -142,7 +142,7 @@
     }).join("") + "</div>";
   }
   function clockButton() {
-    return '<button type="button" class="tog' + (state.clock ? " is-on" : "") + '" id="clock" aria-pressed="' + state.clock + '" aria-label="Use by, soonest first" title="Use by, expiring within a month: ' + (state.clock ? "on" : "off") + '">' + (state.clock ? IC.clockOn : IC.clock) + "</button>";
+    return '<button type="button" class="tog' + (state.clock ? " is-on" : "") + '" id="clock" aria-pressed="' + state.clock + '" aria-label="Use by, soonest first" title="Use by, soonest first: ' + (state.clock ? "on" : "off") + '">' + (state.clock ? IC.clockOn : IC.clock) + "</button>";
   }
 
   function render() {
@@ -165,11 +165,11 @@
         vals.map(function (v) { return '<a href="#" data-tab="' + esc(v) + '" ' + (v === sel ? 'aria-current="page"' : "") + ' draggable="false">' + esc(v) + "</a>"; }).join("") + "</nav>";
     }
 
-    // list: Use by on shows what expires within a month, soonest first, then undated items; off shows everything, A to Z
-    var base = state.clock ? data.filter(function (i) { return i.days === null || i.days <= MONTH; }) : data;
+    // list: Use by on sorts everything, soonest (or overdue) first, then undated items; off is A to Z. Nothing is hidden by date.
+    var base = data;
     var shown = base.filter(function (i) { return !sel || (isCat ? i.category : i.area) === sel; });
     var html;
-    if (!shown.length) html = '<p class="empty">' + (state.clock ? "Nothing here expires within a month, and nothing is undated." : "Nothing here.") + "</p>";
+    if (!shown.length) html = '<p class="empty">' + "Nothing here." + "</p>";
     else if (flat) {
       html = '<ul class="rows" data-flat>' + shown.slice().sort(state.clock ? byUseBy : byName).map(function (i) { return rowHtml(i, true); }).join("") + "</ul>";
     } else {
@@ -180,8 +180,8 @@
         return '<section class="group"><div class="grouphead"><h2>' + esc(k) + '</h2></div><ul class="rows">' + l.map(function (i) { return rowHtml(i, false); }).join("") + "</ul></section>";
       }).join("");
     }
-    if (!state.clock && phase !== "done") html += '<p class="loading" role="status">Loading the rest…</p>';
-    if (state.clock) html += '<p class="note">Use by shows what expires within a month, then items with no date. Turn it off to see everything.</p>';
+    if (phase !== "done") html += '<p class="loading" role="status">Loading the rest…</p>';
+    if (state.clock) html += '<p class="note">Use by puts what expires first at the top, then items with no date. Turn it off for A to Z.</p>';
     $("#list").innerHTML = html;
     touch();
   }
