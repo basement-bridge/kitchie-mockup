@@ -57,6 +57,12 @@ body.is-pulling{-webkit-user-select:none;user-select:none}
 .refreshveil.blend #veil-text{font-size:.82rem;font-weight:600;color:#DDE3DF;text-align:center;letter-spacing:.02em}
 @keyframes vhop{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-9px)}}
 .v-wide .jar{transform-box:fill-box;transform-origin:50% 100%}
+.v-wide .eyes{animation:vhop 1.3s ease-in-out infinite;transform-box:fill-box;transform-origin:50% 100%}
+.v-wide .pupil{animation:vlook 2.6s ease-in-out infinite}
+@keyframes vlook{0%,35%{transform:translateX(0)}45%,70%{transform:translateX(-1.4px)}80%,100%{transform:translateX(0)}}
+.v-wide .jar.tip{animation:vtip 2.2s ease-in-out infinite;transform-origin:50% 100%}
+@keyframes vtip{0%,55%{transform:rotate(0)}65%{transform:rotate(-24deg)}75%{transform:rotate(7deg)}85%{transform:rotate(-3deg)}95%,100%{transform:rotate(0)}}
+@media (prefers-reduced-motion: reduce){.v-wide .eyes,.v-wide .pupil,.v-wide .jar.tip{animation:none!important}}
 .v-wide .plank{fill:#9AA39E}
 .v-wide .jar{fill:var(--accent);stroke:none;animation:vhop 1.3s ease-in-out infinite}
 #list.refreshing li{animation:vrow 1.3s ease-in-out infinite}
@@ -849,11 +855,13 @@ li .meta mark{color:var(--fg)}
   // Visual only in the mockup. Refresh follows the SAME rules as opening the page: the view returns to how the app opens (Use by on, Location and Category off,
   // ribbon hidden) and a temporary search is cleared. LATER: whatever the app learns about the person (their usual view, defaults) applies here exactly as on a page load.
   // An opaque cover blocks the whole screen until the data is in.
+  // Funny one-liners, one picked at random per refresh. Plain, friendly, never about the person.
+  var CAPTIONS = ["Tidying the shelves…", "Alphabetising the pickles…", "Asking the milk how it feels…", "Judging the leftovers…", "Hiding the good biscuits…", "Counting the eggs. Twice.", "Teaching the jars to stand up straight…", "Shaking hands with the cheese…"];
   var LOADERS = {
-    shelves: { blend: true, text: "Tidying the shelves…", svg: '<svg class="v-wide" viewBox="0 0 240 124" aria-hidden="true"><rect class="plank" x="2" y="52" width="236" height="9" rx="4.5"/><rect class="plank" x="2" y="112" width="236" height="9" rx="4.5"/><rect class="jar" x="18" y="19" width="24" height="34" rx="4" style="animation-delay:0.0s"/><rect class="jar" x="58" y="9" width="20" height="44" rx="4" style="animation-delay:0.1s"/><rect class="jar" x="96" y="25" width="26" height="28" rx="4" style="animation-delay:0.2s"/><rect class="jar" x="140" y="13" width="20" height="40" rx="4" style="animation-delay:0.3s"/><rect class="jar" x="186" y="21" width="24" height="32" rx="4" style="animation-delay:0.4s"/><rect class="jar" x="16" y="73" width="22" height="40" rx="4" style="animation-delay:0.5s"/><rect class="jar" x="56" y="83" width="26" height="30" rx="4" style="animation-delay:0.6s"/><rect class="jar" x="100" y="67" width="20" height="46" rx="4" style="animation-delay:0.7s"/><rect class="jar" x="142" y="81" width="26" height="32" rx="4" style="animation-delay:0.8s"/><rect class="jar" x="184" y="71" width="22" height="42" rx="4" style="animation-delay:0.9s"/></svg>' }
+    shelves: { blend: true, text: "Tidying the shelves…", svg: '<svg class="v-wide" viewBox="0 0 240 124" aria-hidden="true"><rect class="plank" x="2" y="52" width="236" height="9" rx="4.5"/><rect class="plank" x="2" y="112" width="236" height="9" rx="4.5"/><rect class="jar" x="18" y="19" width="24" height="34" rx="4" style="animation-delay:0.0s"/><rect class="jar" x="58" y="9" width="20" height="44" rx="4" style="animation-delay:0.1s"/><rect class="jar" x="96" y="25" width="26" height="28" rx="4" style="animation-delay:0.2s"/><rect class="jar" x="140" y="13" width="20" height="40" rx="4" style="animation-delay:0.3s"/><g class="eyes" style="animation-delay:0.3s"><circle cx="146" cy="24" r="3.4" fill="#fff"/><circle cx="154" cy="24" r="3.4" fill="#fff"/><circle class="pupil" cx="147" cy="24.5" r="1.6" fill="#111"/><circle class="pupil" cx="155" cy="24.5" r="1.6" fill="#111"/></g><rect class="jar" x="186" y="21" width="24" height="32" rx="4" style="animation-delay:0.4s"/><rect class="jar" x="16" y="73" width="22" height="40" rx="4" style="animation-delay:0.5s"/><rect class="jar" x="56" y="83" width="26" height="30" rx="4" style="animation-delay:0.6s"/><rect class="jar tip" x="100" y="67" width="20" height="46" rx="4"/><rect class="jar" x="142" y="81" width="26" height="32" rx="4" style="animation-delay:0.8s"/><rect class="jar" x="184" y="71" width="22" height="42" rx="4" style="animation-delay:0.9s"/></svg>' }
   };
   var loader = "shelves", palette = "jewel";
-  function showLoader(k) { loader = k; var v = $("#refreshveil"); v.classList.toggle("blend", !!LOADERS[k].blend); v.style.paddingTop = LOADERS[k].blend ? Math.max(0, $("#list").getBoundingClientRect().top + 16) + "px" : ""; $("#veil-glyph").innerHTML = LOADERS[k].svg; $("#veil-text").textContent = LOADERS[k].text; }
+  function showLoader(k) { loader = k; var v = $("#refreshveil"); v.classList.toggle("blend", !!LOADERS[k].blend); v.style.paddingTop = LOADERS[k].blend ? Math.max(0, $("#list").getBoundingClientRect().top + 16) + "px" : ""; $("#veil-glyph").innerHTML = LOADERS[k].svg; $("#veil-text").textContent = CAPTIONS[Math.floor(Math.random() * CAPTIONS.length)]; }
   // Jar colours for the refresh picture. null = the app accent. The picker below the Try line is for choosing; it goes once one is picked.
   var PALETTES = {
     jewel: ["#1F9DB5", "#F0602F", "#F7B21A", "#8A63E0", "#2FBF7F"]
