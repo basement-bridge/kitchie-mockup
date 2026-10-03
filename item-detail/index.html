@@ -54,6 +54,11 @@
 .munit .k-field{padding:.4rem .8rem}
 .mfoot{display:flex;align-items:center;justify-content:space-between;gap:.5rem;margin:.5rem 0 0}
 .mfoot .k-note{margin:0}
+.addunit{position:relative;flex:0 0 auto}
+.addunit[hidden]{display:none}
+.addbtn{min-height:40px;padding:0 .2rem;border:0;border-radius:.6rem;background:none;color:var(--muted);font:inherit;font-size:.9rem;cursor:pointer;text-decoration:underline;text-underline-offset:3px;transition:color .25s,background .25s,border-color .25s}
+.addbtn.is-nudged{padding:0 .8rem;border:1px solid var(--accent);background:var(--surface);color:var(--accent);font-weight:600;text-decoration:none}
+.sheet .addunit{margin:.6rem 0 0}
 .unitbox{position:relative}
 .unitbox .k-field{padding-right:2.6rem}
 .unitx{position:absolute;right:.35rem;top:50%;transform:translateY(-50%);width:36px;height:36px}
@@ -123,13 +128,16 @@ details.rules summary{cursor:pointer;font-weight:600;color:var(--fg)}
           <button type="button" class="k-step" id="mMinus" aria-label="Less" hidden>&minus;</button>
           <input class="k-field mnum" id="mNum" type="text" inputmode="text" autocomplete="off" autocapitalize="none" maxlength="80" aria-label="Quantity" enterkeyhint="done" placeholder="Amount">
           <button type="button" class="k-step" id="mPlus" aria-label="More" hidden>+</button>
-          <div class="munit">
+          <div class="munit" id="mUnitWrap" hidden>
             <div class="unitbox"><button type="button" class="k-field" id="mUnit" aria-haspopup="listbox" aria-expanded="false" aria-label="Unit"><span id="mUnitText"></span><span class="k-caret" aria-hidden="true">&#9662;</span></button>
-              <button type="button" class="k-icon unitx" id="mUnitX" aria-label="Clear the unit" title="Clear the unit (free text)" hidden>&times;</button></div>
+              <button type="button" class="k-icon unitx" id="mUnitX" aria-label="Clear the unit" title="Clear the unit (free text)">&times;</button></div>
             <ul class="k-list is-right" id="mUnitList" role="listbox" aria-label="Unit" hidden></ul></div>
         </div>
-        <p class="k-note" id="mHelp">Free text. Pick a unit to count in steps.</p>
-        <div class="mfoot"><span></span><button type="button" class="k-btn is-primary" id="mDone">Done</button></div>
+        <div class="mfoot">
+          <div class="addunit" id="mAddWrap"><button type="button" class="addbtn" id="mAdd" aria-haspopup="listbox" aria-expanded="false">+ Add unit</button>
+            <ul class="k-list" id="mAddList" role="listbox" aria-label="Unit" hidden></ul></div>
+          <button type="button" class="k-btn is-primary" id="mDone">Done</button>
+        </div>
       </div>
     </li>
     <li><div class="rowbtn stub"><span class="k">Location</span><span class="v" id="sLoc"></span></div></li>
@@ -166,8 +174,8 @@ details.rules summary{cursor:pointer;font-weight:600;color:var(--fg)}
       <input class="k-field mnum" id="msNum" type="text" inputmode="text" autocomplete="off" autocapitalize="none" maxlength="80" aria-label="Quantity" style="flex:1 1 auto" placeholder="Amount">
       <button type="button" class="k-step" id="msPlus" aria-label="More" hidden>+</button>
     </div>
-    <div class="chips" id="msUnits" role="group" aria-label="Unit"></div>
-    <p class="k-note" id="msHelp">Free text. Pick a unit to count in steps.</p>
+    <div class="chips" id="msUnits" role="group" aria-label="Unit" hidden></div>
+    <div class="addunit" id="msAddWrap"><button type="button" class="addbtn" id="msAdd">+ Add unit</button></div>
     <div class="k-actions"><button type="button" class="k-btn" id="msCancel">Cancel</button><button type="button" class="k-btn is-primary" id="msSave">Done</button></div>
   </div>
 </div>
@@ -320,7 +328,7 @@ details.rules summary{cursor:pointer;font-weight:600;color:var(--fg)}
   function renderM() { var q = readStored(item.text); $("mVal").textContent = q.mode === "structured" ? show(q.n, q.unit) : (item.text || "Not set"); }
 
   function qEditor(ui) {
-    var inp = $(ui.num), minus = $(ui.minus), plus = $(ui.plus), help = $(ui.help);
+    var inp = $(ui.num), minus = $(ui.minus), plus = $(ui.plus), add = $(ui.add), nudgeTimer = null;
     var st = { mode: "free", unit: "" };
     function grow() {
       var on = st.mode === "structured";
@@ -330,7 +338,7 @@ details.rules summary{cursor:pointer;font-weight:600;color:var(--fg)}
     }
     function paint() {
       var on = st.mode === "structured";
-      minus.hidden = plus.hidden = !on; help.hidden = on;
+      minus.hidden = plus.hidden = !on; $(ui.addWrap).hidden = on; add.classList.remove("is-nudged"); clearTimeout(nudgeTimer);
       inp.inputMode = on ? "decimal" : "text"; inp.placeholder = on ? "0" : "Amount";
       ui.paintUnit(on, st.unit); grow();
     }
@@ -341,6 +349,12 @@ details.rules summary{cursor:pointer;font-weight:600;color:var(--fg)}
       var v = inp.value.replace(",", ".").replace(/[^\d.]/g, ""), i = v.indexOf(".");
       if (i >= 0) v = v.slice(0, i + 1) + v.slice(i + 1).replace(/\./g, "").slice(0, 3);
       inp.value = v.slice(0, 8); grow();
+    });
+    // Free text: never reinterpreted. After a pause on a clean number only, "Add unit" is made a little more prominent; any other text keeps it subtle.
+    inp.addEventListener("input", function () {
+      if (st.mode !== "free") return;
+      clearTimeout(nudgeTimer); add.classList.remove("is-nudged");
+      if (/^\d{1,4}([.,]\d{1,3})?$/.test(inp.value.trim())) nudgeTimer = setTimeout(function () { add.classList.add("is-nudged"); }, 500);
     });
     function bump(dir, repeats) { inp.value = num3(Math.max(0, Math.round((num() + dir * stepFor(st.unit, repeats)) * 1000) / 1000)); grow(); }
     [[minus, -1], [plus, 1]].forEach(function (p) {
@@ -373,19 +387,19 @@ details.rules summary{cursor:pointer;font-weight:600;color:var(--fg)}
         }
         paint();
       },
-      clearUnit: function () { st.mode = "free"; st.unit = ""; paint(); },   // the number stays as typed text; steppers and formatting go
+      clearUnit: function () { st.mode = "free"; st.unit = ""; paint(); inp.focus(); inp.select(); },   // the quantity stays as the starting text, selected so typing replaces it
       text: function () { return st.mode === "structured" ? num3(num()) + " " + st.unit : inp.value.trim(); }
     };
   }
   var ul = $("mUnitList");
-  var A = qEditor({ num: "mNum", minus: "mMinus", plus: "mPlus", help: "mHelp",
+  var A = qEditor({ num: "mNum", minus: "mMinus", plus: "mPlus", add: "mAdd", addWrap: "mAddWrap",
     paintUnit: function (on, unit) {
-      $("mUnitText").textContent = on ? unit : "Unit"; $("mUnit").classList.toggle("is-empty", !on); $("mUnitX").hidden = !on; closeList();
+      $("mUnitWrap").hidden = !on; if (on) $("mUnitText").textContent = unit; closeList();
       Array.prototype.forEach.call(ul.children, function (li) { li.setAttribute("aria-selected", String(on && li.dataset.u === unit)); });
     } });
-  var B = qEditor({ num: "msNum", minus: "msMinus", plus: "msPlus", help: "msHelp",
+  var B = qEditor({ num: "msNum", minus: "msMinus", plus: "msPlus", add: "msAdd", addWrap: "msAddWrap",
     paintUnit: function (on, unit) {
-      var c = $("msUnits"); $("msClear").hidden = !on;
+      var c = $("msUnits"); c.hidden = !on; $("msClear").hidden = !on;
       Array.prototype.forEach.call(c.children, function (b) { if (b.dataset.u !== undefined) b.setAttribute("aria-pressed", String(on && b.dataset.u === unit)); });
     } });
   UNITS.forEach(function (u) {
@@ -393,13 +407,18 @@ details.rules summary{cursor:pointer;font-weight:600;color:var(--fg)}
     li.addEventListener("mousedown", function (e) { e.preventDefault(); });
     li.addEventListener("click", function () { A.setUnit(u); });
     ul.appendChild(li);
+    var li2 = li.cloneNode(true); li2.addEventListener("mousedown", function (e) { e.preventDefault(); });
+    li2.addEventListener("click", function () { $("mAddList").hidden = true; $("mAdd").setAttribute("aria-expanded", "false"); A.setUnit(u); $("mNum").focus(); });
+    $("mAddList").appendChild(li2);
     var b = document.createElement("button"); b.type = "button"; b.className = "k-pill"; b.dataset.u = u; b.textContent = u;
     b.addEventListener("click", function () { B.setUnit(u); }); $("msUnits").appendChild(b);
   });
   var clr = document.createElement("button"); clr.type = "button"; clr.className = "k-pill"; clr.id = "msClear"; clr.textContent = "\u00d7 Clear unit"; clr.hidden = true;
   clr.addEventListener("click", function () { B.clearUnit(); }); $("msUnits").insertBefore(clr, $("msUnits").firstChild);
   $("mUnitX").addEventListener("click", function () { A.clearUnit(); $("mNum").focus(); });
-  function closeList() { ul.hidden = true; $("mUnit").setAttribute("aria-expanded", "false"); }
+  $("mAdd").addEventListener("click", function () { var open = $("mAddList").hidden; $("mAddList").hidden = !open; $("mAdd").setAttribute("aria-expanded", String(open)); });
+  $("msAdd").addEventListener("click", function () { $("msUnits").hidden = false; $("msClear").hidden = true; $("msAddWrap").hidden = true; });
+  function closeList() { $("mAddList").hidden = true; $("mAdd").setAttribute("aria-expanded", "false"); ul.hidden = true; $("mUnit").setAttribute("aria-expanded", "false"); }
   $("mUnit").addEventListener("click", function () {
     var open = ul.hidden; ul.hidden = !open; $("mUnit").setAttribute("aria-expanded", String(open));
     if (open) { var sel = ul.querySelector('[aria-selected="true"]'); if (sel) sel.scrollIntoView({ block: "nearest" }); }
