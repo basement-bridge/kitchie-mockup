@@ -45,8 +45,12 @@
 /* Measurement edit, option A: inline */
 .medit{padding:.6rem 0 .8rem}
 .mrow{display:flex;align-items:center;gap:.4rem}
-.mnum{flex:0 0 4.6rem;min-width:0;padding:.4rem .3rem;text-align:center;font-size:1.15rem;font-weight:600}
-.munit{position:relative;flex:1 1 auto;min-width:0}
+.mrow .k-step{width:44px;height:44px;font-size:1.25rem;color:var(--muted);background:transparent}
+.mrow .k-step:disabled{opacity:.3}
+.mnum{flex:0 0 auto;min-width:6.6rem;max-width:10rem;padding:.3rem .5rem;text-align:center;font-size:1.55rem;font-weight:700;font-family:var(--head);overflow-x:auto;text-overflow:clip}
+.mnum.is-free{flex:1 1 auto;width:auto;max-width:none;min-width:0;text-align:left;font-family:inherit;font-size:1.05rem;font-weight:400}
+.mrow{gap:.3rem}
+.munit{position:relative;flex:0 1 auto;min-width:0}
 .munit .k-field{padding:.4rem .8rem}
 .mfoot{display:flex;align-items:center;justify-content:space-between;gap:.5rem;margin:.5rem 0 0}
 .mfoot .k-note{margin:0}
@@ -291,11 +295,11 @@ details.rules summary{cursor:pointer;font-weight:600;color:var(--fg)}
     bunch:  { family: "count",  kind: "discrete", step: 1 },
     roll:   { family: "count",  kind: "discrete", step: 1 }
   };
-  var HOLD = { delay: 400, interval: [160, 110, 70, 50], boost: [[10, 5], [30, 10]] };   // press-and-hold: repeat, speed up, bigger jumps
+  var HOLD = { delay: 450, interval: [180, 130, 90, 60], every: 8, boost: [[40, 5], [70, 10]] };   // gentle repeat; faster first (every 8 repeats); bigger jumps only after a long hold
   function stepFor(unit, repeats) {
     var r = UNIT_RULES[unit], m = 1;
     HOLD.boost.forEach(function (b) { if (repeats >= b[0]) m = b[1]; });
-    return r.step * (r.kind === "discrete" ? Math.max(1, m > 1 ? m : 1) : m);
+    return r.step * m;
   }
   function convert(n, from, to) {
     var a = UNIT_RULES[from], b = UNIT_RULES[to];
@@ -318,11 +322,17 @@ details.rules summary{cursor:pointer;font-weight:600;color:var(--fg)}
   function qEditor(ui) {
     var inp = $(ui.num), minus = $(ui.minus), plus = $(ui.plus), help = $(ui.help);
     var st = { mode: "free", unit: "" };
+    function grow() {
+      var on = st.mode === "structured";
+      inp.classList.toggle("is-free", !on);
+      inp.style.width = on ? "calc(" + Math.max(inp.value.length, 1) + "ch + 1.4rem)" : "";            // grows with the value; CSS min and max hold it, then it scrolls inside
+      minus.disabled = !(on && num() > 0);                                              // minus stops at zero and looks it
+    }
     function paint() {
       var on = st.mode === "structured";
       minus.hidden = plus.hidden = !on; help.hidden = on;
       inp.inputMode = on ? "decimal" : "text"; inp.placeholder = on ? "0" : "Amount";
-      ui.paintUnit(on, st.unit);
+      ui.paintUnit(on, st.unit); grow();
     }
     function num() { var n = parseNum(inp.value); return n === null ? 0 : n; }
     // Structured: the number box takes digits and one decimal point only.
@@ -330,19 +340,23 @@ details.rules summary{cursor:pointer;font-weight:600;color:var(--fg)}
       if (st.mode !== "structured") return;
       var v = inp.value.replace(",", ".").replace(/[^\d.]/g, ""), i = v.indexOf(".");
       if (i >= 0) v = v.slice(0, i + 1) + v.slice(i + 1).replace(/\./g, "").slice(0, 3);
-      inp.value = v.slice(0, 8);
+      inp.value = v.slice(0, 8); grow();
     });
-    function bump(dir, repeats) { inp.value = num3(Math.max(0, Math.round((num() + dir * stepFor(st.unit, repeats)) * 1000) / 1000)); }
+    function bump(dir, repeats) { inp.value = num3(Math.max(0, Math.round((num() + dir * stepFor(st.unit, repeats)) * 1000) / 1000)); grow(); }
     [[minus, -1], [plus, 1]].forEach(function (p) {
-      var btn = p[0], dir = p[1], timer = null, count = 0;
-      function stop() { clearTimeout(timer); timer = null; }
+      var btn = p[0], dir = p[1], timer = null, count = 0, held = false;
+      function stop() { held = false; clearTimeout(timer); timer = null; }              // releasing stops at once
       function loop() {
+        if (!held) return;
+        if (dir < 0 && num() <= 0) { stop(); return; }
         count++; bump(dir, count);
-        var idx = Math.min(HOLD.interval.length - 1, Math.floor(count / 8));
-        timer = setTimeout(loop, HOLD.interval[idx]);
+        if (dir < 0 && num() <= 0) { stop(); return; }
+        timer = setTimeout(loop, HOLD.interval[Math.min(HOLD.interval.length - 1, Math.floor(count / HOLD.every))]);
       }
-      btn.addEventListener("pointerdown", function (e) { e.preventDefault(); count = 0; bump(dir, 0); timer = setTimeout(loop, HOLD.delay); });
-      ["pointerup", "pointerleave", "pointercancel"].forEach(function (n) { btn.addEventListener(n, stop); });
+      btn.addEventListener("pointerdown", function (e) { e.preventDefault(); try { btn.setPointerCapture(e.pointerId); } catch (x) {} stop(); held = true; count = 0; bump(dir, 0); timer = setTimeout(loop, HOLD.delay); });   // a tap is one step
+      ["pointerup", "pointercancel", "blur"].forEach(function (n) { btn.addEventListener(n, stop); });
+      window.addEventListener("pointerup", stop); window.addEventListener("pointercancel", stop);
+      document.addEventListener("visibilitychange", stop);
       btn.addEventListener("click", function (e) { if (e.detail === 0) bump(dir, 0); });   // keyboard: one step per press
     });
     return {
@@ -353,7 +367,7 @@ details.rules summary{cursor:pointer;font-weight:600;color:var(--fg)}
         paint();
       },
       setUnit: function (u) {
-        if (st.mode === "structured") { inp.value = num3(convert(num(), st.unit, u)); st.unit = u; }
+        if (st.mode === "structured") { inp.value = num3(convert(num(), st.unit, u)); st.unit = u; }   // the number is never rounded for a discrete unit
         else {                                       // free text -> structured: keep a plain number, otherwise start at 1
           var n = parseNum(inp.value); inp.value = n === null ? "1" : num3(n); st.mode = "structured"; st.unit = u;
         }
