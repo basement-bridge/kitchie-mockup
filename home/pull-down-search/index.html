@@ -261,6 +261,13 @@ li .meta mark{color:var(--fg)}
       <li>The words that matched are marked inside each row, so you can see why it is there.</li>
       <li>A search is temporary: the &times; or a new pull-down clears it; it never changes your Location or Category, and a refresh clears it, because a refresh follows the same rules as opening the page.</li>
     </ul>
+    <fieldset aria-label="Jar colours"><legend>Jar colours (tap to preview)</legend>
+      <button type="button" class="seg" data-palette="accent" aria-pressed="true">App accent</button>
+      <button type="button" class="seg" data-palette="produce" aria-pressed="false">Produce</button>
+      <button type="button" class="seg" data-palette="pastel" aria-pressed="false">Pastel</button>
+      <button type="button" class="seg" data-palette="sage" aria-pressed="false">Sage greens</button>
+      <button type="button" class="seg" data-palette="jewel" aria-pressed="false">Jewel</button>
+    </fieldset>
     <p><button type="button" class="seg" id="try-refresh">Preview refresh</button></p>
     <p><button type="button" class="seg" id="reset">Reset sample items</button></p>
   </div>
@@ -852,12 +859,25 @@ li .meta mark{color:var(--fg)}
   var LOADERS = {
     shelves: { blend: true, text: "Tidying the shelves…", svg: '<svg class="v-wide" viewBox="0 0 240 124" aria-hidden="true"><rect class="plank" x="4" y="53" width="232" height="6" rx="3"/><rect class="plank" x="4" y="113" width="232" height="6" rx="3"/><rect class="jar" x="18" y="19" width="24" height="34" rx="4" style="animation-delay:0.0s"/><rect class="jar" x="58" y="9" width="20" height="44" rx="4" style="animation-delay:0.1s"/><rect class="jar" x="96" y="25" width="26" height="28" rx="4" style="animation-delay:0.2s"/><rect class="jar" x="140" y="13" width="20" height="40" rx="4" style="animation-delay:0.3s"/><rect class="jar" x="186" y="21" width="24" height="32" rx="4" style="animation-delay:0.4s"/><rect class="jar" x="16" y="73" width="22" height="40" rx="4" style="animation-delay:0.5s"/><rect class="jar" x="56" y="83" width="26" height="30" rx="4" style="animation-delay:0.6s"/><rect class="jar" x="100" y="67" width="20" height="46" rx="4" style="animation-delay:0.7s"/><rect class="jar" x="142" y="81" width="26" height="32" rx="4" style="animation-delay:0.8s"/><rect class="jar" x="184" y="71" width="22" height="42" rx="4" style="animation-delay:0.9s"/></svg>' }
   };
-  var loader = "shelves";
+  var loader = "shelves", palette = "accent";
   function showLoader(k) { loader = k; var v = $("#refreshveil"); v.classList.toggle("blend", !!LOADERS[k].blend); v.style.paddingTop = LOADERS[k].blend ? Math.max(0, $("#list").getBoundingClientRect().top + 16) + "px" : ""; $("#veil-glyph").innerHTML = LOADERS[k].svg; $("#veil-text").textContent = LOADERS[k].text; }
+  // Jar colours for the refresh picture. null = the app accent. The picker below the Try line is for choosing; it goes once one is picked.
+  var PALETTES = {
+    accent: null,
+    produce: ["#D8493E", "#4F9D4B", "#F2B84B", "#8E5BA8", "#E9822F"],
+    pastel: ["#F4A6A0", "#A8D5BA", "#F7D794", "#B8A9E8", "#9CCFE6"],
+    sage: ["#2F6B4F", "#4E8C6A", "#78AE8A", "#A3CDB0"],
+    jewel: ["#1F7A8C", "#E4572E", "#F3A712", "#6C4AB6", "#2E9E6B"]
+  };
+  function paint(name) {
+    var cols = PALETTES[name];
+    $$(".v-wide .jar").forEach(function (j, i) { if (cols) j.style.fill = cols[i % cols.length]; else j.style.removeProperty("fill"); });
+    $$("[data-palette]").forEach(function (b) { b.setAttribute("aria-pressed", String(b.getAttribute("data-palette") === name)); });
+  }
   function startRefresh() {
     refreshing = true; pull = null; document.body.classList.remove("is-pulling");
     wrap.classList.remove("armed", "deep", "settle", "pulling"); wrap.style.height = ""; barEl.style.removeProperty("--p"); pill(-1);
-    showLoader(loader); $("#refreshveil").classList.add("on");
+    showLoader(loader); paint(palette); $("#refreshveil").classList.add("on");
     $("#list").classList.add("refreshing"); $("#list").setAttribute("aria-busy", "true");
     $("#pullstatus").textContent = "Refreshing";
     setTimeout(function () {
@@ -868,6 +888,7 @@ li .meta mark{color:var(--fg)}
       $("#pullstatus").textContent = "List refreshed";
     }, REFRESH_MS);
   }
+  $$("[data-palette]").forEach(function (b) { b.addEventListener("click", function () { palette = b.getAttribute("data-palette"); if (refreshing) paint(palette); else startRefresh(); }); });
   $("#try-refresh").addEventListener("click", function () { if (!refreshing) startRefresh(); });
   function canPull(t) {
     if (refreshing || fieldOpen || !state.items.length || window.scrollY > 0 || !$("#quick-add").hidden) return false;
