@@ -52,12 +52,12 @@ body.is-pulling{-webkit-user-select:none;user-select:none}
 .vcard svg{width:84px;height:84px;overflow:visible;stroke:var(--fg);fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
 .refreshveil.blend{align-items:flex-start;justify-content:flex-start;background:color-mix(in srgb,var(--bg) 50%,transparent);-webkit-backdrop-filter:blur(1.5px);backdrop-filter:blur(1.5px)}
 .refreshveil.blend{justify-content:center}
-.refreshveil.blend #veil-one{background:color-mix(in srgb,var(--surface) 72%,transparent);border:1px solid var(--border);border-radius:1.2rem;box-shadow:0 6px 20px rgba(0,0,0,.08);padding:.9rem 1rem .8rem;width:min(78%,300px);margin:0 auto;transform:translateY(-20vh);gap:.4rem;align-items:stretch}
+.refreshveil.blend #veil-one{background:rgba(28,33,30,.9);border:1px solid #3B443F;border-radius:1.2rem;box-shadow:0 8px 26px rgba(0,0,0,.28);padding:.9rem 1rem .8rem;width:min(78%,300px);margin:0 auto;transform:translateY(-20vh);gap:.4rem;align-items:stretch}
 .refreshveil.blend #veil-one svg{width:100%;height:auto;max-height:150px}
-.refreshveil.blend #veil-text{font-size:.82rem;font-weight:600;color:var(--muted);text-align:center;letter-spacing:.02em}
+.refreshveil.blend #veil-text{font-size:.82rem;font-weight:600;color:#DDE3DF;text-align:center;letter-spacing:.02em}
 @keyframes vhop{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-9px)}}
 .v-wide .jar{transform-box:fill-box;transform-origin:50% 100%}
-.v-wide .plank{fill:var(--muted);opacity:.55}
+.v-wide .plank{fill:#9AA39E}
 .v-wide .jar{fill:var(--accent);stroke:none;animation:vhop 1.3s ease-in-out infinite}
 #list.refreshing li{animation:vrow 1.3s ease-in-out infinite}
 @keyframes vrow{0%,100%{opacity:.35}40%{opacity:.75}}
@@ -261,10 +261,6 @@ li .meta mark{color:var(--fg)}
       <li>The words that matched are marked inside each row, so you can see why it is there.</li>
       <li>A search is temporary: the &times; or a new pull-down clears it; it never changes your Location or Category, and a refresh clears it, because a refresh follows the same rules as opening the page.</li>
     </ul>
-    <fieldset aria-label="Jar colours"><legend>Jar colours (tap to preview)</legend>
-      <button type="button" class="seg" data-palette="produce" aria-pressed="true">Produce</button>
-      <button type="button" class="seg" data-palette="jewel" aria-pressed="false">Jewel</button>
-    </fieldset>
     <p><button type="button" class="seg" id="try-refresh">Preview refresh</button></p>
     <p><button type="button" class="seg" id="reset">Reset sample items</button></p>
   </div>
@@ -854,19 +850,17 @@ li .meta mark{color:var(--fg)}
   // ribbon hidden) and a temporary search is cleared. LATER: whatever the app learns about the person (their usual view, defaults) applies here exactly as on a page load.
   // An opaque cover blocks the whole screen until the data is in.
   var LOADERS = {
-    shelves: { blend: true, text: "Tidying the shelves…", svg: '<svg class="v-wide" viewBox="0 0 240 124" aria-hidden="true"><rect class="plank" x="4" y="53" width="232" height="6" rx="3"/><rect class="plank" x="4" y="113" width="232" height="6" rx="3"/><rect class="jar" x="18" y="19" width="24" height="34" rx="4" style="animation-delay:0.0s"/><rect class="jar" x="58" y="9" width="20" height="44" rx="4" style="animation-delay:0.1s"/><rect class="jar" x="96" y="25" width="26" height="28" rx="4" style="animation-delay:0.2s"/><rect class="jar" x="140" y="13" width="20" height="40" rx="4" style="animation-delay:0.3s"/><rect class="jar" x="186" y="21" width="24" height="32" rx="4" style="animation-delay:0.4s"/><rect class="jar" x="16" y="73" width="22" height="40" rx="4" style="animation-delay:0.5s"/><rect class="jar" x="56" y="83" width="26" height="30" rx="4" style="animation-delay:0.6s"/><rect class="jar" x="100" y="67" width="20" height="46" rx="4" style="animation-delay:0.7s"/><rect class="jar" x="142" y="81" width="26" height="32" rx="4" style="animation-delay:0.8s"/><rect class="jar" x="184" y="71" width="22" height="42" rx="4" style="animation-delay:0.9s"/></svg>' }
+    shelves: { blend: true, text: "Tidying the shelves…", svg: '<svg class="v-wide" viewBox="0 0 240 124" aria-hidden="true"><rect class="plank" x="2" y="52" width="236" height="9" rx="4.5"/><rect class="plank" x="2" y="112" width="236" height="9" rx="4.5"/><rect class="jar" x="18" y="19" width="24" height="34" rx="4" style="animation-delay:0.0s"/><rect class="jar" x="58" y="9" width="20" height="44" rx="4" style="animation-delay:0.1s"/><rect class="jar" x="96" y="25" width="26" height="28" rx="4" style="animation-delay:0.2s"/><rect class="jar" x="140" y="13" width="20" height="40" rx="4" style="animation-delay:0.3s"/><rect class="jar" x="186" y="21" width="24" height="32" rx="4" style="animation-delay:0.4s"/><rect class="jar" x="16" y="73" width="22" height="40" rx="4" style="animation-delay:0.5s"/><rect class="jar" x="56" y="83" width="26" height="30" rx="4" style="animation-delay:0.6s"/><rect class="jar" x="100" y="67" width="20" height="46" rx="4" style="animation-delay:0.7s"/><rect class="jar" x="142" y="81" width="26" height="32" rx="4" style="animation-delay:0.8s"/><rect class="jar" x="184" y="71" width="22" height="42" rx="4" style="animation-delay:0.9s"/></svg>' }
   };
-  var loader = "shelves", palette = "produce";
+  var loader = "shelves", palette = "jewel";
   function showLoader(k) { loader = k; var v = $("#refreshveil"); v.classList.toggle("blend", !!LOADERS[k].blend); v.style.paddingTop = LOADERS[k].blend ? Math.max(0, $("#list").getBoundingClientRect().top + 16) + "px" : ""; $("#veil-glyph").innerHTML = LOADERS[k].svg; $("#veil-text").textContent = LOADERS[k].text; }
   // Jar colours for the refresh picture. null = the app accent. The picker below the Try line is for choosing; it goes once one is picked.
   var PALETTES = {
-    produce: ["#D8493E", "#4F9D4B", "#F2B84B", "#8E5BA8", "#E9822F"],
-    jewel: ["#1F7A8C", "#E4572E", "#F3A712", "#6C4AB6", "#2E9E6B"]
+    jewel: ["#1F9DB5", "#F0602F", "#F7B21A", "#8A63E0", "#2FBF7F"]
   };
   function paint(name) {
     var cols = PALETTES[name];
     $$(".v-wide .jar").forEach(function (j, i) { if (cols) j.style.fill = cols[i % cols.length]; else j.style.removeProperty("fill"); });
-    $$("[data-palette]").forEach(function (b) { b.setAttribute("aria-pressed", String(b.getAttribute("data-palette") === name)); });
   }
   function startRefresh() {
     refreshing = true; pull = null; document.body.classList.remove("is-pulling");
@@ -882,7 +876,6 @@ li .meta mark{color:var(--fg)}
       $("#pullstatus").textContent = "List refreshed";
     }, REFRESH_MS);
   }
-  $$("[data-palette]").forEach(function (b) { b.addEventListener("click", function () { palette = b.getAttribute("data-palette"); if (refreshing) paint(palette); else startRefresh(); }); });
   $("#try-refresh").addEventListener("click", function () { if (!refreshing) startRefresh(); });
   function canPull(t) {
     if (refreshing || fieldOpen || !state.items.length || window.scrollY > 0 || !$("#quick-add").hidden) return false;
