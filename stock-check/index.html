@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kitchie: Stock check mockup</title>
+<meta name="description" content="Keeping stock honest without making people the state manager: a quiet check on the web, the same thing through the assistant, and the ways to stop it. Sample data, not the live product.">
+<meta name="robots" content="noindex">
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="../theme.css">
+<style>
+:root{--page-width:34rem}
+h1{font-size:2.3rem;line-height:1.05;font-weight:700;margin:.5rem 0 .4rem}
+h2{font-size:1.25rem;margin:0 0 .6rem}
+.back{display:inline-block;color:var(--accent);margin:.2rem 0 .4rem;min-height:32px}
+.rules{margin:1rem 0 1.4rem;padding:.9rem 1.1rem .9rem 2rem;border:1px dashed var(--border);border-radius:1.2rem;color:var(--muted);font-size:.92rem}
+.rules li{margin:.25rem 0}.rules strong{color:var(--fg)}
+.k-seg{margin:0 0 1rem}
+.k-card{margin:0 0 1.1rem}
+.sample{margin:.6rem 0 0;font-size:.85rem;color:var(--muted)}
+.item{display:flex;flex-wrap:wrap;align-items:baseline;gap:.2rem .7rem}
+.item h3{margin:0;font-size:1.15rem}
+.item .meta{color:var(--muted);font-size:.9rem}
+.qty{margin:.4rem 0 0;font-size:1.05rem}
+.qty .yours{color:var(--muted);font-size:.82rem;margin-left:.4rem}
+.est{display:inline-block;margin:.5rem 0 0;padding:.15rem .6rem;border:1px solid var(--border);border-radius:999px;font-size:.82rem;color:var(--muted)}
+.est b{color:var(--fg);font-weight:600}
+.ask{margin:.8rem 0 0;padding:.8rem .9rem;border:1px solid var(--accent);border-radius:1rem}
+.ask p{margin:0 0 .6rem}
+.ask .btns{display:flex;flex-wrap:wrap;gap:.5rem}
+.stop{margin-top:.5rem;background:none;border:0;color:var(--muted);font:inherit;font-size:.9rem;text-decoration:underline;cursor:pointer;min-height:44px;padding:0}
+.done{margin:.8rem 0 0;color:var(--sage);font-size:.95rem}
+.quiet{margin:.8rem 0 0;color:var(--muted);font-size:.9rem}
+.chat{display:flex;flex-direction:column;gap:.6rem;margin:.8rem 0}
+.b{max-width:88%;padding:.6rem .85rem;border-radius:1.1rem;border:1px solid var(--border);overflow-wrap:anywhere}
+.b.me{align-self:flex-end;background:var(--accent);border-color:var(--accent);color:var(--bg)}
+.b.ai{align-self:flex-start;background:var(--bg)}
+.mcp{margin:.4rem 0 0;padding:.7rem .8rem;border:1px solid var(--border);border-radius:.8rem;background:var(--bg);color:var(--fg);font:.82rem/1.5 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:pre-wrap;overflow-wrap:anywhere}
+.pills{display:flex;flex-wrap:wrap;gap:.5rem;margin:.2rem 0 .4rem}
+.set{list-style:none;margin:.4rem 0 0;padding:0}
+.set li{display:flex;align-items:center;gap:.6rem;min-height:56px;border-top:1px solid var(--border)}
+.set li:first-child{border-top:0}
+.set .name{flex:1 1 auto;min-width:0;overflow-wrap:anywhere}
+.set .what{display:block;color:var(--muted);font-size:.85rem}
+.sheetwrap{align-items:flex-end;padding:0}
+.sheet{width:100%;max-width:var(--page-width);padding:1.2rem 20px 1.4rem;border:1px solid var(--border);border-bottom:0;border-radius:1.4rem 1.4rem 0 0;background:var(--surface);box-shadow:var(--shadow)}
+.sheet h2{margin:0 0 .6rem}
+.sheet .k-btn{width:100%;justify-content:flex-start;margin:.3rem 0}
+.k-note code{font-size:.85em}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<div class="k-banner"><strong>Mockup</strong> &middot; sample data</div>
+<a class="back" href="../index.html">&larr; All mockups</a>
+<p class="k-note" style="margin:0">Draft concept (Kitchie #192, with #191)</p>
+<h1>Stock check</h1>
+
+<ul class="rules" aria-label="How this works">
+  <li><strong>Amounts drift once things are used.</strong> Nobody takes a fraction off the butter each time, so the app asks at quiet moments instead of pretending to know.</li>
+  <li><strong>Only where you already are.</strong> Never a push, never a timer.</li>
+  <li><strong>Your words stay as you typed them.</strong> An estimate is labelled and never shown as fact.</li>
+  <li><strong>The assistant can do the thinking.</strong> It knows eggs go off and a freezer slows that down, and stores the estimate so nobody has to keep state.</li>
+  <li><strong>Always a way out:</strong> stop for one item, one area or category, or everything. Stopping the questions keeps the estimate.</li>
+</ul>
+
+<div class="k-seg" role="tablist" aria-label="Where it shows up">
+  <button role="tab" id="t-web" aria-selected="true" aria-controls="p-web">On the web</button>
+  <button role="tab" id="t-chat" aria-selected="false" aria-controls="p-chat" tabindex="-1">In chat</button>
+  <button role="tab" id="t-set" aria-selected="false" aria-controls="p-set" tabindex="-1">Settings</button>
+</div>
+
+<div id="p-web" role="tabpanel" aria-labelledby="t-web">
+  <section class="k-card" aria-labelledby="h-butter">
+    <div class="item"><h3 id="h-butter">Butter</h3><span class="meta">Fridge &middot; updated 19 days ago</span></div>
+    <p class="qty">half a block <span class="yours">your words</span></p>
+    <div class="ask" id="ask-butter">
+      <p><strong>Still about right?</strong></p>
+      <div class="btns">
+        <button class="k-btn" data-a="right">About right</button>
+        <button class="k-btn" data-a="low">Running low</button>
+        <button class="k-btn" data-a="gone">All gone</button>
+      </div>
+      <button class="stop" data-stop="Butter">Stop asking&hellip;</button>
+    </div>
+    <p class="done" id="done-butter" role="status" hidden></p>
+    <p class="sample">Shown because this item is opened and has not been updated for a while. It is the kind of thing that goes quickly.</p>
+  </section>
+
+  <section class="k-card" aria-labelledby="h-egg">
+    <div class="item"><h3 id="h-egg">Egg whites</h3><span class="meta">Deep freeze &middot; updated 4 months ago</span></div>
+    <p class="qty">6 cups</p>
+    <span class="est">Estimated by assistant: <b>keeps a long time (frozen)</b> &middot; <button class="stop" style="min-height:0;margin:0" id="fix">Not right?</button></span>
+    <p class="quiet" id="eggnote">Not asked. It is kept somewhere that slows spoiling, so a long gap is expected.</p>
+    <p class="sample">Same item type as the butter, different place, so no question.</p>
+  </section>
+</div>
+
+<div id="p-chat" role="tabpanel" aria-labelledby="t-chat" hidden>
+  <section class="k-card" aria-labelledby="h-chat">
+    <h2 id="h-chat">Through the assistant</h2>
+    <p class="k-note" style="margin-top:0">Pick a moment. The assistant uses the item, category and place you named. There is no shelf-life table in Kitchie.</p>
+    <div class="pills" role="group" aria-label="Scenario">
+      <button class="k-pill" data-s="add" aria-pressed="true">Add frozen egg whites</button>
+      <button class="k-pill" data-s="unsure" aria-pressed="false">Unsure item</button>
+      <button class="k-pill" data-s="stop" aria-pressed="false">Stop asking</button>
+      <button class="k-pill" data-s="all" aria-pressed="false">Stop everything</button>
+    </div>
+    <div class="chat" id="chat" aria-live="polite"></div>
+    <div id="mcpbox"></div>
+    <p class="sample">The stored name and shape of the estimate are placeholders. Sample data only.</p>
+  </section>
+</div>
+
+<div id="p-set" role="tabpanel" aria-labelledby="t-set" hidden>
+  <section class="k-card" aria-labelledby="h-set">
+    <h2 id="h-set">Stock checks</h2>
+    <div class="pills" role="group" aria-label="Ask me to check amounts">
+      <button class="k-pill" id="glob" aria-pressed="true">Ask me to check amounts: On</button>
+    </div>
+    <p class="k-note" style="margin-top:.2rem">Off stops every question on the web and in chat. Estimates already stored stay, so the shopping list can still use them.</p>
+    <p class="k-label" style="margin-top:1.1rem">Not asking about</p>
+    <ul class="set" id="set" aria-label="Exceptions"></ul>
+    <p class="sample">The same list can be changed by telling the assistant. One operation behind both.</p>
+  </section>
+</div>
+
+<div class="k-scrim sheetwrap" id="scrim" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-h">
+    <h2 id="sheet-h">Stop asking</h2>
+    <button class="k-btn" data-w="item">Just about this item</button>
+    <button class="k-btn" data-w="area">About everything in this place</button>
+    <button class="k-btn" data-w="cat">About everything in this category</button>
+    <button class="k-btn" data-w="all">Stop all stock checks</button>
+    <p class="k-note">Your estimate is kept. Only the questions stop. You can turn it back on in Settings or by telling the assistant.</p>
+    <div class="k-actions"><button class="k-btn" id="sheet-x" type="button">Cancel</button></div>
+  </div>
+</div>
+
+<script>
+var $=function(i){return document.getElementById(i)};
+function esc(s){return s.replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+
+/* tabs */
+var tabs=["web","chat","set"];
+function show(n){tabs.forEach(function(t){
+  var on=t===n;$("t-"+t).setAttribute("aria-selected",on);$("t-"+t).tabIndex=on?0:-1;$("p-"+t).hidden=!on;});}
+tabs.forEach(function(t){$("t-"+t).onclick=function(){show(t)};});
+document.querySelector(".k-seg").addEventListener("keydown",function(e){
+  var i=tabs.indexOf(document.activeElement.id.slice(2));if(i<0)return;
+  if(e.key==="ArrowRight")i=(i+1)%3;else if(e.key==="ArrowLeft")i=(i+2)%3;else return;
+  show(tabs[i]);$("t-"+tabs[i]).focus();e.preventDefault();});
+
+/* web: butter check */
+var asked=true;
+document.querySelectorAll("#ask-butter [data-a]").forEach(function(b){b.onclick=function(){
+  var m={right:"Thanks. Left as half a block.",low:"Marked as running low. It will show on your shopping list.",gone:"Marked as used up."};
+  $("ask-butter").hidden=true;$("done-butter").hidden=false;$("done-butter").textContent=m[b.dataset.a];};});
+var sheetFrom="Butter";
+document.querySelector("#ask-butter .stop").onclick=function(){$("scrim").hidden=false;};
+$("sheet-x").onclick=function(){$("scrim").hidden=true;};
+$("fix").onclick=function(){$("eggnote").textContent="Cleared. Your own note would replace the estimate; it is never shown as fact.";};
+
+/* settings */
+var exc=[];
+function drawSet(){
+  var u=$("set");u.innerHTML="";
+  if(!exc.length){u.innerHTML='<li><span class="name"><span class="what">Nothing is switched off. Use Stop asking on a check, or tell the assistant.</span></span></li>';return;}
+  exc.forEach(function(e,i){var li=document.createElement("li");
+    li.innerHTML='<span class="name">'+esc(e.n)+'<span class="what">'+esc(e.w)+'</span></span><button class="k-btn" data-i="'+i+'">Ask again</button>';u.appendChild(li);});
+  u.querySelectorAll("button").forEach(function(b){b.onclick=function(){exc.splice(+b.dataset.i,1);drawSet();};});
+}
+document.querySelectorAll("#scrim [data-w]").forEach(function(b){b.onclick=function(){
+  var w=b.dataset.w;
+  if(w==="all"){$("glob").setAttribute("aria-pressed","false");$("glob").textContent="Ask me to check amounts: Off";}
+  else exc.push({n:{item:"Butter",area:"Fridge",cat:"Dairy and eggs"}[w],w:{item:"This item only",area:"Everything in this place",cat:"Everything in this category"}[w]});
+  drawSet();$("scrim").hidden=true;
+  $("ask-butter").hidden=true;$("done-butter").hidden=false;
+  $("done-butter").textContent="Okay, no more questions "+({item:"about Butter",area:"about the Fridge",cat:"about Dairy and eggs",all:"at all"}[w])+". Your estimate stays.";
+};});
+$("glob").onclick=function(){var on=$("glob").getAttribute("aria-pressed")!=="true";
+  $("glob").setAttribute("aria-pressed",on);$("glob").textContent="Ask me to check amounts: "+(on?"On":"Off");};
+drawSet();
+
+/* chat */
+var S={
+ add:{c:[["me","Put 6 cups of egg whites in the deep freeze."],["ai","Added: egg whites, 6 cups, Deep freeze. They keep a long time frozen, so I won't ask you about them."]],
+   m:'item: "Egg whites" · 6 cups · Deep freeze\nextended.freshness_outlook (placeholder name):\n  value: "keeps a long time (frozen)"\n  source: "model_inference"\n  confidence: 0.8'},
+ unsure:{c:[["me","Added a tub of cream."],["ai","Added: cream. Is it opened? That changes how soon it needs using."],["me","Opened yesterday."],["ai","Thanks. I'll keep it near the top of what to use first."]],
+   m:'extended.freshness_outlook:\n  value: "use within days (opened)"\n  source: "user" (you said it was opened)\nNothing is stored as inference where you told me.'},
+ stop:{c:[["me","Stop asking me about milk."],["ai","Done. I won't ask about Milk again. I'll keep my estimate so it still counts for the shopping list. Say the word and I'll ask again."]],
+   m:'stock_checks: item "Milk" -> off\nextended.freshness_outlook: kept'},
+ all:{c:[["me","No more questions about amounts, thanks."],["ai","Okay. No more stock check questions, here or on the web. Your amounts and estimates are untouched."]],
+   m:'stock_checks: all -> off\nSame operation as Settings > Stock checks.'}};
+function scene(k){
+  document.querySelectorAll("[data-s]").forEach(function(b){b.setAttribute("aria-pressed",b.dataset.s===k)});
+  $("chat").innerHTML=S[k].c.map(function(x){return '<div class="b '+x[0]+'">'+esc(x[1])+'</div>'}).join("");
+  $("mcpbox").innerHTML='<pre class="mcp" aria-label="What is stored">'+esc(S[k].m)+'</pre>';}
+document.querySelectorAll("[data-s]").forEach(function(b){b.onclick=function(){scene(b.dataset.s)}});
+scene("add");
+</script>
+</body>
+</html>
