@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kitchie: release to search, B Fridge door</title>
+<meta name="description" content="A tiny fridge door strains open, light leaking out, as if it cannot hold any more. Not the live product.">
+<meta name="robots" content="noindex">
+<!-- Colours, fonts and base rules come from the shared theme. Never copy them into this page. -->
+<link rel="stylesheet" href="../../../theme.css">
+<style>
+
+:root{--page-width:30rem}
+h1{font-size:2.4rem;line-height:1.05;font-weight:700;margin:.5rem 0 .6rem}
+.lead{margin:0 0 1.2rem;color:var(--muted)}
+.frame{margin:0 0 1.2rem}
+.cap{display:flex;gap:.5rem;align-items:center;margin:0 0 .45rem;font-size:.9rem;color:var(--muted)}
+.scene{position:relative;padding:34px 10px 14px;border:1px dashed var(--border);border-radius:1.2rem;overflow:hidden}
+.searchbar{display:flex;gap:.5rem;align-items:center}
+.field{flex:1 1 auto;min-width:0;min-height:52px;display:flex;align-items:center;padding:.4rem 1rem;border:1px solid var(--border);border-radius:1rem;background:var(--surface);color:var(--muted);white-space:nowrap;overflow:hidden}
+.field,.mic{opacity:.5}
+.mic{flex:0 0 48px;height:48px;display:grid;place-items:center;border:1px solid var(--border);border-radius:.9rem;color:var(--fg)}
+.cancel{flex:0 0 auto;padding:0 .4rem;color:var(--accent);font-weight:700}
+.pullpill{position:absolute;left:18px;top:37px;z-index:2}
+.pill{display:inline-flex;align-items:center;gap:.5rem;white-space:nowrap;min-height:46px;padding:0 1rem 0 .6rem;border:1px solid var(--border);border-radius:999px;background:var(--surface);color:var(--muted);font-size:.9rem;font-weight:600;box-shadow:0 2px 8px rgba(0,0,0,.12)}
+.scene[data-stage="1"] .pill{color:var(--fg);border-color:var(--accent);font-weight:700}
+.g{flex:none;overflow:visible;margin:-5px 0}
+.notes{margin:1.4rem 0 0;padding:1rem 1.2rem;border:1px solid var(--border);border-radius:1.2rem;background:var(--surface);font-size:.95rem}
+.notes h2{font-size:1rem;margin:0 0 .5rem}
+.notes ul{margin:0;padding-left:1.1rem;display:grid;gap:.35rem}
+.links{margin:1.2rem 0 0;display:flex;gap:.6rem;flex-wrap:wrap}
+html.embed .k-banner,html.embed h1,html.embed .lead,html.embed .notes,html.embed .links{display:none}
+html.embed body{padding:8px 6px 6px}
+html.embed .scene{padding-inline:6px}
+html.embed .pullpill{left:14px}
+html.embed .rig{left:6px}
+html.embed .frame{margin:0 0 .5rem}
+html.embed .cap{font-size:.75rem;margin:0 0 .25rem}
+html.embed .cap .k-chip{display:none}
+
+.fridge .cav{fill:var(--find-gold);stroke:var(--sage);stroke-width:1.8}
+.fridge .dr{fill:var(--surface);stroke:var(--sage);stroke-width:1.8}
+.fridge .dl{fill:none;stroke:var(--sage);stroke-width:1.8;stroke-linecap:round}
+.fridge .glow{fill:var(--find-gold);opacity:0}
+.fridge .door{transform-origin:7px 19px;transform-box:view-box}
+.scene[data-stage="0"] .fridge .cav{fill:var(--surface)}
+.scene[data-stage="1"] .fridge .door{transform:scaleX(.8)}
+.scene[data-stage="1"] .fridge .glow{opacity:.55}
+@media (prefers-reduced-motion:no-preference){
+  .scene[data-stage="1"] .fridge .door{animation:b-door 2.4s ease-in-out infinite}
+  .scene[data-stage="1"] .fridge .glow{animation:b-glow 2.4s ease-in-out infinite}
+  .scene[data-stage="1"] .fridge .fr{animation:b-shake 2.4s linear infinite}
+  .scene[data-stage="0"] .fridge .door{animation:b-idle 3s ease-in-out infinite;transform-origin:7px 19px}
+}
+@keyframes b-door{
+  0%,10%{transform:scaleX(1)}
+  26%{transform:scaleX(.78)}
+  34%{transform:scaleX(.92)}
+  46%{transform:scaleX(.74)}
+  56%{transform:scaleX(.9)}
+  70%,100%{transform:scaleX(1)}
+}
+@keyframes b-glow{0%,10%{opacity:0}26%{opacity:.8}34%{opacity:.3}46%{opacity:.9}56%{opacity:.3}70%,100%{opacity:0}}
+@keyframes b-shake{0%,8%,62%,100%{transform:translateX(0)}12%{transform:translateX(-.8px)}16%{transform:translateX(.8px)}20%{transform:translateX(-.8px)}24%{transform:translateX(.8px)}40%{transform:translateX(-.6px)}44%{transform:translateX(.6px)}50%{transform:translateX(-.6px)}54%{transform:translateX(.6px)}}
+@keyframes b-idle{0%,100%{transform:scaleX(1)}50%{transform:scaleX(.985)}}
+</style>
+<script>if(location.hash==="#embed")document.documentElement.classList.add("embed");</script>
+</head>
+<body>
+<div class="k-banner"><strong>Mockup</strong> &middot; sample data &middot; release to search</div>
+<h1>B Fridge door</h1>
+<p class="lead">A little fridge, the same one as the Kitchie mark, whose door strains open against something inside and lets a strip of light out.</p>
+<section class="frame" aria-label="1. Pulling, short of the line">
+  <p class="cap"><span class="k-chip">Pulling</span> 1. Pulling, short of the line</p>
+  <div class="scene" data-stage="0" aria-hidden="true">
+    <div class="pullpill"><span class="pill"><svg class="g fridge" width="46" height="52" viewBox="0 0 34 38" aria-hidden="true" focusable="false"><g class="fr"><path class="glow" d="M26 9 L34 2 L34 36 L26 30Z"/><rect class="cav" x="7" y="2" width="20" height="34" rx="4"/><g class="door"><rect class="dr" x="7" y="2" width="20" height="34" rx="4"/><path class="dl" d="M7 14H27M23 6.5V10.5M23 19V27"/></g></g></svg>Pull down to search</span></div>
+    <div class="searchbar"><div class="field">Search your kitchen</div><span class="mic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3"/></svg></span><span class="cancel">Cancel</span></div>
+  </div>
+</section>
+<section class="frame" aria-label="2. Past the line: let go and search opens">
+  <p class="cap"><span class="k-chip">Armed</span> 2. Past the line: let go and search opens</p>
+  <div class="scene" data-stage="1" aria-hidden="true">
+    <div class="pullpill"><span class="pill"><svg class="g fridge" width="46" height="52" viewBox="0 0 34 38" aria-hidden="true" focusable="false"><g class="fr"><path class="glow" d="M26 9 L34 2 L34 36 L26 30Z"/><rect class="cav" x="7" y="2" width="20" height="34" rx="4"/><g class="door"><rect class="dr" x="7" y="2" width="20" height="34" rx="4"/><path class="dl" d="M7 14H27M23 6.5V10.5M23 19V27"/></g></g></svg>Release to search</span></div>
+    <div class="searchbar"><div class="field">Search your kitchen</div><span class="mic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3"/></svg></span><span class="cancel">Cancel</span></div>
+  </div>
+</section>
+<div class="notes">
+  <h2>What to look at</h2>
+  <ul>
+    <li>Short of the line the door is shut. Past the line it opens to a crack, the light flickers in the gap and the whole fridge shudders.</li>
+    <li>Motion: the door swings between open and shut, with a rattle before it, every 2.4 s. Transforms and opacity only.</li>
+    <li>The fridge is drawn in the app's sage line style, and the light uses the theme's gold.</li>
+    <li>Reduced motion: nothing moves. The armed pill shows the held pose (bands taut, door ajar, lid lifted, spring squashed, egg cracked) with the same words.</li>
+  </ul>
+</div>
+<p class="links"><a class="k-btn" href="../index.html">All five options</a> <a class="k-btn" href="../../index.html">Home screen</a></p>
+</body>
+</html>
