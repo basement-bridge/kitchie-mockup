@@ -32,6 +32,21 @@ html,body{overscroll-behavior-y:contain}
 .searchbar .cancel{flex:0 0 auto;min-height:48px;padding:0 .4rem;border:0;background:transparent;color:var(--accent);font:inherit;font-weight:700;cursor:pointer;border-radius:.6rem}
 body.is-pulling{-webkit-user-select:none;user-select:none}
 @media (prefers-reduced-motion: reduce){.pullwrap.settle{transition:none}}
+/* One gesture, two depths. The pill under the field says what letting go does right now: a glyph plus words, never colour alone. */
+.pullpill{position:relative;height:0;z-index:5;pointer-events:none}
+.pullpill .pill{position:absolute;left:50%;top:var(--pt,6px);transform:translateX(-50%);display:none;align-items:center;gap:.45rem;white-space:nowrap;min-height:36px;padding:0 .9rem;border:1px solid var(--border);border-radius:999px;background:var(--surface);color:var(--muted);font-size:.9rem;font-weight:600;box-shadow:0 2px 8px rgba(0,0,0,.12)}
+.pullpill.on .pill{display:inline-flex}
+.pullpill[data-stage="1"] .pill{color:var(--fg);border-color:var(--accent)}
+.pullpill[data-stage="2"] .pill{color:var(--bg);background:var(--accent);border-color:var(--accent);font-weight:700}
+.pullpill .pill svg{flex:none;transition:transform .2s ease}
+.pullpill[data-stage="2"] .pill svg{transform:rotate(180deg)}
+.pullpill.busy .pill svg{transform:none;animation:spin .9s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.pullwrap.deep .searchbar{opacity:.12}
+.pullwrap.refreshing .searchbar{visibility:hidden}
+#list{transition:opacity .2s ease}
+#list.refreshing{opacity:.25;pointer-events:none}
+@media (prefers-reduced-motion: reduce){.pullpill .pill svg{transition:none;transform:none!important;animation:none!important}#list{transition:none}}
 #search-mic[aria-pressed="true"]{color:#fff;background:#C0392B;border-color:#C0392B;animation:listen 1.2s ease-in-out infinite}
 @keyframes listen{50%{box-shadow:0 0 0 6px rgba(192,57,43,.25)}}
 @media (prefers-reduced-motion: reduce){#search-mic[aria-pressed="true"]{animation:none}}
@@ -220,12 +235,13 @@ li .meta mark{color:var(--fg)}
       <button type="button" class="seg" data-theme-pick="light" aria-pressed="false">Light</button>
       <button type="button" class="seg" data-theme-pick="dark" aria-pressed="false">Dark</button>
     </fieldset>
-    <p>Try: pull the list down from the top and type milk, cheese or e.</p>
+    <p>Try: pull the list down a little and type milk, cheese or e; pull it further and let go to refresh.</p>
     <ul class="rules">
+      <li>Pull a little: search. Pull further: refresh.</li>
       <li>Pull down from the top to search. Closing the field (Cancel, the Search key, a tap outside, scrolling) keeps the search on.</li>
       <li>An amber-gold banner sits right above the list: Results for &ldquo;milk&rdquo; &middot; 3 items, with a &times;. Tap the words to edit the search; the field opens pre-filled.</li>
       <li>The words that matched are marked inside each row, so you can see why it is there.</li>
-      <li>A search is temporary: the &times; or a new pull-down clears it; it never changes your Location or Category, and a refresh clears it too.</li>
+      <li>A search is temporary: the &times; or a new pull-down clears it; it never changes your Location or Category, and a page reload clears it too (a pull-to-refresh does not).</li>
     </ul>
     <p><button type="button" class="seg" id="reset">Reset sample items</button></p>
   </div>
@@ -241,6 +257,8 @@ li .meta mark{color:var(--fg)}
     <button type="button" class="cancel" id="search-cancel">Cancel</button>
   </div>
 </div>
+<div class="pullpill" id="pullpill" data-stage="0" aria-hidden="true"><span class="pill"><span id="pill-glyph"></span><span id="pill-text"></span></span></div>
+<div class="sr-only" id="pullstatus" role="status" aria-live="polite"></div>
 <p id="add-from-search-wrap" hidden><a id="add-from-search" class="btn" href="#">Add as a new item</a></p>
 <div id="tabs"></div>
 <div id="list"></div>
@@ -300,6 +318,7 @@ li .meta mark{color:var(--fg)}
     plus: icon('<path d="M12 5v14M5 12h14"/>'),
     mic: icon('<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3"/>'),
     close: icon('<path d="M6 6l12 12M18 6L6 18"/>'),
+    down: icon('<path d="M12 5v13M6 13l6 6 6-6"/>'),
     retry: icon('<path d="M20 12a8 8 0 1 1-2.6-5.9"/><path d="M20 4v5h-5"/>'),
     person: icon('<circle cx="12" cy="8" r="3.5"/><path d="M5 20c0-3.6 3.1-6 7-6s7 2.4 7 6"/>')
   };
@@ -729,7 +748,15 @@ li .meta mark{color:var(--fg)}
   /* ---------- search field: pull down to open, Cancel / Search key / tap outside / scroll to close ---------- */
   var micTimer = 0, fieldOpen = false, suppressScroll = false;
   var wrap = $("#searchwrap"), qEl = $("#q"), barEl = $("#searchbar");
-  var FIELD_H = 64, ARM = 80, RESIST = 0.6;   // full height of the field row, pull distance that arms it, finger-to-field ratio
+  /* The pull has two depths, measured by finger distance only (touch and mouse drag alike, no velocity):
+     past PULL_SEARCH_PX the release opens search; past PULL_REFRESH_PX it refreshes the list.
+     Why these numbers on a 390 px phone: 56 px is a short, deliberate thumb pull (about a centimetre), small enough to be easy, big enough that
+     a stray scroll jitter (10 to 15 px) never arms it. 130 px is about 2.3 times that, roughly a sixth of the screen height, still reachable by a
+     thumb without re-gripping, and the 74 px gap between the two is several times the jitter, so the label change is something you push through
+     on purpose rather than hit by accident. The field follows the finger at RESIST (0.9) so it is fully drawn at the first line (56 x 0.9 = about 50 px,
+     the input row), then stays put while the pill below it reports the stage. Distance only on purpose: a fast flick that travels far does refresh. */
+  var PULL_SEARCH_PX = 56, PULL_REFRESH_PX = 130, RESIST = 0.9, REFRESH_MS = 1000;
+  var FIELD_H = 64;   // full height of the field row
   var reduced = function () { return window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches; };
   $("#search-mic").innerHTML = ICONS.mic;
   $("#sheet-x").innerHTML = ICONS.close;
@@ -748,7 +775,7 @@ li .meta mark{color:var(--fg)}
   function openField(edit) {
     if (!state.items.length) return;
     fieldOpen = true;
-    wrap.classList.remove("pulling", "armed", "settle"); wrap.style.height = ""; barEl.style.removeProperty("--p");
+    wrap.classList.remove("pulling", "armed", "settle", "deep"); wrap.style.height = ""; barEl.style.removeProperty("--p"); pill(-1);
     wrap.classList.add("open");
     qEl.tabIndex = 0;
     if (edit) qEl.value = state.query; else { qEl.value = ""; state.query = ""; }
@@ -762,7 +789,7 @@ li .meta mark{color:var(--fg)}
     clearTimeout(micTimer); listening(false);
     state.query = qEl.value.trim(); qEl.value = state.query;   // closing keeps the term; it shows as a chip
     qEl.blur(); qEl.tabIndex = -1;
-    wrap.classList.remove("open", "pulling", "armed", "settle"); wrap.style.height = ""; barEl.style.removeProperty("--p");
+    wrap.classList.remove("open", "pulling", "armed", "settle", "deep"); wrap.style.height = ""; barEl.style.removeProperty("--p"); pill(-1);
     if (!silent) update();
   }
   function clearSearch() { state.query = ""; qEl.value = ""; update(); }
@@ -783,9 +810,45 @@ li .meta mark{color:var(--fg)}
   }, { passive: true });
 
   /* pull gesture: touch, and mouse drag for the desktop. Only from the very top of the page. */
-  var pull = null;
+  var pull = null, refreshing = false;
+  var pillEl = $("#pullpill"), stageNow = -1;
+  var STAGES = [
+    { glyph: ICONS.down, text: "Pull down to search", say: "" },
+    { glyph: ICONS.search, text: "Release to search", say: "Release to search" },
+    { glyph: ICONS.retry, text: "Release to refresh", say: "Release to refresh" }
+  ];
+  // stage 0 = nothing yet, 1 = search, 2 = refresh, -1 = pill hidden. The words and the aria-live text change together, only when the stage changes.
+  function pill(stage) {
+    if (stage === stageNow) return;
+    stageNow = stage;
+    if (stage < 0) { pillEl.classList.remove("on"); $("#pullstatus").textContent = ""; return; }
+    pillEl.classList.add("on"); pillEl.setAttribute("data-stage", String(stage));
+    $("#pill-glyph").innerHTML = STAGES[stage].glyph; $("#pill-text").textContent = STAGES[stage].text;
+    $("#pullstatus").textContent = STAGES[stage].say;
+  }
+  function stageFor(d) { return d >= PULL_REFRESH_PX ? 2 : d >= PULL_SEARCH_PX ? 1 : 0; }
+  // Visual only in the mockup: the live app swaps changed rows in place (refresh.js); here the list dims, spins, and comes back. Search, Location, Category and sort stay as they are.
+  function startRefresh() {
+    refreshing = true;
+    wrap.classList.remove("armed", "deep", "settle"); wrap.classList.add("pulling", "refreshing");
+    wrap.style.height = FIELD_H + "px";
+    pillEl.style.setProperty("--pt", (-FIELD_H + (FIELD_H - 36) / 2) + "px");
+    pillEl.classList.add("busy"); stageNow = -2; pillEl.classList.add("on"); pillEl.setAttribute("data-stage", "2");
+    $("#pill-glyph").innerHTML = ICONS.retry; $("#pill-text").textContent = "Refreshing…";
+    $("#pullstatus").textContent = "Refreshing";
+    $("#list").classList.add("refreshing"); $("#list").setAttribute("aria-busy", "true");
+    setTimeout(function () {
+      update();
+      $("#list").classList.remove("refreshing"); $("#list").removeAttribute("aria-busy");
+      pillEl.classList.remove("busy", "on"); pillEl.style.removeProperty("--pt"); stageNow = -1;
+      wrap.classList.remove("refreshing");
+      var done = function () { wrap.classList.remove("pulling", "settle"); wrap.style.height = ""; barEl.style.removeProperty("--p"); refreshing = false; };
+      if (reduced()) done(); else { wrap.classList.add("settle"); wrap.style.height = "0px"; setTimeout(done, 260); }
+      $("#pullstatus").textContent = "List refreshed";
+    }, REFRESH_MS);
+  }
   function canPull(t) {
-    if (fieldOpen || !state.items.length || window.scrollY > 0 || !$("#quick-add").hidden) return false;
+    if (refreshing || fieldOpen || !state.items.length || window.scrollY > 0 || !$("#quick-add").hidden) return false;
     if (t.closest && t.closest("input,select,textarea,summary,.sheet,nav.tabs.reordering,details.profile[open]")) return false;
     return true;
   }
@@ -802,21 +865,24 @@ li .meta mark{color:var(--fg)}
     }
     if (e.cancelable) e.preventDefault();
     pull.d = Math.max(0, dy);
-    var h = Math.min(FIELD_H, pull.d * RESIST);
-    wrap.style.height = h + "px"; barEl.style.setProperty("--p", String(h / FIELD_H));
-    wrap.classList.toggle("armed", pull.d >= ARM);
+    var h = Math.min(FIELD_H, pull.d * RESIST), st = stageFor(pull.d);
+    wrap.style.height = h + "px"; barEl.style.setProperty("--p", String(Math.min(1, pull.d / PULL_SEARCH_PX)));
+    wrap.classList.toggle("armed", st === 1); wrap.classList.toggle("deep", st === 2);
+    pill(st);
   }
   function pullEnd() {
     if (!pull) return;
     var p = pull; pull = null; document.body.classList.remove("is-pulling");
     if (!p.on) return;
     suppressClick = true; setTimeout(function () { suppressClick = false; }, 60);
-    if (p.d >= ARM) { openField(false); return; }
-    // short of the line: spring back
-    wrap.classList.remove("armed");
+    var st = stageFor(p.d);
+    if (st === 2) { pill(-1); startRefresh(); return; }
+    if (st === 1) { openField(false); return; }
+    // short of the first line: spring back
+    wrap.classList.remove("armed", "deep"); pill(-1);
     if (reduced()) { wrap.classList.remove("pulling"); wrap.style.height = ""; barEl.style.removeProperty("--p"); return; }
     wrap.classList.add("settle"); wrap.style.height = "0px"; barEl.style.setProperty("--p", "0");
-    setTimeout(function () { if (!fieldOpen) { wrap.classList.remove("pulling", "settle"); wrap.style.height = ""; barEl.style.removeProperty("--p"); } }, 260);
+    setTimeout(function () { if (!fieldOpen && !refreshing) { wrap.classList.remove("pulling", "settle"); wrap.style.height = ""; barEl.style.removeProperty("--p"); } }, 260);
   }
   var lastTouch = 0;
   document.addEventListener("touchstart", function (e) { lastTouch = Date.now(); if (e.touches.length === 1) pullStart(e.touches[0].clientX, e.touches[0].clientY, e.target); else pull = null; }, { passive: true });
