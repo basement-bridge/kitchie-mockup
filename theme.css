@@ -19,7 +19,7 @@
   color-scheme: dark;
   --bg: #0F1E19; --surface: #172A23; --border: #24403A;
   --fg: #F3EEE3; --muted: #A9B8AE;
-  --accent: #F2B84B; --danger: #FF9A8F; --sage: #9CCBA8;
+  --accent: #F2B84B; --danger: #FF9A8F; --sage: #9CCBA8; --added: #86D99B;
   --scrim: rgba(0,0,0,.45); --shadow: 0 8px 24px rgba(0,0,0,.35);
   --font-body: "DM Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --head: "Bricolage Grotesque", "DM Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
@@ -30,20 +30,20 @@
     color-scheme: light;
     --bg: #F6F1E6; --surface: #FFFFFF; --border: #D9D1BF;
     --fg: #1D2A24; --muted: #56645B;
-    --accent: #8A5600; --danger: #B42318; --sage: #2F6B45;
+    --accent: #8A5600; --danger: #B42318; --sage: #2F6B45; --added: #1E7A44;
   }
 }
 :root[data-theme="light"] {
   color-scheme: light;
   --bg: #F6F1E6; --surface: #FFFFFF; --border: #D9D1BF;
   --fg: #1D2A24; --muted: #56645B;
-  --accent: #8A5600; --danger: #B42318; --sage: #2F6B45;
+  --accent: #8A5600; --danger: #B42318; --sage: #2F6B45; --added: #1E7A44;
 }
 :root[data-theme="dark"] {
   color-scheme: dark;
   --bg: #0F1E19; --surface: #172A23; --border: #24403A;
   --fg: #F3EEE3; --muted: #A9B8AE;
-  --accent: #F2B84B; --danger: #FF9A8F; --sage: #9CCBA8;
+  --accent: #F2B84B; --danger: #FF9A8F; --sage: #9CCBA8; --added: #86D99B;
 }
 
 /* Base rules every page shares. */

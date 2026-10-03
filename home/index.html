@@ -4,17 +4,20 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Kitchie: home screen mockup</title>
-<meta name="description" content="The Kitchie home screen with a pin and tag toggle that switches the filter ribbon between location and category. Not the live product.">
+<meta name="description" content="The Kitchie home screen as the app shows it: Use by clock, pin and tag toggles, ribbon, search and empty states. Not the live product.">
 <meta name="robots" content="noindex">
 <link rel="stylesheet" href="../theme.css">
 <style>
-/* The app's own page styles, copied from the Kitchie page shell (layout.ts, commit 9190276) so this mockup looks like the product. */
+/* The app's own page styles, copied from the Kitchie page shell (layout.ts, kept in step with Kitchie main b6cc148, v0.12.30) so this mockup looks like the product. */
 :root[data-motion=reduce] *,:root[data-motion=reduce] *::before,:root[data-motion=reduce] *::after{transition:none!important;animation:none!important;scroll-behavior:auto!important}
 h1{font-family:var(--head);font-size:2.9rem;line-height:1.02;font-weight:700;margin:.1rem 0 1rem}
 h2{font-family:var(--head);font-size:1.4rem;margin:0;font-weight:700}
 h2.section{margin:1.8rem 0 .6rem}
 a{color:var(--accent)}a:hover{text-decoration:none}
-.top{padding-top:.5rem;display:flex;align-items:flex-start;justify-content:space-between;gap:.75rem}
+.brandbar{display:inline-flex;align-items:center;gap:.45rem;min-height:44px;font-family:var(--head);font-weight:700;font-size:1.1rem;color:var(--fg);text-decoration:none}
+.brandbar svg{color:var(--sage);flex:none}
+.sr-only{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+.top{padding-top:.5rem;display:flex;align-items:flex-start;justify-content:space-between;gap:.75rem}.top.end{justify-content:flex-end}
 .hdr{display:flex;gap:.5rem;padding-top:.45rem}
 .searchbar{display:flex;gap:.5rem;align-items:center;margin:0 0 .9rem}
 .searchbar input[type=search]{flex:1 1 auto;max-width:none}
@@ -51,10 +54,7 @@ a.btn:hover,button.btn:hover{border-color:var(--accent)}
 a.add{display:flex;align-items:center;justify-content:center;min-height:52px;border-radius:1rem;background:var(--fg);color:var(--bg);font-size:1.05rem;font-weight:700;text-decoration:none;margin:0 0 .9rem}
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 [hidden]{display:none!important}
-.tools{display:flex;gap:.6rem;flex-wrap:wrap;align-items:center;margin:0 0 .9rem}
-.tools input[type=search]{flex:1 1 14rem;max-width:none}
 input[type=search],input[type=text],input[type=date],select{font:inherit;width:100%;max-width:26rem;min-height:52px;padding:.4rem 1rem;background:var(--surface);color:var(--fg);border:1px solid var(--border);border-radius:1rem}
-.tools select{width:auto;min-height:52px}
 nav.tabs{position:relative;display:flex;gap:.25rem;padding:.25rem;border-radius:1rem;background:var(--surface);margin:0 0 .6rem;overflow-x:auto;scroll-snap-type:x mandatory;scroll-padding-left:.25rem;scrollbar-width:none;max-width:100%;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
 nav.tabs::-webkit-scrollbar{display:none}
 nav.tabs.fitted::after{content:"";flex:0 0 0}
@@ -65,7 +65,6 @@ nav.tabs a{flex:1 0 auto;display:flex;align-items:center;justify-content:center;
 nav.tabs a[aria-current=page]{background:var(--accent);color:var(--bg)}
 .group{margin:0}
 .grouphead{display:flex;justify-content:space-between;align-items:baseline;padding:1rem .25rem 0}
-.count{font-size:.9rem;color:var(--muted)}
 ul.rows{list-style:none;margin:0;padding:0;position:relative}
 .swipe-under{position:absolute;left:0;right:0;display:flex;align-items:center;justify-content:space-between;padding:0 1.2rem;border-radius:.75rem;font-weight:700;font-size:.95rem;color:var(--bg);pointer-events:none;background:var(--accent)}
 .swipe-under[data-dir="all"]{background:var(--danger)}
@@ -84,15 +83,15 @@ li .name{font-size:1.06rem;font-weight:600;text-transform:lowercase}
 html[data-size="small"] li .name{font-size:.95rem}html[data-size="large"] li .name{font-size:1.3rem}
 html[data-compact] li[data-row]{min-height:52px}html[data-compact] li .rowlink{padding-top:.3rem;padding-bottom:.3rem}
 html[data-hide~="useby"] li .due{display:none}
-.sortmenu{position:relative}.sortmenu>summary{list-style:none;display:flex;align-items:center;min-height:52px;padding:0 1rem;border:1px solid var(--border);border-radius:.8rem;background:var(--surface);cursor:pointer;font:inherit}.sortmenu>summary::-webkit-details-marker{display:none}.sortmenu>summary::after{content:"\25BE";margin-left:.6rem;color:var(--muted)}
-.sortpanel{position:absolute;left:0;top:calc(100% + .35rem);z-index:20;min-width:15rem;padding:.4rem;border:1px solid var(--border);border-radius:1rem;background:var(--surface);box-shadow:0 8px 24px rgba(0,0,0,.12)}
-.sortrow{display:flex;align-items:center}.sortrow button{display:flex;align-items:center;gap:.6rem;min-height:44px;padding:0 .8rem;border:0;border-radius:.6rem;background:transparent;color:var(--fg);font:inherit;cursor:pointer;text-align:left}.sortrow .pick{flex:1 1 auto}.sortrow .pick[aria-checked="true"]{font-weight:700}.sortrow .pick[aria-checked="true"]::before{content:"\2713";color:var(--accent)}.sortrow .pick[aria-checked="false"]::before{content:"";display:inline-block;width:1em}.sortrow .tri{width:44px;justify-content:center;color:var(--accent)}.sortrow button:hover{background:var(--bg)}
 .srow{display:flex;align-items:center;justify-content:space-between;gap:1rem;min-height:48px}.srow input[type=checkbox]{width:1.4rem;height:1.4rem}
 
 table td:first-child{text-transform:lowercase}
 li .meta{font-size:.9rem;color:var(--muted);margin-top:.1rem}
-li .cue{display:inline-block;font-size:.72rem;font-weight:700;letter-spacing:.02em;text-transform:uppercase;padding:.05rem .4rem;border-radius:.6rem;background:var(--accent,#2f7d5b);color:#fff;vertical-align:.1em}
-li .due{font-size:.9rem;color:var(--muted);white-space:nowrap}
+li .nw{white-space:nowrap}
+li .added{display:inline-block;margin-left:.3em;width:17px;height:17px;vertical-align:-.15em;color:var(--added);fill:none;stroke:currentColor;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;flex:none}
+li .due{font-size:.9rem;color:var(--muted);flex:none;max-width:5.6rem;text-align:right;line-height:1.25;text-wrap:balance}
+li .due[data-tone="late"]{color:var(--danger);font-weight:600}li .due[data-tone="soon"]{color:var(--accent);font-weight:600}
+section.flat .meta[data-area]::before{content:attr(data-area) " \00b7 "}
 li .chev{display:inline-flex;color:var(--muted)}
 li a.iconbtn{flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;align-self:center;width:48px;height:48px;border-radius:.75rem;color:var(--accent)}
 li a.iconbtn:hover{background:var(--surface)}
@@ -163,16 +162,23 @@ html{overflow-x:clip}
 .profile summary.icon{list-style:none}
 table td:nth-child(2){white-space:nowrap}
 
-/* Filter toggle: the ribbon shows Location or Category, and a two-state switch decides which. */
-.tabhead{display:flex;align-items:center;justify-content:space-between;gap:.8rem;margin:0 .1rem .5rem}
-.tabhead b{font-family:var(--head);font-size:1.3rem;font-weight:700}
-.bin{position:relative;display:grid;grid-template-columns:1fr 1fr;width:5.6rem;height:44px;padding:3px;border:1px solid var(--border);border-radius:999px;background:var(--surface);color:var(--fg);font:inherit;cursor:pointer}
-.bin i{position:absolute;top:3px;left:3px;width:calc(50% - 3px);height:calc(100% - 6px);border-radius:999px;background:var(--accent);transition:transform .2s ease,background .2s ease}
-.bin[aria-checked="true"] i{transform:translateX(100%);background:var(--sage)}
-.bin span{position:relative;z-index:1;display:grid;place-items:center;color:var(--muted)}
-.bin[aria-checked="false"] span:first-of-type,.bin[aria-checked="true"] span:last-of-type{color:var(--bg)}
-.bin svg{width:1.1rem;height:1.1rem;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-nav.tabs.dim-cat a[aria-current=page]{background:var(--sage)}
+/* Title row: what is showing, the pin and tag toggles (Location, Category) and the Use by clock. As in the app (layout.ts). */
+.titlerow{display:flex;align-items:center;justify-content:space-between;gap:.6rem;margin:0 .1rem .5rem}
+.titlerow b,.titlebtn{font-family:var(--head);font-size:1.3rem;font-weight:700;line-height:1.1;white-space:nowrap}
+.titlerow #titleslot{min-width:0;overflow:hidden;text-overflow:ellipsis}
+.titlebtn{display:inline-flex;align-items:center;gap:.4rem;min-height:44px;margin-left:-.4rem;padding:0 .4rem;border:0;border-radius:.7rem;background:transparent;color:var(--fg);cursor:pointer}
+.titlebtn:hover{color:var(--accent)}.titlebtn .mark{color:var(--muted);font-size:.95rem}
+.ctl{display:flex;align-items:center;gap:.4rem;flex:0 0 auto}
+.iseg{display:inline-flex;align-items:center;gap:2px;height:44px;padding:3px;border:1px solid var(--border);border-radius:999px;background:var(--surface)}
+.iseg a.pv{display:grid;place-items:center;width:38px;height:36px;border-radius:999px;color:var(--muted);text-decoration:none}
+.iseg a.pv svg{width:1.1rem;height:1.1rem}
+.iseg a.pv[aria-pressed="true"]{background:var(--accent);color:var(--bg)}
+.iseg a.pv[data-pin="category"][aria-pressed="true"]{background:var(--sage)}
+.tog{display:grid;place-items:center;width:44px;height:44px;padding:0;border:1px solid var(--border);border-radius:999px;background:var(--surface);color:var(--muted);cursor:pointer}
+.tog svg{width:1.2rem;height:1.2rem}
+.tog[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--bg)}
+.tog[aria-pressed="true"] svg circle{fill:currentColor}.tog[aria-pressed="true"] svg path{stroke:var(--accent)}
+nav.tabs[data-view="category"] a[aria-current=page]{background:var(--sage)}
 </style>
 </head>
 <body>
@@ -190,12 +196,13 @@ nav.tabs.dim-cat a[aria-current=page]{background:var(--sage)}
       <button type="button" class="seg" data-theme-pick="light" aria-pressed="false">Light</button>
       <button type="button" class="seg" data-theme-pick="dark" aria-pressed="false">Dark</button>
     </fieldset>
-    <p>Try: swipe a row right (use one) or left (used up), tap the &minus; or tick on a row, the plus to add, the magnifier or mic to search, the pin and tag switch (Location or Category), the ribbon (scroll it; press and hold a chip to reorder) and Sort. Undo appears for 5 seconds after a change.</p>
+    <p>Try: swipe a row right (use one) or left (used up), tap the &minus; or tick on a row, the plus to add, the magnifier or mic to search (or pull the list down from the top on a phone), the pin and tag toggles (Location or Category), the clock (Use by, on at every load) and the ribbon (it hides itself after a few seconds; tap the title to bring it back; scroll it; press and hold a chip to reorder). Undo appears for 5 seconds after a change.</p>
     <p><button type="button" class="seg" id="reset">Reset sample items</button></p>
   </div>
 </details>
 
-<div class="top"><h1>Kitchen</h1><div class="hdr" id="hdr"></div></div>
+<a class="brandbar" href="#" data-na="The Kitchie home page"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="6" y="2.5" width="12" height="19" rx="2.5"></rect><path d="M6 10h12M9 6v1.5M9 13v3"></path></svg><span>Kitchie</span></a>
+<div class="top end"><h1 class="sr-only">Kitchen</h1><div class="hdr" id="hdr"></div></div>
 <p class="note" id="readonly-note" hidden>Read-only view. Items are added and changed through ChatGPT. This is a provisional review space, not a final household baseline.</p>
 <div class="searchbar" id="searchbar" hidden>
   <input id="q" type="search" placeholder="Search your kitchen" aria-label="Search your kitchen" maxlength="80" autocomplete="off">
@@ -203,7 +210,6 @@ nav.tabs.dim-cat a[aria-current=page]{background:var(--sage)}
   <button type="button" class="icon" id="search-close" aria-label="Close search" title="Close search" data-mode="close"><span class="ic-x"></span><span class="ic-retry"></span></button>
 </div>
 <p id="add-from-search-wrap" hidden><a id="add-from-search" class="btn" href="#">Add as a new item</a></p>
-<div class="tools" id="tools"><select id="sort" aria-label="Sort"><option value="name">Name A to Z</option><option value="useby">Use by, soonest</option><option value="updated">Recently updated</option></select><span id="count" class="note"></span></div>
 <div id="tabs"></div>
 <div id="list"></div>
 <details class="shopping" id="shopping"></details>
@@ -281,7 +287,7 @@ nav.tabs.dim-cat a[aria-current=page]{background:var(--sage)}
         mk("eggs", "6", "Fridge", "Door", "Dairy & eggs", "🥚", { minimum: 4, updated: now - 30 * h }),
         mk("milk", "1 litre", "Fridge", "Door", "Dairy & eggs", "🥛", { useBy: dayStr(4), updated: now - 5 * h }),
         mk("cheddar cheese", "1 block", "Fridge", "Shelf 2", "Dairy & eggs", "🧀", { useBy: dayStr(9), updated: now - 80 * h }),
-        mk("spinach", "1 bag", "Fridge", "Crisper", "Fruit & veg", "🥬", { useBy: dayStr(1), updated: now - 60 * h }),
+        mk("spinach", "1 bag", "Fridge", "Crisper", "Fruit & veg", "🥬", { useBy: dayStr(-1), updated: now - 60 * h }),
         mk("curry", "2 serves", "Fridge", "Shelf 1", "Meals", "🍛", { kind: "leftover", useBy: dayStr(2), updated: now - 20 * h, recent: { at: now - 20 * h, kind: "new" } }),
         mk("rice", "2 kg", "Pantry", "Top shelf", "Grains & pasta", "🍚", { staple: true, updated: now - 200 * h }),
         mk("pasta", "1", "Pantry", "Top shelf", "Grains & pasta", "🍝", { minimum: 2, updated: now - 100 * h }),
@@ -297,7 +303,7 @@ nav.tabs.dim-cat a[aria-current=page]{background:var(--sage)}
   }
 
   /* ---------- state ---------- */
-  var state = { scenario: "full", theme: "auto", dim: "area", cat: "", area: "", sort: "name", query: "", items: [], removed: [], undo: null };
+  var state = { scenario: "full", theme: "auto", by: "", cat: "", area: "", clock: true, ribbon: false, query: "", items: [], removed: [], undo: null };   // as the app opens: Use by on, Location and Category off
   var fresh = seed(); state.items = fresh.items; state.removed = fresh.removed;
 
   /* ---------- rules copied from the product ---------- */
@@ -349,11 +355,6 @@ nav.tabs.dim-cat a[aria-current=page]{background:var(--sage)}
     return total;
   }
   function byName(a, b) { return a.name.localeCompare(b.name, undefined, { sensitivity: "base" }); }
-  function sorter() {
-    if (state.sort === "useby") return function (a, b) { if (a.useBy === b.useBy) return byName(a, b); if (!a.useBy) return 1; if (!b.useBy) return -1; return a.useBy < b.useBy ? -1 : 1; };
-    if (state.sort === "updated") return function (a, b) { return b.updated - a.updated || byName(a, b); };
-    return byName;
-  }
   function groups(list) {
     var map = {};
     list.forEach(function (i) { var k = i.area || "Other"; (map[k] = map[k] || []).push(i); });
@@ -368,21 +369,21 @@ nav.tabs.dim-cat a[aria-current=page]{background:var(--sage)}
 
   /* ---------- filter ribbon ---------- */
   // Default order: the value with the most items first, then by name. A saved order (per view, in this browser only) wins over that.
-  var RIBBON_KEY = function () { return "kitchie.tabs." + state.dim; };
-  function readOrder() { try { var v = JSON.parse(localStorage.getItem(RIBBON_KEY()) || "[]"); return Array.isArray(v) ? v.filter(function (x) { return typeof x === "string"; }) : []; } catch (e) { return []; } }
-  function saveOrder(order) { try { localStorage.setItem(RIBBON_KEY(), JSON.stringify(order)); } catch (e) { /* storage blocked: the order is just not remembered */ } }
-  function ribbonValues(list) {
+  var RIBBON_KEY = function (view) { return "kitchie.tabs." + (view === "category" ? "category" : "area"); };
+  function readOrder(view) { try { var v = JSON.parse(localStorage.getItem(RIBBON_KEY(view)) || "[]"); return Array.isArray(v) ? v.filter(function (x) { return typeof x === "string"; }) : []; } catch (e) { return []; } }
+  function saveOrder(view, order) { try { localStorage.setItem(RIBBON_KEY(view), JSON.stringify(order)); } catch (e) { /* storage blocked: the order is just not remembered */ } }
+  function ribbonValues(list, view) {
     var count = {};
-    list.forEach(function (i) { var k = state.dim === "cat" ? i.category : (i.area || "Other"); if (k) count[k] = (count[k] || 0) + 1; });
+    list.forEach(function (i) { var k = view === "category" ? i.category : (i.area || "Other"); if (k) count[k] = (count[k] || 0) + 1; });
     var vals = Object.keys(count).sort(function (a, b) { return count[b] - count[a] || a.localeCompare(b); });
-    var saved = readOrder();
+    var saved = readOrder(view);
     if (!saved.length) return vals;
     var rank = function (v) { var n = saved.indexOf(v); return n === -1 ? 1e6 + vals.indexOf(v) : n; };   // values new since the last save keep their usual place after the saved ones
     return vals.slice().sort(function (a, b) { return rank(a) - rank(b); });
   }
   var ribbonLater = null;
   window.addEventListener("resize", function () { if (ribbonLater) ribbonLater(); });
-  function initRibbon() {
+  function initRibbon(view) {
     var nav = $("nav.tabs"); ribbonLater = null;
     if (!nav) return;
     var links = function () { return $$("a", nav); };
@@ -405,7 +406,8 @@ nav.tabs.dim-cat a[aria-current=page]{background:var(--sage)}
     }
     function later() { clearTimeout(timer); timer = setTimeout(fit, 120); }
     ribbonLater = later;
-    nav.addEventListener("scroll", function () { if (mine) { mine = false; return; } if (!dragging) later(); }, { passive: true });
+    nav.addEventListener("scroll", function () { if (mine) { mine = false; return; } if (!dragging) later(); touchRibbon(); }, { passive: true });
+    nav.addEventListener("pointerdown", function () { touchRibbon(); }, { passive: true });
     var cur = nav.querySelector("[aria-current]");   // keep the chosen chip in view after a redraw
     if (cur && cur.offsetLeft + cur.offsetWidth > nav.clientWidth) nav.scrollLeft = cur.offsetLeft - 8;
     fit();
@@ -414,7 +416,7 @@ nav.tabs.dim-cat a[aria-current=page]{background:var(--sage)}
     var HOLD = 500, MOVE = 8;
     function cancelPress() { if (press) { clearTimeout(press.t); press = null; } }
     function startDrag(a) { dragging = a; nav.classList.add("reordering"); a.classList.add("lifted"); if (navigator.vibrate) { try { navigator.vibrate(15); } catch (e) { /* not supported */ } } }
-    function endDrag() { if (!dragging) return; dragging.classList.remove("lifted"); nav.classList.remove("reordering"); dragging = null; saveOrder(movable().map(function (a) { return a.getAttribute("data-tab"); })); fit(); }
+    function endDrag() { if (!dragging) return; dragging.classList.remove("lifted"); nav.classList.remove("reordering"); dragging = null; saveOrder(view, movable().map(function (a) { return a.getAttribute("data-tab"); })); fit(); }
     nav.addEventListener("pointerdown", function (e) {
       var a = e.target.closest && e.target.closest("a[data-tab]");
       if (!a || a.hasAttribute("data-fixed") || (e.pointerType === "mouse" && e.button !== 0)) return;
@@ -437,25 +439,99 @@ nav.tabs.dim-cat a[aria-current=page]{background:var(--sage)}
   /* ---------- rendering ---------- */
   var editing = function () { return state.scenario !== "readonly"; };
 
-  function rowHtml(i) {
+  // The relative use-by label, words and thresholds as in the app (useby.js): past use by, today, within a week, then no number.
+  function daysLeft(iso) {
+    var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso); if (!m) return null;
+    var t = new Date();
+    return Math.round((Date.UTC(+m[1], +m[2] - 1, +m[3]) - Date.UTC(t.getFullYear(), t.getMonth(), t.getDate())) / 86400000);
+  }
+  function days(n) { return n + (n === 1 ? " day" : " days"); }
+  function dueLabel(n) { return n < 0 ? "Past use by " + days(-n) : n === 0 ? "Use today" : n <= 7 ? "Use within " + days(n) : "More than a week"; }
+  function dueTone(n) { return n < 0 ? "late" : n <= 3 ? "soon" : ""; }
+
+  // Anything added in the last 24 hours gets one green up arrow, kept with the name's last word so it never wraps alone.
+  var ADDED_LABEL = "Added in the last 24 hours";
+  var ADDED_ARROW = '<svg class="added" width="17" height="17" viewBox="0 0 24 24" role="img" aria-label="' + ADDED_LABEL + '" focusable="false"><title>' + ADDED_LABEL + '</title><path d="M12 20V5M5.5 11.5L12 5l6.5 6.5"/></svg>';
+  function nameWithMarker(name, marker) {
+    if (!marker) return esc(name);
+    var cut = name.search(/\s\S*$/);
+    return (cut < 0 ? "" : esc(name.slice(0, cut)) + " ") + '<span class="nw">' + esc(name.slice(cut < 0 ? 0 : cut + 1)) + marker + "</span>";
+  }
+
+  function rowHtml(i, flat) {
     var ed = editing(), now = Date.now();
-    var cue = i.recent && now - i.recent.at < CUE_MS ? ' <span class="cue">' + (i.recent.kind === "new" ? "New" : "More") + "</span>" : "";
-    var due = i.useBy ? '<span class="due">Use by ' + esc(i.useBy) + "</span>" : "";
-    var body = '<div class="main"><div class="name">' + (i.emoji ? '<span class="emo" aria-hidden="true">' + esc(i.emoji) + "</span> " : "") + esc(i.name) + cue + '</div><div class="meta">' + esc(metaLine(i)) + "</div></div>" + due;
+    var cue = i.recent && now - i.recent.at < CUE_MS ? ADDED_ARROW : "";
+    var n = i.useBy ? daysLeft(i.useBy) : null;
+    var due = n !== null ? '<span class="due" data-due="' + esc(i.useBy) + '" data-tone="' + dueTone(n) + '" title="Use by ' + esc(i.useBy) + '">' + dueLabel(n) + "</span>" : "";
+    var body = '<div class="main"><div class="name">' + (i.emoji ? '<span class="emo" aria-hidden="true">' + esc(i.emoji) + "</span> " : "") + nameWithMarker(i.name, cue) + '</div><div class="meta"' + (flat ? ' data-area="' + esc(i.area || "Other") + '"' : "") + ">" + esc(metaLine(i)) + "</div></div>" + due;
     var inner = ed
       ? '<a class="rowlink" href="#" data-na="The edit page" draggable="false">' + body + '<span class="chev">' + ICONS.chevron + '</span></a><form class="usef" onsubmit="return false"><button type="button" class="usebtn" data-use="' + esc(i.id) + '" aria-label="Use one of ' + esc(i.name) + '" title="Use one">' + ICONS.minus + '</button></form><a class="iconbtn" href="#" data-used-up="' + esc(i.id) + '" aria-label="Mark ' + esc(i.name) + ' as used up" title="Used up">' + ICONS.check + "</a>"
       : '<div class="rowlink">' + body + "</div>";
     return '<li data-row data-id="' + esc(i.id) + '"' + (ed ? " data-reduce" : "") + ">" + inner + "</li>";
   }
 
+  // What the page offers follows the data (the app's rule): a view needs two or more values, the clock needs a use-by date.
+  function views() {
+    var areas = {}, cats = {};
+    state.items.forEach(function (i) { areas[i.area || "Other"] = 1; if (i.category) cats[i.category] = 1; });
+    return { locOk: Object.keys(areas).length > 1, catOk: Object.keys(cats).length > 1, clockOk: state.items.some(function (i) { return i.useBy; }) };
+  }
+  function viewNow() { var v = views(); return state.by === "location" && v.locOk ? "location" : state.by === "category" && v.catOk ? "category" : ""; }
+  function clockNow() { return views().clockOk && state.clock; }
+  function titleText() {
+    var by = viewNow(), pick = by === "location" ? state.area : by === "category" ? state.cat : "";
+    var where = pick || (by === "location" ? "Location" : by === "category" ? "Category" : "");
+    return clockNow() ? (where ? "Use by · " + where : "Use by") : (where || "All items");
+  }
+
+  // The ribbon gets out of the way: 5 seconds with no touch, or 3 seconds after a value is picked while Use by is on. Tap the title to bring it back.
+  var idle = 0, held = false;
+  function touchRibbon() {
+    clearTimeout(idle);
+    if (viewNow() && state.ribbon) idle = setTimeout(function () { held = false; state.ribbon = false; drawTabs(); }, held ? 3000 : 5000);
+  }
+
+  var PIN = icon('<path d="M12 21s-7-6.2-7-11.2A7 7 0 0 1 19 9.8C19 14.8 12 21 12 21z"/><circle cx="12" cy="10" r="2.5"/>');
+  var TAG = icon('<path d="M3 12V4h8l10 10-8 8L3 12z"/><circle cx="7.5" cy="8.5" r="1.3"/>');
+  var CLOCK = icon('<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.2 2"/>');
+
+  function drawTabs() {
+    var v = views(), by = viewNow(), clock = clockNow(), empty = state.items.length === 0;
+    if (state.by && !by) { state.by = ""; state.ribbon = false; }
+    var title = titleText(), asButton = by !== "" && !state.ribbon;
+    var toggle = function (view, label, svg) {
+      var on = by === view;
+      return '<a class="pv" data-pin="' + view + '" role="button" aria-pressed="' + on + '" aria-label="' + label + (on ? ". Tap again to clear" : "") + '" title="' + label + (on ? " (tap again to clear)" : "") + '" href="#" draggable="false">' + svg + "</a>";
+    };
+    var viewSwitch = (v.locOk ? toggle("location", "Location", PIN) : "") + (v.catOk ? toggle("category", "Category", TAG) : "");
+    var head = viewSwitch || v.clockOk
+      ? '<div class="titlerow"><span id="titleslot">' + (asButton
+          ? '<button type="button" class="titlebtn" id="tabtitle" data-show-ribbon aria-label="' + esc(title) + ". Tap to show the " + by + ' ribbon">' + esc(title) + '<span class="mark" aria-hidden="true"> ▾</span></button>'
+          : '<b id="tabtitle">' + esc(title) + "</b>") + '</span><div class="ctl">' +
+        (viewSwitch ? '<div class="iseg" id="viewsw" role="group" aria-label="Group the list by">' + viewSwitch + "</div>" : "") +
+        (v.clockOk ? '<button type="button" class="tog" id="useby-toggle" data-clock aria-pressed="' + clock + '" aria-label="Use by, soonest first" title="Use by, soonest first">' + CLOCK + "</button>" : "") + "</div></div>"
+      : "";
+    var nav = "";
+    if (by && state.ribbon) {
+      var sel = by === "category" ? state.cat : state.area;
+      nav = '<nav class="tabs" data-view="' + by + '" aria-label="' + (by === "category" ? "Category" : "Area") + '"><a href="#" data-tab="" data-fixed ' + (sel === "" ? 'aria-current="page"' : "") + ' draggable="false">All</a>' +
+        ribbonValues(state.items, by).slice(0, 12).map(function (x) { return '<a href="#" data-tab="' + esc(x) + '" ' + (x === sel ? 'aria-current="page"' : "") + ' draggable="false">' + esc(x) + "</a>"; }).join("") + "</nav>";
+    }
+    $("#tabs").innerHTML = empty ? "" : head + nav;
+    if (nav) initRibbon(by);
+    touchRibbon();
+  }
+
   function update() {
     var ed = editing(), all = state.items, empty = all.length === 0, q = state.query.trim();
-    var areaSel = state.dim === "area" ? state.area : "", catSel = state.dim === "cat" ? state.cat : "";   // only the view in front filters
-    var visible = all.filter(function (i) { return (!q || rank(i, q) >= 0) && (!catSel || i.category === catSel); });
-    var cmp = sorter();
+    var by = viewNow(), clock = clockNow();
     var gs = groups(all);
+    // a chosen area or category nobody uses any more falls back to All
     if (state.area && !gs.some(function (g) { return g[0] === state.area; })) state.area = "";
     if (state.cat && !all.some(function (i) { return i.category === state.cat; })) state.cat = "";
+    var areaSel = by === "location" ? state.area : "", catSel = by === "category" ? state.cat : "";
+    var inView = all.filter(function (i) { return (!areaSel || (i.area || "Other") === areaSel) && (!catSel || i.category === catSel); });
+    var visible = inView.filter(function (i) { return !q || rank(i, q) >= 0; });
 
     // header icons
     var profile = ed ? '<details class="profile"><summary class="icon" aria-label="Profile" title="Profile">' + ICONS.person + '</summary><div class="menu"><a href="#" data-na="Household">Household</a><a href="#" data-na="History">History</a><a href="#" data-na="Settings">Settings</a><button type="button" data-na="Create invite link">Create invite link</button><a href="#" data-na="Download CSV">Download CSV</a><a href="#" data-na="JSON">JSON</a><button type="button" data-na="Sign out">Sign out</button></div></details>' : "";
@@ -465,38 +541,30 @@ nav.tabs.dim-cat a[aria-current=page]{background:var(--sage)}
 
     $("#readonly-note").hidden = ed;
     if (empty && !$("#searchbar").hidden) closeSearch(true);
-    $("#tools").hidden = empty;
-    $("#count").textContent = q ? visible.length + " of " + all.length : "";
-    $("#sort").value = state.sort;
 
-    // filter ribbon: the pin | tag switch picks Location or Category; chips are whole buttons, scroll sideways and can be reordered
-    var PIN = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.2A7 7 0 0 1 19 9.8C19 14.8 12 21 12 21z"/><circle cx="12" cy="10" r="2.5"/></svg>';
-    var TAG = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12V4h8l10 10-8 8L3 12z"/><circle cx="7.5" cy="8.5" r="1.3"/></svg>';
-    var isCat = state.dim === "cat", sel = isCat ? state.cat : state.area, title = isCat ? "Category" : "Location";
-    var vals = ribbonValues(all);
-    $("#tabs").innerHTML = empty ? "" : '<div class="tabhead"><b>' + title + '</b><button type="button" class="bin" role="switch" aria-checked="' + isCat + '" aria-label="Filter by category" data-flip><i></i><span>' + PIN + '</span><span>' + TAG + '</span></button></div>' +
-      '<nav class="tabs' + (isCat ? " dim-cat" : "") + '" aria-label="' + title + '"><a href="#" data-tab="" data-fixed ' + (sel === "" ? 'aria-current="page"' : "") + ' draggable="false">All</a>' +
-      vals.slice(0, 20).map(function (v) { return '<a href="#" data-tab="' + esc(v) + '" ' + (v === sel ? 'aria-current="page"' : "") + ' draggable="false">' + esc(v) + "</a>"; }).join("") + "</nav>";
-    initRibbon();
+    drawTabs();
 
-    // list
+    // list: with Use by on it is one flat list, soonest first, then items with no date; off, it is grouped by area, A to Z
+    var cmpUse = function (a, b) { if (a.useBy === b.useBy) return byName(a, b); if (!a.useBy) return 1; if (!b.useBy) return -1; return a.useBy < b.useBy ? -1 : 1; };
+    var ranked = function (list) { return q ? list.map(function (r, n) { return { r: r, n: n, k: rank(r, q) }; }).sort(function (a, b) { return a.k - b.k || a.n - b.n; }).map(function (x) { return x.r; }) : list; };
     var html = "";
-    if (empty) html = "<p>Nothing here yet.</p>";
-    else if (visible.length === 0) html = '<p class="note">Nothing matches “' + esc(q) + "”.</p>";
+    if (empty) html = '<p id="emptylist">Nothing here yet.</p>';
     else {
-      html = groups(visible).filter(function (g) { return !areaSel || g[0] === areaSel; }).map(function (g) {
-        var list = g[1].slice();
-        if (q) { var base = list.slice().sort(cmp); list = base.map(function (r, n) { return { r: r, n: n, k: rank(r, q) }; }).sort(function (a, b) { return a.k - b.k || a.n - b.n; }).map(function (x) { return x.r; }); }
-        else list.sort(cmp);
-        return '<section class="group" data-group="' + esc(g[0]) + '"><div class="grouphead"><h2>' + esc(g[0]) + '</h2><span class="count">' + list.length + '</span></div><ul class="rows">' + list.map(rowHtml).join("") + "</ul></section>";
-      }).join("");
-      if (areaSel && !html) html = '<p class="note">Nothing matches “' + esc(q) + "” in " + esc(state.area) + ".</p>";
+      if (visible.length) {
+        if (clock) html = '<section class="group flat"><ul class="rows">' + ranked(visible.slice().sort(cmpUse)).map(function (r) { return rowHtml(r, true); }).join("") + "</ul></section>";
+        else html = groups(visible).map(function (g) {
+          return '<section class="group" data-group="' + esc(g[0]) + '"><div class="grouphead"><h2>' + esc(g[0]) + '</h2></div><ul class="rows">' + ranked(g[1].slice().sort(byName)).map(function (r) { return rowHtml(r, false); }).join("") + "</ul></section>";
+        }).join("");
+      }
+      if (!visible.length && inView.length) html += '<p class="note" id="nomatch" role="status">No item matches “' + esc(q) + '”.</p><p><button class="btn" type="button" data-clear-search>Clear search</button></p>';
+      if (clock) html += '<p class="note" id="useby-note">Use by puts what expires first at the top, then items with no date. Turn it off for A to Z.</p>';
     }
     $("#list").innerHTML = html;
 
-    // add-from-search
-    var exact = all.some(function (i) { return fold(i.name) === fold(q); });
-    $("#add-from-search-wrap").hidden = !(ed && q && !exact && !$("#searchbar").hidden);
+    // Add as a new item: only when the search finds nothing, as in the app
+    var addBtn = $("#add-from-search");
+    addBtn.textContent = "Add “" + q.slice(0, 60) + "” as a new item";
+    $("#add-from-search-wrap").hidden = !(ed && q && !visible.length && inView.length);
 
     // shopping list
     var shop = shoppingList(), sh = $("#shopping");
@@ -505,7 +573,7 @@ nav.tabs.dim-cat a[aria-current=page]{background:var(--sage)}
     sh.innerHTML = "<summary>" + shop.length + " to buy</summary>" + (shop.length ? '<div class="tablewrap"><table><thead><tr><th>Item</th><th>Amount</th><th>Spot</th><th>Why</th></tr></thead><tbody>' + shop.map(function (e) { return "<tr><td>" + esc(e.name) + "</td><td>" + esc(e.qty) + "</td><td>" + esc(e.area) + " / " + esc(e.place) + "</td><td>" + esc(e.why) + "</td></tr>"; }).join("") + "</tbody></table></div>" : "");
     sh.open = wasOpen;
 
-    $("#footnote").innerHTML = all.length + " item" + (all.length === 1 ? "" : "s") + ' &middot; <a href="#" data-na="The shopping list JSON">shopping list JSON</a> &middot; <span id="version">Kitchie mockup</span>';
+    $("#footnote").innerHTML = '<a href="#" data-na="The shopping list JSON">shopping list JSON</a> &middot; <span id="version">Kitchie mockup</span>';
 
     // bottom bar
     $("#dock").innerHTML = (ed ? '<a class="icon" href="#" data-open-add aria-label="Add an item" title="Add an item">' + ICONS.plus + "</a>" : "") +
@@ -566,13 +634,17 @@ nav.tabs.dim-cat a[aria-current=page]{background:var(--sage)}
     if (na) { e.preventDefault(); toast(na.getAttribute("data-na") + " isn’t part of this mockup."); var p = $("details.profile"); if (p) p.open = false; return; }
     var use = t.closest("[data-use]"); if (use) { e.preventDefault(); useOne(use.getAttribute("data-use")); return; }
     var done = t.closest("[data-used-up]"); if (done) { e.preventDefault(); usedUp(done.getAttribute("data-used-up")); return; }
-    var flip = t.closest("[data-flip]"); if (flip) { e.preventDefault(); state.dim = state.dim === "area" ? "cat" : "area"; state.area = ""; state.cat = ""; update(); var again = $("[data-flip]"); if (again) again.focus(); return; }
-    var tab = t.closest("[data-tab]"); if (tab) { e.preventDefault(); if (state.dim === "cat") state.cat = tab.getAttribute("data-tab"); else state.area = tab.getAttribute("data-tab"); update(); return; }
+    var pv = t.closest("a.pv");   // pin or tag: choose it (the ribbon comes out at All); tap the lit one to clear it
+    if (pv) { e.preventDefault(); var view = pv.getAttribute("data-pin"); state.by = viewNow() === view ? "" : view; state.area = ""; state.cat = ""; state.ribbon = state.by !== ""; held = false; update(); var again = $('a.pv[data-pin="' + view + '"]'); if (again) again.focus({ preventScroll: true }); return; }
+    if (t.closest("[data-clock]")) { e.preventDefault(); state.clock = !state.clock; held = false; update(); return; }
+    if (t.closest("[data-show-ribbon]")) { e.preventDefault(); state.ribbon = true; drawTabs(); return; }
+    var tab = t.closest("[data-tab]"); if (tab) { e.preventDefault(); var val = tab.getAttribute("data-tab"); if (viewNow() === "category") state.cat = val; else state.area = val; held = Boolean(val && clockNow()); update(); return; }
+    if (t.closest("[data-clear-search]")) { e.preventDefault(); state.query = ""; $("#q").value = ""; update(); $("#q").focus(); return; }
     var sc = t.closest("[data-scenario]"); if (sc) { setScenario(sc.getAttribute("data-scenario")); return; }
     var th = t.closest("[data-theme-pick]"); if (th) { setTheme(th.getAttribute("data-theme-pick")); return; }
     var sh = t.closest("[data-share]"); if (sh) { toast(sh.getAttribute("data-share") + " copied (mockup: nothing is shared)."); return; }
     if (t.closest("[data-open-add]")) { e.preventDefault(); openSheet(""); return; }
-    if (t.closest("#search-toggle")) { openSearch(); return; }
+    if (t.closest("#search-toggle")) { if ($("#searchbar").hidden) openSearch(); else closeSearch(); return; }
     if (t.closest("#add-from-search")) { e.preventDefault(); openSheet($("#q").value.trim()); return; }
     var prof = $("details.profile"); if (prof && prof.open && !prof.contains(t)) prof.open = false;
   });
@@ -582,7 +654,7 @@ nav.tabs.dim-cat a[aria-current=page]{background:var(--sage)}
     var fresh = seed();
     if (s === "empty") { state.items = []; state.removed = []; }
     else { state.items = fresh.items; state.removed = fresh.removed; }
-    state.area = ""; state.cat = ""; state.query = ""; $("#q").value = ""; hideUndo();
+    state.by = ""; state.area = ""; state.cat = ""; state.clock = true; state.ribbon = false; state.query = ""; $("#q").value = ""; hideUndo();
     $$("[data-scenario]").forEach(function (b) { b.setAttribute("aria-pressed", String(b.getAttribute("data-scenario") === s)); });
     update();
   }
@@ -592,7 +664,6 @@ nav.tabs.dim-cat a[aria-current=page]{background:var(--sage)}
     $$("[data-theme-pick]").forEach(function (b) { b.setAttribute("aria-pressed", String(b.getAttribute("data-theme-pick") === t)); });
   }
   $("#reset").addEventListener("click", function () { setScenario(state.scenario); toast("Sample items reset."); });
-  $("#sort").addEventListener("change", function () { state.sort = this.value; update(); });
 
   /* ---------- search ---------- */
   var micTimer = 0, closeMode = "close";
@@ -636,6 +707,15 @@ nav.tabs.dim-cat a[aria-current=page]{background:var(--sage)}
     if (closeMode === "retry") { $("#q").value = ""; state.query = ""; update(); listen(); return; }
     closeSearch();
   });
+  $("#q").addEventListener("keydown", function (e) { if (e.key === "Escape") closeSearch(); });
+  // Pull down from the top of the list (touch only) opens the search, as in the app; the magnifier stays as the other route.
+  var pullY = null, pulled = false;
+  document.addEventListener("touchstart", function (e) { pullY = window.scrollY <= 0 && e.touches.length === 1 && $("#quick-add").hidden ? e.touches[0].clientY : null; pulled = false; }, { passive: true });
+  document.addEventListener("touchmove", function (e) {
+    if (pullY === null || pulled || !$("#searchbar").hidden || !$("#search-toggle")) return;
+    if (e.touches[0].clientY - pullY > 70 && window.scrollY <= 0) { pulled = true; openSearch(); }
+  }, { passive: true });
+  document.addEventListener("touchend", function () { pullY = null; }, { passive: true });
   document.addEventListener("keydown", function (e) {
     var typing = /^(INPUT|TEXTAREA|SELECT)$/.test((document.activeElement || {}).tagName || "");
     if (e.key === "/" && !typing && !e.metaKey && !e.ctrlKey && !e.altKey && $("#quick-add").hidden && $("#search-toggle")) { e.preventDefault(); openSearch(); }
@@ -650,7 +730,7 @@ nav.tabs.dim-cat a[aria-current=page]{background:var(--sage)}
   function openSheet(name) {
     lastFocus = document.activeElement;
     $("#add-form").reset(); $("#f-err").hidden = true; $("#f-name").removeAttribute("aria-invalid");
-    $("#f-area").value = state.area && ["Fridge", "Pantry", "Freezer"].indexOf(state.area) !== -1 ? state.area : "Fridge";
+    $("#f-area").value = viewNow() === "location" && ["Fridge", "Pantry", "Freezer"].indexOf(state.area) !== -1 ? state.area : "Fridge";
     $("#f-name").value = name || "";
     $("#quick-add").hidden = false;
     $("#f-name").focus();
@@ -672,7 +752,7 @@ nav.tabs.dim-cat a[aria-current=page]{background:var(--sage)}
       state.items.push(target); note = "Added " + name + ".";
     }
     state.removed = state.removed.filter(function (r) { return fold(r.name) !== fold(name); });
-    state.area = ""; state.cat = ""; closeSheet(); update();
+    state.by = ""; state.area = ""; state.cat = ""; state.clock = true; state.ribbon = false; closeSheet(); update();   // the app reloads the list after an add: it opens as it always does
     var li = $('li[data-id="' + target.id + '"]');
     if (li) { li.scrollIntoView({ block: "center", behavior: "smooth" }); li.classList.add("flash"); }
     offerUndo(note, before);
