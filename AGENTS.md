@@ -42,6 +42,15 @@ Do not quietly leave the alternatives behind. As soon as you set a screen to Pro
 
 `Kept` means the user decided. `Earlier` under a decided screen means it was missed. Never add `Kept` without the user's answer.
 
+## When the owner is driving a design
+
+When the owner is shaping a feature or screen, the mockup is where the work happens. It is how the owner recognises the work before it reaches the real repo. Update the mockup first; the real repo follows later and the code base takes precedence over the mockup when it is built.
+
+1. **Ask first:** "Do you want me to capture this as issues on the kitchie repo as we go?" Do not file issues until the owner says yes.
+2. **If yes, keep the issues in sync, always.** Every change to the mockup updates the matching issue in the same turn (edit the body or add a dated "Update" section). New rules go in an issue the moment they are decided. Say which issues changed.
+3. **Before treating the mockup as done** (the owner says it is agreed, or asks to build it), propose a tidy-up of the issues on that feature: merge fragments, split what grew too big, close what the design made obsolete, fix titles and links. Be the smart one: list what you would merge, split, close or rename and why, and wait for a yes before closing or deleting anything.
+4. Back-end rules (storage, formatting, config, validation) become issues; look and behaviour stay in the mockup.
+
 ## Add a mockup
 
 Copy `_template/` to `<screen>/`, edit, add a hub card (Draft), run `scripts/check-hub.sh`.
