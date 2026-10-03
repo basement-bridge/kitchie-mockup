@@ -1,0 +1,376 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kitchie: item detail mockup</title>
+<meta name="description" content="Item detail as a read view with field-level editing: header, long item names, and quantity with a human-friendly unit. Not the live product.">
+<meta name="robots" content="noindex">
+<!-- Colours, fonts and the k- classes come from the shared theme. Never copy them into this page. -->
+<link rel="stylesheet" href="../theme.css">
+<style>
+:root{--page-width:30rem}
+.strip{margin:0 0 1rem;padding:.6rem .7rem;border:1px dashed var(--border);border-radius:1.2rem;font-size:.85rem;color:var(--muted)}
+.strip-row{display:flex;flex-wrap:wrap;align-items:center;gap:.3rem}
+.strip-row+.strip-row{margin-top:.4rem}
+.strip .lab{flex:0 0 100%;margin:.2rem 0 0;font-weight:600;color:var(--fg)}
+.strip .k-pill{min-height:36px;padding:0 .65rem;font-size:.85rem}
+.frame{position:relative;padding:.6rem 14px 1.6rem;border:1px solid var(--border);border-radius:1.6rem;background:var(--bg);overflow:hidden}
+/* Header: brand left, Back right, one row */
+.head{display:flex;align-items:center;justify-content:space-between;gap:.5rem;min-height:44px}
+.brand{display:inline-flex;align-items:center;gap:.4rem;font-family:var(--head);font-weight:700;font-size:1.1rem;color:var(--fg)}
+.brand svg{color:var(--sage)}
+.back{display:inline-flex;align-items:center;min-height:44px;padding:0 0 0 .5rem;border:0;background:none;color:var(--accent);font:inherit;font-weight:600;cursor:pointer}
+.saved{min-height:1.3rem;margin:0 0 .2rem;text-align:right;font-size:.85rem;color:var(--sage)}
+/* Name */
+.namerow{display:flex;align-items:flex-start;gap:.6rem;margin:0 0 1.1rem}
+.emoji{flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;width:52px;height:52px;border:1px solid var(--border);border-radius:1rem;background:var(--surface);font-size:1.7rem}
+.namecell{flex:1 1 auto;min-width:0}
+.nameread{display:block;width:100%;padding:0 .1rem .1rem;border:0;border-bottom:2px solid var(--border);background:transparent;color:var(--fg);font-family:var(--head);font-weight:700;line-height:1.12;text-align:left;cursor:text;overflow-wrap:anywhere}
+.nameread.scrolls{overflow-x:auto;overflow-y:hidden;white-space:nowrap;overflow-wrap:normal;-webkit-overflow-scrolling:touch;cursor:grab;scrollbar-width:thin}
+.nameread.scrolls::after{content:"";display:inline-block;width:1.2rem}
+.hintline{margin:.25rem 0 0;font-size:.8rem;color:var(--muted)}
+.hintline:empty{display:none}
+/* Read rows */
+.rows{margin:0;padding:0;list-style:none}
+.rows li{border-top:1px solid var(--border)}
+.rows li:last-child{border-bottom:1px solid var(--border)}
+.rowbtn{display:flex;align-items:center;justify-content:space-between;gap:.8rem;width:100%;min-height:60px;padding:.55rem .1rem;border:0;background:none;color:var(--fg);font:inherit;text-align:left;cursor:pointer}
+.rowbtn .k{color:var(--muted);font-size:.9rem}
+.rowbtn .v{font-weight:600;font-size:1.15rem;text-align:right}
+.rowbtn.stub{cursor:default}
+.rowbtn.stub .v{font-weight:400;font-size:1rem;color:var(--muted)}
+.rowbtn:focus-visible,.nameread:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.later{margin:.8rem 0 0;font-size:.85rem;color:var(--muted)}
+/* Measurement edit, option A: inline */
+.medit{padding:.6rem 0 .8rem}
+.mrow{display:flex;align-items:center;gap:.4rem}
+.mnum{flex:0 0 4.6rem;min-width:0;padding:.4rem .3rem;text-align:center;font-size:1.15rem;font-weight:600}
+.munit{position:relative;flex:1 1 auto;min-width:0}
+.munit .k-field{padding:.4rem .8rem}
+.mfoot{display:flex;align-items:center;justify-content:space-between;gap:.5rem;margin:.5rem 0 0}
+.mfoot .k-note{margin:0}
+.fracs{display:flex;gap:.3rem;margin:.5rem 0 0}
+.fracs .k-pill{min-height:40px;flex:1 1 0;padding:0}
+/* Sheets and full screen */
+.sheetscrim{position:fixed;inset:0;z-index:60;display:flex;align-items:flex-end;justify-content:center;background:var(--scrim);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px)}
+.sheet{width:100%;max-width:30rem;padding:1rem 16px 1.4rem;border:1px solid var(--border);border-radius:1.4rem 1.4rem 0 0;background:var(--surface);box-shadow:var(--shadow)}
+.sheet h2{margin:0 0 .7rem;font-size:1.2rem}
+.sheet textarea{display:block;width:100%;min-height:5.5rem;padding:.7rem 1rem;border:1px solid var(--border);border-radius:1rem;background:var(--bg);color:var(--fg);font:inherit;font-size:1.1rem;resize:none}
+.sheet .k-actions{display:flex;justify-content:flex-end;gap:.5rem;margin-top:.8rem}
+.fullscreen{position:fixed;inset:0;z-index:70;display:flex;flex-direction:column;padding:.6rem 16px 1rem;background:var(--bg)}
+.fullscreen .bar{display:flex;align-items:center;justify-content:space-between;min-height:44px}
+.fullscreen textarea{flex:1 1 auto;margin:.6rem 0;padding:.4rem .1rem;border:0;background:transparent;color:var(--fg);font-family:var(--head);font-size:2rem;font-weight:700;line-height:1.15;resize:none}
+.fullscreen textarea:focus{outline:none}
+.bigval{margin:.2rem 0 .8rem;text-align:center;font-family:var(--head);font-size:2.6rem;font-weight:700}
+.chips{display:flex;flex-wrap:wrap;gap:.35rem;margin:.6rem 0 0}
+.chips .k-pill{min-height:40px}
+.table{width:100%;border-collapse:collapse;font-size:.9rem}
+.table th,.table td{padding:.3rem .4rem;border-bottom:1px solid var(--border);text-align:left}
+.table th{color:var(--muted);font-weight:600}
+details.rules{margin:1rem 0 0;padding:.6rem .8rem;border:1px dashed var(--border);border-radius:1rem;font-size:.9rem;color:var(--muted)}
+details.rules summary{cursor:pointer;font-weight:600;color:var(--fg)}
+</style>
+</head>
+<body>
+<div class="k-banner"><strong>Mockup</strong> &middot; sample data</div>
+
+<section class="strip" aria-label="Mockup controls">
+  <p class="lab">Sample item</p>
+  <div class="strip-row" role="group" aria-label="Sample item" id="sampleRow"></div>
+  <p class="lab">Long-name editor (names that do not fit one line)</p>
+  <div class="strip-row" role="group" aria-label="Long-name editor">
+    <button type="button" class="k-pill" data-name-ui="sheet" aria-pressed="true">Bottom sheet</button>
+    <button type="button" class="k-pill" data-name-ui="full" aria-pressed="false">Full screen</button>
+  </div>
+  <p class="lab">Quantity editor</p>
+  <div class="strip-row" role="group" aria-label="Quantity editor">
+    <button type="button" class="k-pill" data-m-ui="inline" aria-pressed="true">A: in place</button>
+    <button type="button" class="k-pill" data-m-ui="sheet" aria-pressed="false">B: bottom sheet</button>
+  </div>
+  <p class="lab">Preview</p>
+  <div class="strip-row"><button type="button" class="k-pill" id="themeToggle">Phone</button></div>
+</section>
+
+<main class="frame" id="frame">
+  <div class="head">
+    <span class="brand"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11h16l-1.5 8h-13z"/><path d="M8 11a4 4 0 0 1 8 0"/></svg>Kitchie</span>
+    <button type="button" class="back" id="back">Back &rarr;</button>
+  </div>
+  <p class="saved" id="saved" role="status" aria-live="polite"></p>
+
+  <div class="namerow">
+    <span class="emoji" id="emoji" aria-hidden="true"></span>
+    <div class="namecell" id="nameCell">
+      <button type="button" class="nameread" id="nameRead" aria-label="Item name. Tap to change"></button>
+      <p class="hintline" id="nameHint"></p>
+    </div>
+  </div>
+
+  <ul class="rows">
+    <li id="mLi">
+      <button type="button" class="rowbtn" id="mRead" aria-label="Quantity. Tap to change"><span class="k">Quantity</span><span class="v" id="mVal"></span></button>
+      <div class="medit" id="mEditInline" hidden>
+        <div class="mrow">
+          <button type="button" class="k-step" id="mMinus" aria-label="Less">&minus;</button>
+          <input class="k-field mnum" id="mNum" type="text" inputmode="decimal" autocomplete="off" maxlength="9" aria-label="Quantity" enterkeyhint="done">
+          <button type="button" class="k-step" id="mPlus" aria-label="More">+</button>
+          <div class="munit"><button type="button" class="k-field" id="mUnit" aria-haspopup="listbox" aria-expanded="false" aria-label="Unit"><span id="mUnitText"></span><span class="k-caret" aria-hidden="true">&#9662;</span></button>
+            <ul class="k-list is-right" id="mUnitList" role="listbox" aria-label="Unit" hidden></ul></div>
+        </div>
+        <div class="fracs" id="mFracs" role="group" aria-label="Fractions"></div>
+        <div class="mfoot"><p class="k-note" id="mPreview"></p><button type="button" class="k-btn is-primary" id="mDone">Done</button></div>
+      </div>
+    </li>
+    <li><div class="rowbtn stub"><span class="k">Location</span><span class="v" id="sLoc"></span></div></li>
+    <li><div class="rowbtn stub"><span class="k">Spot</span><span class="v" id="sSpot"></span></div></li>
+    <li><div class="rowbtn stub"><span class="k">Category</span><span class="v" id="sCat"></span></div></li>
+    <li><div class="rowbtn stub"><span class="k">Use by</span><span class="v" id="sUse"></span></div></li>
+    <li><div class="rowbtn stub"><span class="k">Minimum stock</span><span class="v" id="sMin"></span></div></li>
+  </ul>
+  <p class="later">Greyed rows keep today's behaviour and get their own field-level editing in the next sections. "Mark as used up" is gone from this screen: it lives on the list.</p>
+</main>
+
+<details class="rules" open>
+  <summary>How quantities are shown (the rules this mockup uses)</summary>
+  <table class="table" id="rulesTable"><thead><tr><th>Stored</th><th>Shown</th></tr></thead><tbody></tbody></table>
+  <p style="margin:.6rem 0 0">Fractions only for &frac14; &frac12; &frac34; on kg, L and counts. Grams and millilitres stay whole or decimal. Up to two decimals, never padded. Grams roll up to kg only when that reads naturally (1500 g is 1&frac12; kg; 250 g stays 250 g).</p>
+</details>
+
+<div class="sheetscrim" id="nameSheet" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="nsT">
+    <h2 id="nsT">Item name</h2>
+    <textarea id="nsText" maxlength="120" aria-label="Item name" enterkeyhint="done"></textarea>
+    <div class="k-actions"><button type="button" class="k-btn" id="nsCancel">Cancel</button><button type="button" class="k-btn is-primary" id="nsSave">Save</button></div>
+  </div>
+</div>
+<div class="fullscreen" id="nameFull" hidden role="dialog" aria-modal="true" aria-label="Item name">
+  <div class="bar"><button type="button" class="back" id="nfCancel" style="padding:0">Cancel</button><button type="button" class="k-btn is-primary" id="nfSave">Save</button></div>
+  <textarea id="nfText" maxlength="120" aria-label="Item name"></textarea>
+</div>
+<div class="sheetscrim" id="mSheet" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="msT">
+    <h2 id="msT">Quantity</h2>
+    <div class="bigval" id="msBig"></div>
+    <div class="mrow">
+      <button type="button" class="k-step" id="msMinus" aria-label="Less">&minus;</button>
+      <input class="k-field mnum" id="msNum" type="text" inputmode="decimal" autocomplete="off" maxlength="9" aria-label="Quantity" style="flex:1 1 auto">
+      <button type="button" class="k-step" id="msPlus" aria-label="More">+</button>
+    </div>
+    <div class="fracs" id="msFracs" role="group" aria-label="Fractions"></div>
+    <div class="chips" id="msUnits" role="group" aria-label="Unit"></div>
+    <div class="k-actions"><button type="button" class="k-btn" id="msCancel">Cancel</button><button type="button" class="k-btn is-primary" id="msSave">Done</button></div>
+  </div>
+</div>
+
+<p style="margin:1.4rem 0 0"><a class="k-btn" href="../index.html">All mockups</a></p>
+
+<script>
+(function () {
+  "use strict";
+  var $ = function (id) { return document.getElementById(id); };
+  var UNITS = ["g", "kg", "mL", "L", "pack", "tin", "jar", "bottle", "bag", "box", "carton", "bunch", "roll"];
+  var FAMILY = { g: "mass", kg: "mass", mL: "volume", L: "volume" };   // everything else is a count
+  var SAMPLES = [
+    { id: "short", label: "Short name", emoji: "🍊", name: "Orange", n: 3, unit: "pack", loc: "Pantry", spot: "Bottom shelf", cat: "Fruits", use: "in 6 days", min: "2" },
+    { id: "med", label: "Two lines", emoji: "🍗", name: "Chicken thigh fillets, free range", n: 1.5, unit: "kg", loc: "Freezer", spot: "Top drawer", cat: "Meat", use: "in 3 weeks", min: "" },
+    { id: "long", label: "Very long", emoji: "🥫", name: "Organic crushed Italian tomatoes with basil and a little garlic, family size, low salt", n: 400, unit: "g", loc: "Pantry", spot: "Left shelf", cat: "Cans", use: "", min: "2" }
+  ];
+  var cur = SAMPLES[0], item = null, nameUi = "sheet", mUi = "inline";
+
+  /* ---------- The display formatter: stored measurement in, human wording out ---------- */
+  var FRAC = { 0.25: "¼", 0.5: "½", 0.75: "¾" };
+  function round2(x) { return Math.round(x * 100) / 100; }
+  function plain(x) { return String(round2(x)); }                      // 1, 1.5, 1.25 (no padding)
+  function withFraction(x) {
+    var w = Math.floor(x + 1e-9), f = round2(x - w);
+    if (FRAC[f]) return (w > 0 ? String(w) : "") + FRAC[f];
+    return plain(x);
+  }
+  // Natural unit: grams roll up at 1000 and read as kg only when that is a simple value; kg under 1 reads as grams.
+  function natural(n, unit) {
+    if (unit === "g" && n >= 1000) { var kg = round2(n / 1000); if (FRAC[round2(kg % 1)] !== undefined || kg % 1 === 0 || String(kg).length <= 4) return { n: kg, unit: "kg" }; }
+    if (unit === "kg" && n < 1) return { n: round2(n * 1000), unit: "g" };
+    if (unit === "mL" && n >= 1000) return { n: round2(n / 1000), unit: "L" };
+    if (unit === "L" && n < 1) return { n: round2(n * 1000), unit: "mL" };
+    return { n: n, unit: unit };
+  }
+  function show(n, unit) {
+    var v = natural(n, unit), small = v.unit === "g" || v.unit === "mL";
+    var txt = small ? plain(v.n) : withFraction(v.n);
+    return txt + (v.unit ? " " + v.unit : "");
+  }
+  var RULE_ROWS = [[1, "kg"], [1.5, "kg"], [1.25, "kg"], [1.75, "kg"], [1.85, "kg"], [250, "g"], [1500, "g"], [1850, "g"], [0.25, "kg"], [0.5, "L"], [2.5, "pack"]];
+  var tb = $("rulesTable").querySelector("tbody");
+  RULE_ROWS.forEach(function (r) { var tr = document.createElement("tr"), a = document.createElement("td"), b = document.createElement("td"); a.textContent = r[0] + " " + r[1]; b.textContent = show(r[0], r[1]); tr.appendChild(a); tr.appendChild(b); tb.appendChild(tr); });
+
+  /* ---------- Saving: one field at a time, then straight back to the read view ---------- */
+  var savedTimer = null;
+  function saved(what) {
+    $("saved").textContent = what + " saved";
+    clearTimeout(savedTimer); savedTimer = setTimeout(function () { $("saved").textContent = ""; }, 2200);
+  }
+
+  /* ---------- Name: read view ---------- */
+  var MAXPX = 30.4, MINPX = 20;   // 1.9rem down to 1.25rem, never smaller
+  function fitName() {
+    var el = $("nameRead"), t = item.name;
+    el.textContent = t; el.classList.remove("scrolls"); $("nameHint").textContent = "";
+    var px = MAXPX; el.style.fontSize = px + "px";
+    var lh = function () { return parseFloat(getComputedStyle(el).lineHeight) || px * 1.12; };
+    var lines = function () { return Math.round(el.scrollHeight / lh()); };
+    while (lines() > 2 && px > MINPX) { px -= 1; el.style.fontSize = px + "px"; }
+    if (lines() > 2) {   // still too long at the smallest size: keep the title area, drag sideways to read the rest
+      el.classList.add("scrolls");
+      $("nameHint").textContent = "Drag sideways to read the whole name";
+    }
+    el.dataset.long = (item.name.length > 18 || lines() > 1 || el.classList.contains("scrolls")) ? "1" : "";
+  }
+  // Drag to scroll with a mouse as well as touch
+  (function () {
+    var el = $("nameRead"), down = false, sx = 0, sl = 0, moved = false;
+    el.addEventListener("pointerdown", function (e) { if (e.pointerType === "mouse" && el.classList.contains("scrolls")) { down = true; moved = false; sx = e.clientX; sl = el.scrollLeft; } });
+    window.addEventListener("pointermove", function (e) { if (down) { var d = e.clientX - sx; if (Math.abs(d) > 4) moved = true; el.scrollLeft = sl - d; } });
+    window.addEventListener("pointerup", function () { down = false; });
+    el.addEventListener("click", function (e) { if (moved) { e.preventDefault(); e.stopImmediatePropagation(); moved = false; } }, true);
+  })();
+
+  /* ---------- Name: edit ---------- */
+  function commitName(v) {
+    v = v.replace(/\s+/g, " ").trim();
+    if (v !== "" && v !== item.name) { item.name = v; saved("Name"); }
+    fitName();
+  }
+  $("nameRead").addEventListener("click", function () {
+    if ($("nameRead").dataset.long !== "1") return inlineName();
+    if (nameUi === "full") { $("nfText").value = item.name; $("nameFull").hidden = false; $("nfText").focus(); }
+    else { $("nsText").value = item.name; $("nameSheet").hidden = false; $("nsText").focus(); }
+  });
+  function inlineName() {
+    var read = $("nameRead"), inp = document.createElement("input");
+    inp.className = "k-title"; inp.type = "text"; inp.maxLength = 120; inp.value = item.name; inp.setAttribute("aria-label", "Item name"); inp.enterKeyHint = "done";
+    read.hidden = true; read.parentNode.insertBefore(inp, read); inp.focus(); inp.select();
+    var finished = false;
+    function end(save) { if (finished) return; finished = true; var v = inp.value; inp.remove(); read.hidden = false; if (save) commitName(v); else fitName(); read.focus(); }
+    inp.addEventListener("keydown", function (e) { if (e.key === "Enter") { e.preventDefault(); end(true); } else if (e.key === "Escape") end(false); });
+    inp.addEventListener("blur", function () { end(true); });
+  }
+  function closeSheet(id) { $(id).hidden = true; $("nameRead").focus(); }
+  $("nsSave").addEventListener("click", function () { commitName($("nsText").value); closeSheet("nameSheet"); });
+  $("nsCancel").addEventListener("click", function () { closeSheet("nameSheet"); });
+  $("nfSave").addEventListener("click", function () { commitName($("nfText").value); closeSheet("nameFull"); });
+  $("nfCancel").addEventListener("click", function () { closeSheet("nameFull"); });
+  [["nsText", "nsSave"], ["nfText", "nfSave"]].forEach(function (p) {
+    $(p[0]).addEventListener("keydown", function (e) { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); $(p[1]).click(); } });
+  });
+
+  /* ---------- Quantity: read view ---------- */
+  function renderM() { $("mVal").textContent = show(item.n, item.unit); }
+  function parseNum(s) {
+    s = String(s).trim().replace(",", ".");
+    var m = /^(\d{1,4})?\s*([¼½¾])$/.exec(s);
+    if (m) return (m[1] ? +m[1] : 0) + { "¼": 0.25, "½": 0.5, "¾": 0.75 }[m[2]];
+    var f = /^(\d{1,4})\s+(\d)\/(\d)$/.exec(s);
+    if (f && +f[3] > 0) return +f[1] + +f[2] / +f[3];
+    return /^\d{0,4}(\.\d{0,2})?$/.test(s) && s !== "" && s !== "." ? parseFloat(s) : null;
+  }
+  function stepFor(unit) { return unit === "g" || unit === "mL" ? 50 : FAMILY[unit] ? 0.25 : 1; }
+
+  /* Draft values while editing (one object serves both editors) */
+  var d = { n: 0, unit: "" };
+  function dText() { return plain(d.n); }
+  function previewLine() { return "Reads as " + show(d.n, d.unit); }
+  function adjust(dir) { d.n = Math.max(0, round2(d.n + dir * stepFor(d.unit))); }
+  function chipsFor(box, onpick) {
+    box.textContent = "";
+    [["¼", 0.25], ["½", 0.5], ["¾", 0.75]].forEach(function (f) {
+      var b = document.createElement("button"); b.type = "button"; b.className = "k-pill"; b.textContent = f[0]; b.setAttribute("aria-label", "Add " + f[0]);
+      b.addEventListener("click", function () { d.n = round2(Math.floor(d.n) + f[1]); onpick(); }); box.appendChild(b);
+    });
+  }
+  function hideFracs(box) { box.hidden = !(FAMILY[d.unit] === "mass" && d.unit === "kg" || FAMILY[d.unit] === "volume" && d.unit === "L" || !FAMILY[d.unit]); }
+  function commitM() {
+    if (d.n !== item.n || d.unit !== item.unit) { item.n = d.n; item.unit = d.unit; saved("Quantity"); }
+    renderM();
+  }
+
+  /* Option A: in place */
+  function drawA() { $("mNum").value = dText(); $("mUnitText").textContent = d.unit; $("mPreview").textContent = previewLine(); hideFracs($("mFracs")); }
+  function openA() {
+    d.n = item.n; d.unit = item.unit; $("mRead").hidden = true; $("mEditInline").hidden = false; drawA(); $("mNum").focus(); $("mNum").select();
+  }
+  function closeA(save) { if (save) commitM(); $("mEditInline").hidden = true; $("mRead").hidden = false; $("mRead").focus(); closeList(); }
+  chipsFor($("mFracs"), drawA);
+  $("mMinus").addEventListener("click", function () { adjust(-1); drawA(); });
+  $("mPlus").addEventListener("click", function () { adjust(1); drawA(); });
+  $("mNum").addEventListener("input", function () { var v = parseNum($("mNum").value); if (v !== null) { d.n = v; $("mPreview").textContent = previewLine(); } });
+  $("mNum").addEventListener("keydown", function (e) { if (e.key === "Enter") { e.preventDefault(); closeA(true); } else if (e.key === "Escape") closeA(false); });
+  $("mDone").addEventListener("click", function () { closeA(true); });
+  var ul = $("mUnitList");
+  UNITS.forEach(function (u) {
+    var li = document.createElement("li"); li.setAttribute("role", "option"); li.textContent = u;
+    li.addEventListener("mousedown", function (e) { e.preventDefault(); });
+    li.addEventListener("click", function () { d.unit = u; closeList(); drawA(); });
+    ul.appendChild(li);
+  });
+  function closeList() { ul.hidden = true; $("mUnit").setAttribute("aria-expanded", "false"); }
+  $("mUnit").addEventListener("click", function () { var open = ul.hidden; ul.hidden = !open; $("mUnit").setAttribute("aria-expanded", String(open)); });
+  // Tapping anywhere else finishes the edit and returns to the read view
+  document.addEventListener("pointerdown", function (e) {
+    if (!$("mEditInline").hidden && !$("mEditInline").contains(e.target)) closeA(true);
+  });
+
+  /* Option B: bottom sheet with the unit as chips */
+  function drawB() {
+    $("msNum").value = dText(); $("msBig").textContent = show(d.n, d.unit); hideFracs($("msFracs"));
+    Array.prototype.forEach.call($("msUnits").children, function (b) { b.setAttribute("aria-pressed", String(b.textContent === d.unit)); });
+  }
+  chipsFor($("msFracs"), drawB);
+  UNITS.forEach(function (u) {
+    var b = document.createElement("button"); b.type = "button"; b.className = "k-pill"; b.textContent = u;
+    b.addEventListener("click", function () { d.unit = u; drawB(); }); $("msUnits").appendChild(b);
+  });
+  $("msMinus").addEventListener("click", function () { adjust(-1); drawB(); });
+  $("msPlus").addEventListener("click", function () { adjust(1); drawB(); });
+  $("msNum").addEventListener("input", function () { var v = parseNum($("msNum").value); if (v !== null) { d.n = v; $("msBig").textContent = show(d.n, d.unit); } });
+  $("msSave").addEventListener("click", function () { commitM(); $("mSheet").hidden = true; $("mRead").focus(); });
+  $("msCancel").addEventListener("click", function () { $("mSheet").hidden = true; $("mRead").focus(); });
+  $("msNum").addEventListener("keydown", function (e) { if (e.key === "Enter") { e.preventDefault(); $("msSave").click(); } });
+
+  $("mRead").addEventListener("click", function () {
+    if (mUi === "inline") return openA();
+    d.n = item.n; d.unit = item.unit; drawB(); $("mSheet").hidden = false; $("msNum").focus(); $("msNum").select();
+  });
+
+  /* ---------- Page ---------- */
+  function load(s) {
+    cur = s; item = JSON.parse(JSON.stringify(s));
+    $("emoji").textContent = item.emoji; $("sLoc").textContent = item.loc; $("sSpot").textContent = item.spot; $("sCat").textContent = item.cat;
+    $("sUse").textContent = item.use || "Not set"; $("sMin").textContent = item.min || "Not set";
+    $("mEditInline").hidden = true; $("mRead").hidden = false; $("saved").textContent = "";
+    fitName(); renderM();
+    Array.prototype.forEach.call($("sampleRow").children, function (b) { b.setAttribute("aria-pressed", String(b.dataset.id === s.id)); });
+  }
+  SAMPLES.forEach(function (s) {
+    var b = document.createElement("button"); b.type = "button"; b.className = "k-pill"; b.dataset.id = s.id; b.textContent = s.label;
+    b.addEventListener("click", function () { load(s); }); $("sampleRow").appendChild(b);
+  });
+  Array.prototype.forEach.call(document.querySelectorAll("[data-name-ui]"), function (b) {
+    b.addEventListener("click", function () { nameUi = b.dataset.nameUi; Array.prototype.forEach.call(document.querySelectorAll("[data-name-ui]"), function (x) { x.setAttribute("aria-pressed", String(x === b)); }); });
+  });
+  Array.prototype.forEach.call(document.querySelectorAll("[data-m-ui]"), function (b) {
+    b.addEventListener("click", function () { mUi = b.dataset.mUi; Array.prototype.forEach.call(document.querySelectorAll("[data-m-ui]"), function (x) { x.setAttribute("aria-pressed", String(x === b)); }); });
+  });
+  var themes = ["Phone", "Light", "Dark"], ti = 0;
+  $("themeToggle").addEventListener("click", function () {
+    ti = (ti + 1) % 3; $("themeToggle").textContent = themes[ti];
+    if (ti === 0) document.documentElement.removeAttribute("data-theme"); else document.documentElement.setAttribute("data-theme", themes[ti].toLowerCase());
+  });
+  window.addEventListener("resize", function () { if (item) fitName(); });
+  $("back").addEventListener("click", function () { $("saved").textContent = "Back to the list (every change is already saved)"; });
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { fitName(); });
+  load(SAMPLES[1]);
+})();
+</script>
+</body>
+</html>
