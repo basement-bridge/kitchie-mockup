@@ -52,9 +52,11 @@ body.is-pulling{-webkit-user-select:none;user-select:none}
 .vcard svg{width:84px;height:84px;overflow:visible;stroke:var(--fg);fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
 .refreshveil.blend{align-items:flex-start;justify-content:flex-start;background:color-mix(in srgb,var(--bg) 50%,transparent);-webkit-backdrop-filter:blur(1.5px);backdrop-filter:blur(1.5px)}
 .refreshveil.blend{justify-content:center}
-.refreshveil.blend #veil-one{background:color-mix(in srgb,var(--surface) 72%,transparent);border:1px solid var(--border);border-radius:1.2rem;box-shadow:0 6px 20px rgba(0,0,0,.08);padding:.9rem 1rem .8rem;width:min(78%,300px);margin:0 auto;gap:.4rem;align-items:stretch}
+.refreshveil.blend #veil-one{background:color-mix(in srgb,var(--surface) 72%,transparent);border:1px solid var(--border);border-radius:1.2rem;box-shadow:0 6px 20px rgba(0,0,0,.08);padding:.9rem 1rem .8rem;width:min(78%,300px);margin:0 auto;transform:translateY(-20vh);gap:.4rem;align-items:stretch}
 .refreshveil.blend #veil-one svg{width:100%;height:auto;max-height:150px}
 .refreshveil.blend #veil-text{font-size:.82rem;font-weight:600;color:var(--muted);text-align:center;letter-spacing:.02em}
+@keyframes vhop{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-9px)}}
+.v-wide .jar{transform-box:fill-box;transform-origin:50% 100%}
 .v-wide .plank{fill:var(--muted);opacity:.55}
 .v-wide .jar{fill:var(--accent);stroke:none;animation:vhop 1.3s ease-in-out infinite}
 #list.refreshing li{animation:vrow 1.3s ease-in-out infinite}
