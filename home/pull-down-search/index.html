@@ -750,12 +750,11 @@ li .meta mark{color:var(--fg)}
   var wrap = $("#searchwrap"), qEl = $("#q"), barEl = $("#searchbar");
   /* The pull has two depths, measured by finger distance only (touch and mouse drag alike, no velocity):
      past PULL_SEARCH_PX the release opens search; past PULL_REFRESH_PX it refreshes the list.
-     Why these numbers on a 390 px phone: 56 px is a short, deliberate thumb pull (about a centimetre), small enough to be easy, big enough that
-     a stray scroll jitter (10 to 15 px) never arms it. 130 px is about 2.3 times that, roughly a sixth of the screen height, still reachable by a
-     thumb without re-gripping, and the 74 px gap between the two is several times the jitter, so the label change is something you push through
-     on purpose rather than hit by accident. The field follows the finger at RESIST (0.9) so it is fully drawn at the first line (56 x 0.9 = about 50 px,
-     the input row), then stays put while the pill below it reports the stage. Distance only on purpose: a fast flick that travels far does refresh. */
-  var PULL_SEARCH_PX = 56, PULL_REFRESH_PX = 130, RESIST = 0.9, REFRESH_MS = 1000;
+     Owner rule: refresh needs at least 40% of the screen height, so it is a deliberate pull and never an accident. Fixed pixels for now, from a
+     reference screen 800 px tall: 0.40 x 800 = 320 px. 56 px opens search (a short thumb pull; stray scroll jitter of 10 to 15 px never arms it).
+     LATER: scale with the real screen, with a maximum travel so it feels the same on every form factor.
+     Distance only on purpose: a fast flick that travels far does refresh. */
+  var PULL_SEARCH_PX = 56, PULL_REFRESH_PX = 320, RESIST = 0.9, REFRESH_MS = 1000;
   var FIELD_H = 64;   // full height of the field row
   var reduced = function () { return window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches; };
   $("#search-mic").innerHTML = ICONS.mic;
