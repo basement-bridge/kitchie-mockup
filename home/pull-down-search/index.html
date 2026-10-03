@@ -45,7 +45,11 @@ body.is-pulling{-webkit-user-select:none;user-select:none}
 .pullwrap.deep .searchbar{opacity:.12}
 .pullwrap.refreshing .searchbar{visibility:hidden}
 #list{transition:opacity .2s ease}
-#list.refreshing{opacity:.25;pointer-events:none}
+#list.refreshing{visibility:hidden}
+.refreshveil{position:fixed;inset:0;z-index:60;background:var(--bg);display:none;align-items:center;justify-content:center;flex-direction:column;gap:.8rem;color:var(--muted);font-weight:600}
+.refreshveil.on{display:flex}
+.refreshveil svg{width:32px;height:32px;animation:spin .9s linear infinite}
+@media (prefers-reduced-motion: reduce){.refreshveil svg{animation:none}}
 @media (prefers-reduced-motion: reduce){.pullpill .pill svg{transition:none;transform:none!important;animation:none!important}#list{transition:none}}
 #search-mic[aria-pressed="true"]{color:#fff;background:#C0392B;border-color:#C0392B;animation:listen 1.2s ease-in-out infinite}
 @keyframes listen{50%{box-shadow:0 0 0 6px rgba(192,57,43,.25)}}
@@ -235,13 +239,13 @@ li .meta mark{color:var(--fg)}
       <button type="button" class="seg" data-theme-pick="light" aria-pressed="false">Light</button>
       <button type="button" class="seg" data-theme-pick="dark" aria-pressed="false">Dark</button>
     </fieldset>
-    <p>Try: pull the list down a little and type milk, cheese or e; pull it further and let go to refresh.</p>
+    <p>Try: pull the list down a little and type milk, cheese or e; keep pulling and it refreshes by itself, no letting go needed.</p>
     <ul class="rules">
-      <li>Pull a little: search. Pull further: refresh.</li>
+      <li>Pull a little and let go: search. Keep pulling: it refreshes on its own, behind a solid cover until the data is in.</li>
       <li>Pull down from the top to search. Closing the field (Cancel, the Search key, a tap outside, scrolling) keeps the search on.</li>
       <li>An amber-gold banner sits right above the list: Results for &ldquo;milk&rdquo; &middot; 3 items, with a &times;. Tap the words to edit the search; the field opens pre-filled.</li>
       <li>The words that matched are marked inside each row, so you can see why it is there.</li>
-      <li>A search is temporary: the &times; or a new pull-down clears it; it never changes your Location or Category, and a page reload clears it too (a pull-to-refresh does not).</li>
+      <li>A search is temporary: the &times; or a new pull-down clears it; it never changes your Location or Category, and a refresh clears it, because a refresh follows the same rules as opening the page.</li>
     </ul>
     <p><button type="button" class="seg" id="reset">Reset sample items</button></p>
   </div>
@@ -258,6 +262,7 @@ li .meta mark{color:var(--fg)}
   </div>
 </div>
 <div class="pullpill" id="pullpill" data-stage="0" aria-hidden="true"><span class="pill"><span id="pill-glyph"></span><span id="pill-text"></span></span></div>
+<div class="refreshveil" id="refreshveil" aria-hidden="true"><span id="veil-glyph"></span><span>Refreshing…</span></div>
 <div class="sr-only" id="pullstatus" role="status" aria-live="polite"></div>
 <p id="add-from-search-wrap" hidden><a id="add-from-search" class="btn" href="#">Add as a new item</a></p>
 <div id="tabs"></div>
@@ -814,7 +819,7 @@ li .meta mark{color:var(--fg)}
   var STAGES = [
     { glyph: ICONS.down, text: "Pull down to search", say: "" },
     { glyph: ICONS.search, text: "Release to search", say: "Release to search" },
-    { glyph: ICONS.retry, text: "Release to refresh", say: "Release to refresh" }
+    { glyph: ICONS.retry, text: "Refreshing", say: "Refreshing" }
   ];
   // stage 0 = nothing yet, 1 = search, 2 = refresh, -1 = pill hidden. The words and the aria-live text change together, only when the stage changes.
   function pill(stage) {
@@ -826,23 +831,20 @@ li .meta mark{color:var(--fg)}
     $("#pullstatus").textContent = STAGES[stage].say;
   }
   function stageFor(d) { return d >= PULL_REFRESH_PX ? 2 : d >= PULL_SEARCH_PX ? 1 : 0; }
-  // Visual only in the mockup: the live app swaps changed rows in place (refresh.js); here the list dims, spins, and comes back. Search, Location, Category and sort stay as they are.
+  // Visual only in the mockup. Refresh follows the SAME rules as opening the page: the view returns to how the app opens (Use by on, Location and Category off,
+  // ribbon hidden) and a temporary search is cleared. LATER: whatever the app learns about the person (their usual view, defaults) applies here exactly as on a page load.
+  // An opaque cover blocks the whole screen until the data is in.
   function startRefresh() {
-    refreshing = true;
-    wrap.classList.remove("armed", "deep", "settle"); wrap.classList.add("pulling", "refreshing");
-    wrap.style.height = FIELD_H + "px";
-    pillEl.style.setProperty("--pt", (-FIELD_H + (FIELD_H - 36) / 2) + "px");
-    pillEl.classList.add("busy"); stageNow = -2; pillEl.classList.add("on"); pillEl.setAttribute("data-stage", "2");
-    $("#pill-glyph").innerHTML = ICONS.retry; $("#pill-text").textContent = "Refreshing…";
-    $("#pullstatus").textContent = "Refreshing";
+    refreshing = true; pull = null; document.body.classList.remove("is-pulling");
+    wrap.classList.remove("armed", "deep", "settle", "pulling"); wrap.style.height = ""; barEl.style.removeProperty("--p"); pill(-1);
+    $("#veil-glyph").innerHTML = ICONS.retry; $("#refreshveil").classList.add("on");
     $("#list").classList.add("refreshing"); $("#list").setAttribute("aria-busy", "true");
+    $("#pullstatus").textContent = "Refreshing";
     setTimeout(function () {
+      state.by = ""; state.area = ""; state.cat = ""; state.clock = true; state.ribbon = false; state.query = ""; qEl.value = "";
       update();
       $("#list").classList.remove("refreshing"); $("#list").removeAttribute("aria-busy");
-      pillEl.classList.remove("busy", "on"); pillEl.style.removeProperty("--pt"); stageNow = -1;
-      wrap.classList.remove("refreshing");
-      var done = function () { wrap.classList.remove("pulling", "settle"); wrap.style.height = ""; barEl.style.removeProperty("--p"); refreshing = false; };
-      if (reduced()) done(); else { wrap.classList.add("settle"); wrap.style.height = "0px"; setTimeout(done, 260); }
+      $("#refreshveil").classList.remove("on"); refreshing = false;
       $("#pullstatus").textContent = "List refreshed";
     }, REFRESH_MS);
   }
@@ -867,6 +869,7 @@ li .meta mark{color:var(--fg)}
     var h = Math.min(FIELD_H, pull.d * RESIST), st = stageFor(pull.d);
     wrap.style.height = h + "px"; barEl.style.setProperty("--p", String(Math.min(1, pull.d / PULL_SEARCH_PX)));
     wrap.classList.toggle("armed", st === 1); wrap.classList.toggle("deep", st === 2);
+    if (st === 2) { startRefresh(); return; }
     pill(st);
   }
   function pullEnd() {
@@ -875,7 +878,6 @@ li .meta mark{color:var(--fg)}
     if (!p.on) return;
     suppressClick = true; setTimeout(function () { suppressClick = false; }, 60);
     var st = stageFor(p.d);
-    if (st === 2) { pill(-1); startRefresh(); return; }
     if (st === 1) { openField(false); return; }
     // short of the first line: spring back
     wrap.classList.remove("armed", "deep"); pill(-1);
