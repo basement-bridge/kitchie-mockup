@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kitchie: release to search, C Jar lid</title>
+<meta name="description" content="A jar lid rattles under pressure, then pops with a puff. Not the live product.">
+<meta name="robots" content="noindex">
+<!-- Colours, fonts and base rules come from the shared theme. Never copy them into this page. -->
+<link rel="stylesheet" href="../../../theme.css">
+<style>
+
+:root{--page-width:30rem}
+h1{font-size:2.4rem;line-height:1.05;font-weight:700;margin:.5rem 0 .6rem}
+.lead{margin:0 0 1.2rem;color:var(--muted)}
+.frame{margin:0 0 1.2rem}
+.cap{display:flex;gap:.5rem;align-items:center;margin:0 0 .45rem;font-size:.9rem;color:var(--muted)}
+.scene{position:relative;padding:34px 10px 14px;border:1px dashed var(--border);border-radius:1.2rem;overflow:hidden}
+.searchbar{display:flex;gap:.5rem;align-items:center}
+.field{flex:1 1 auto;min-width:0;min-height:52px;display:flex;align-items:center;padding:.4rem 1rem;border:1px solid var(--border);border-radius:1rem;background:var(--surface);color:var(--muted);white-space:nowrap;overflow:hidden}
+.field,.mic{opacity:.5}
+.mic{flex:0 0 48px;height:48px;display:grid;place-items:center;border:1px solid var(--border);border-radius:.9rem;color:var(--fg)}
+.cancel{flex:0 0 auto;padding:0 .4rem;color:var(--accent);font-weight:700}
+.pullpill{position:absolute;left:18px;top:37px;z-index:2}
+.pill{display:inline-flex;align-items:center;gap:.5rem;white-space:nowrap;min-height:46px;padding:0 1rem 0 .6rem;border:1px solid var(--border);border-radius:999px;background:var(--surface);color:var(--muted);font-size:.9rem;font-weight:600;box-shadow:0 2px 8px rgba(0,0,0,.12)}
+.scene[data-stage="1"] .pill{color:var(--fg);border-color:var(--accent);font-weight:700}
+.g{flex:none;overflow:visible;margin:-5px 0}
+.notes{margin:1.4rem 0 0;padding:1rem 1.2rem;border:1px solid var(--border);border-radius:1.2rem;background:var(--surface);font-size:.95rem}
+.notes h2{font-size:1rem;margin:0 0 .5rem}
+.notes ul{margin:0;padding-left:1.1rem;display:grid;gap:.35rem}
+.links{margin:1.2rem 0 0;display:flex;gap:.6rem;flex-wrap:wrap}
+html.embed .k-banner,html.embed h1,html.embed .lead,html.embed .notes,html.embed .links{display:none}
+html.embed body{padding:8px 6px 6px}
+html.embed .scene{padding-inline:6px}
+html.embed .pullpill{left:14px}
+html.embed .rig{left:6px}
+html.embed .frame{margin:0 0 .5rem}
+html.embed .cap{font-size:.75rem;margin:0 0 .25rem}
+html.embed .cap .k-chip{display:none}
+
+.jar .body{fill:var(--surface);stroke:var(--fg);stroke-width:1.8}
+.jar .jam{fill:var(--accent);opacity:.4}
+.jar .lidr{fill:var(--accent);stroke:var(--accent);stroke-width:1.8}
+.jar .lidh{fill:none;stroke:var(--surface);stroke-width:1.5;stroke-linecap:round;opacity:.7}
+.jar .puffs path{fill:none;stroke:var(--accent);stroke-width:1.7;stroke-linecap:round}
+.jar .puffs{opacity:0}
+.jar .lid{transform-origin:17px 15px;transform-box:view-box}
+.scene[data-stage="1"] .jar .lid{transform:translate(-1px,-5px) rotate(-12deg)}
+.scene[data-stage="1"] .jar .puffs{opacity:1}
+@media (prefers-reduced-motion:no-preference){
+  .scene[data-stage="1"] .jar .lid{animation:c-lid 2.2s ease-out infinite}
+  .scene[data-stage="1"] .jar .puffs{animation:c-puff 2.2s ease-out infinite}
+  .scene[data-stage="1"] .jar .body{animation:c-jar 2.2s linear infinite;transform-origin:17px 36px;transform-box:view-box}
+  .scene[data-stage="0"] .jar .lid{animation:c-idle 3s ease-in-out infinite}
+}
+@keyframes c-lid{
+  0%{transform:translate(0,0) rotate(0)}
+  8%{transform:translate(0,-.8px) rotate(1.5deg)}
+  14%{transform:translate(0,0) rotate(-1deg)}
+  20%{transform:translate(0,-.8px) rotate(1.5deg)}
+  26%{transform:translate(0,0) rotate(-1deg)}
+  34%{transform:translate(0,-1.8px) rotate(0)}
+  42%{transform:translate(-1px,-9px) rotate(-18deg)}
+  54%{transform:translate(-1px,-7px) rotate(-14deg)}
+  68%{transform:translate(0,0) rotate(0)}
+  74%{transform:translate(0,-2px) rotate(-3deg)}
+  80%,100%{transform:translate(0,0) rotate(0)}
+}
+@keyframes c-puff{0%,38%{opacity:0}44%{opacity:1}58%,100%{opacity:0}}
+@keyframes c-jar{0%,30%,100%{transform:scale(1)}36%{transform:scale(1.02,.97)}44%{transform:scale(.99,1.01)}}
+@keyframes c-idle{0%,100%{transform:translate(0,0)}50%{transform:translate(0,-.6px)}}
+</style>
+<script>if(location.hash==="#embed")document.documentElement.classList.add("embed");</script>
+</head>
+<body>
+<div class="k-banner"><strong>Mockup</strong> &middot; sample data &middot; release to search</div>
+<h1>C Jar lid</h1>
+<p class="lead">A jam jar with its lid rattling under pressure, then popping up with three little puffs and dropping back.</p>
+<section class="frame" aria-label="1. Pulling, short of the line">
+  <p class="cap"><span class="k-chip">Pulling</span> 1. Pulling, short of the line</p>
+  <div class="scene" data-stage="0" aria-hidden="true">
+    <div class="pullpill"><span class="pill"><svg class="g jar" width="46" height="52" viewBox="0 0 34 38" aria-hidden="true" focusable="false"><g class="puffs"><path d="M11 6L8 2M17 5V0M23 6L26 2"/></g><rect class="body" x="7" y="15" width="20" height="21" rx="6"/><rect class="jam" x="9.5" y="25" width="15" height="8" rx="3"/><g class="lid"><rect class="lidr" x="6" y="9" width="22" height="6" rx="2.5"/><path class="lidh" d="M10 11.5H18"/></g></svg>Pull down to search</span></div>
+    <div class="searchbar"><div class="field">Search your kitchen</div><span class="mic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3"/></svg></span><span class="cancel">Cancel</span></div>
+  </div>
+</section>
+<section class="frame" aria-label="2. Past the line: let go and search opens">
+  <p class="cap"><span class="k-chip">Armed</span> 2. Past the line: let go and search opens</p>
+  <div class="scene" data-stage="1" aria-hidden="true">
+    <div class="pullpill"><span class="pill"><svg class="g jar" width="46" height="52" viewBox="0 0 34 38" aria-hidden="true" focusable="false"><g class="puffs"><path d="M11 6L8 2M17 5V0M23 6L26 2"/></g><rect class="body" x="7" y="15" width="20" height="21" rx="6"/><rect class="jam" x="9.5" y="25" width="15" height="8" rx="3"/><g class="lid"><rect class="lidr" x="6" y="9" width="22" height="6" rx="2.5"/><path class="lidh" d="M10 11.5H18"/></g></svg>Release to search</span></div>
+    <div class="searchbar"><div class="field">Search your kitchen</div><span class="mic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3"/></svg></span><span class="cancel">Cancel</span></div>
+  </div>
+</section>
+<div class="notes">
+  <h2>What to look at</h2>
+  <ul>
+    <li>Short of the line the lid sits still. Past the line it rattles, pops up and tilts with three puffs, then drops back and rattles again.</li>
+    <li>Motion: rattle, pop, land, every 2.2 s. Transforms and opacity only.</li>
+    <li>Pops are the one 'bigger' movement among the five, so it reads even at a glance.</li>
+    <li>Reduced motion: nothing moves. The armed pill shows the held pose (bands taut, door ajar, lid lifted, spring squashed, egg cracked) with the same words.</li>
+  </ul>
+</div>
+<p class="links"><a class="k-btn" href="../index.html">All five options</a> <a class="k-btn" href="../../index.html">Home screen</a></p>
+</body>
+</html>

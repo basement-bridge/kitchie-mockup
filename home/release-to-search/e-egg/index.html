@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kitchie: release to search, E Egg</title>
+<meta name="description" content="An egg rocks, cracks across and glows, about to hatch. Not the live product.">
+<meta name="robots" content="noindex">
+<!-- Colours, fonts and base rules come from the shared theme. Never copy them into this page. -->
+<link rel="stylesheet" href="../../../theme.css">
+<style>
+
+:root{--page-width:30rem}
+h1{font-size:2.4rem;line-height:1.05;font-weight:700;margin:.5rem 0 .6rem}
+.lead{margin:0 0 1.2rem;color:var(--muted)}
+.frame{margin:0 0 1.2rem}
+.cap{display:flex;gap:.5rem;align-items:center;margin:0 0 .45rem;font-size:.9rem;color:var(--muted)}
+.scene{position:relative;padding:34px 10px 14px;border:1px dashed var(--border);border-radius:1.2rem;overflow:hidden}
+.searchbar{display:flex;gap:.5rem;align-items:center}
+.field{flex:1 1 auto;min-width:0;min-height:52px;display:flex;align-items:center;padding:.4rem 1rem;border:1px solid var(--border);border-radius:1rem;background:var(--surface);color:var(--muted);white-space:nowrap;overflow:hidden}
+.field,.mic{opacity:.5}
+.mic{flex:0 0 48px;height:48px;display:grid;place-items:center;border:1px solid var(--border);border-radius:.9rem;color:var(--fg)}
+.cancel{flex:0 0 auto;padding:0 .4rem;color:var(--accent);font-weight:700}
+.pullpill{position:absolute;left:18px;top:37px;z-index:2}
+.pill{display:inline-flex;align-items:center;gap:.5rem;white-space:nowrap;min-height:46px;padding:0 1rem 0 .6rem;border:1px solid var(--border);border-radius:999px;background:var(--surface);color:var(--muted);font-size:.9rem;font-weight:600;box-shadow:0 2px 8px rgba(0,0,0,.12)}
+.scene[data-stage="1"] .pill{color:var(--fg);border-color:var(--accent);font-weight:700}
+.g{flex:none;overflow:visible;margin:-5px 0}
+.notes{margin:1.4rem 0 0;padding:1rem 1.2rem;border:1px solid var(--border);border-radius:1.2rem;background:var(--surface);font-size:.95rem}
+.notes h2{font-size:1rem;margin:0 0 .5rem}
+.notes ul{margin:0;padding-left:1.1rem;display:grid;gap:.35rem}
+.links{margin:1.2rem 0 0;display:flex;gap:.6rem;flex-wrap:wrap}
+html.embed .k-banner,html.embed h1,html.embed .lead,html.embed .notes,html.embed .links{display:none}
+html.embed body{padding:8px 6px 6px}
+html.embed .scene{padding-inline:6px}
+html.embed .pullpill{left:14px}
+html.embed .rig{left:6px}
+html.embed .frame{margin:0 0 .5rem}
+html.embed .cap{font-size:.75rem;margin:0 0 .25rem}
+html.embed .cap .k-chip{display:none}
+
+.egg .eg{fill:var(--surface);stroke:var(--fg);stroke-width:1.8;stroke-linejoin:round}
+.egg .crack{fill:none;stroke:var(--accent);stroke-width:2;stroke-linecap:round;stroke-linejoin:round;opacity:0}
+.egg .gleam{fill:var(--find-gold);opacity:0}
+.egg .chip{fill:var(--fg);opacity:0}
+.egg .shell{transform-origin:17px 35px;transform-box:view-box}
+.scene[data-stage="1"] .egg .shell{transform:rotate(6deg)}
+.scene[data-stage="1"] .egg .crack{opacity:1}
+.scene[data-stage="1"] .egg .gleam{opacity:.8}
+.scene[data-stage="1"] .egg .chip{opacity:1}
+@media (prefers-reduced-motion:no-preference){
+  .scene[data-stage="1"] .egg .shell{animation:e-rock 2.4s ease-in-out infinite}
+  .scene[data-stage="1"] .egg .k1{animation:e-k1 2.4s linear infinite}
+  .scene[data-stage="1"] .egg .k2{animation:e-k2 2.4s linear infinite}
+  .scene[data-stage="1"] .egg .gleam{animation:e-gleam 2.4s ease-in-out infinite}
+  .scene[data-stage="1"] .egg .c1{animation:e-c1 2.4s ease-out infinite}
+  .scene[data-stage="1"] .egg .c2{animation:e-c2 2.4s ease-out infinite}
+  .scene[data-stage="0"] .egg .shell{animation:e-idle 3s ease-in-out infinite}
+}
+@keyframes e-rock{
+  0%{transform:rotate(0)}8%{transform:rotate(-5deg)}16%{transform:rotate(6deg)}24%{transform:rotate(-7deg)}
+  32%{transform:rotate(8deg)}40%{transform:rotate(-8deg)}48%{transform:rotate(6deg)}56%{transform:rotate(-3deg)}64%,100%{transform:rotate(0)}
+}
+@keyframes e-k1{0%,18%{opacity:0}24%,90%{opacity:1}100%{opacity:0}}
+@keyframes e-k2{0%,38%{opacity:0}44%,90%{opacity:1}100%{opacity:0}}
+@keyframes e-gleam{0%,42%{opacity:0}50%{opacity:.9}60%{opacity:.4}70%{opacity:.9}92%{opacity:.5}100%{opacity:0}}
+@keyframes e-c1{0%,50%{opacity:0;transform:translate(0,0)}54%{opacity:1;transform:translate(0,0)}72%,100%{opacity:0;transform:translate(-4px,-8px) rotate(-30deg)}}
+@keyframes e-c2{0%,50%{opacity:0;transform:translate(0,0)}54%{opacity:1;transform:translate(0,0)}72%,100%{opacity:0;transform:translate(4px,-8px) rotate(30deg)}}
+@keyframes e-idle{0%,100%{transform:rotate(-1.5deg)}50%{transform:rotate(1.5deg)}}
+</style>
+<script>if(location.hash==="#embed")document.documentElement.classList.add("embed");</script>
+</head>
+<body>
+<div class="k-banner"><strong>Mockup</strong> &middot; sample data &middot; release to search</div>
+<h1>E Egg</h1>
+<p class="lead">An egg rocking on its end while a crack runs across it, a glow behind, and two chips of shell flicking off: about to hatch.</p>
+<section class="frame" aria-label="1. Pulling, short of the line">
+  <p class="cap"><span class="k-chip">Pulling</span> 1. Pulling, short of the line</p>
+  <div class="scene" data-stage="0" aria-hidden="true">
+    <div class="pullpill"><span class="pill"><svg class="g egg" width="46" height="52" viewBox="0 0 34 38" aria-hidden="true" focusable="false"><g class="chips"><path class="chip c1" d="M9 17L6 13L11 14Z"/><path class="chip c2" d="M25 17L28 13L23 14Z"/></g><g class="shell"><path class="eg" d="M17 2.5C24.5 2.5 28.5 15 28.5 22.5C28.5 29.8 23.5 35 17 35C10.5 35 5.5 29.8 5.5 22.5C5.5 15 9.5 2.5 17 2.5Z"/><ellipse class="gleam" cx="17" cy="21" rx="6" ry="3"/><path class="crack k1" d="M6 21L11 18L15 23L18 19"/><path class="crack k2" d="M18 19L22 23L25 18L28 21"/></g></svg>Pull down to search</span></div>
+    <div class="searchbar"><div class="field">Search your kitchen</div><span class="mic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3"/></svg></span><span class="cancel">Cancel</span></div>
+  </div>
+</section>
+<section class="frame" aria-label="2. Past the line: let go and search opens">
+  <p class="cap"><span class="k-chip">Armed</span> 2. Past the line: let go and search opens</p>
+  <div class="scene" data-stage="1" aria-hidden="true">
+    <div class="pullpill"><span class="pill"><svg class="g egg" width="46" height="52" viewBox="0 0 34 38" aria-hidden="true" focusable="false"><g class="chips"><path class="chip c1" d="M9 17L6 13L11 14Z"/><path class="chip c2" d="M25 17L28 13L23 14Z"/></g><g class="shell"><path class="eg" d="M17 2.5C24.5 2.5 28.5 15 28.5 22.5C28.5 29.8 23.5 35 17 35C10.5 35 5.5 29.8 5.5 22.5C5.5 15 9.5 2.5 17 2.5Z"/><ellipse class="gleam" cx="17" cy="21" rx="6" ry="3"/><path class="crack k1" d="M6 21L11 18L15 23L18 19"/><path class="crack k2" d="M18 19L22 23L25 18L28 21"/></g></svg>Release to search</span></div>
+    <div class="searchbar"><div class="field">Search your kitchen</div><span class="mic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3"/></svg></span><span class="cancel">Cancel</span></div>
+  </div>
+</section>
+<div class="notes">
+  <h2>What to look at</h2>
+  <ul>
+    <li>Short of the line the egg sits still. Past the line it rocks harder, the crack grows from the left then the right, light shows through and shell chips fly.</li>
+    <li>Motion: rock, crack, glow, chip, every 2.4 s. Transforms and opacity only.</li>
+    <li>Egg is outline only, in the same line style as the app's icons.</li>
+    <li>Reduced motion: nothing moves. The armed pill shows the held pose (bands taut, door ajar, lid lifted, spring squashed, egg cracked) with the same words.</li>
+  </ul>
+</div>
+<p class="links"><a class="k-btn" href="../index.html">All five options</a> <a class="k-btn" href="../../index.html">Home screen</a></p>
+</body>
+</html>

@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kitchie: release to search, D Spring magnifier</title>
+<meta name="description" content="A magnifier on a coiled spring is pressed down, quivers, then boings up. Not the live product.">
+<meta name="robots" content="noindex">
+<!-- Colours, fonts and base rules come from the shared theme. Never copy them into this page. -->
+<link rel="stylesheet" href="../../../theme.css">
+<style>
+
+:root{--page-width:30rem}
+h1{font-size:2.4rem;line-height:1.05;font-weight:700;margin:.5rem 0 .6rem}
+.lead{margin:0 0 1.2rem;color:var(--muted)}
+.frame{margin:0 0 1.2rem}
+.cap{display:flex;gap:.5rem;align-items:center;margin:0 0 .45rem;font-size:.9rem;color:var(--muted)}
+.scene{position:relative;padding:34px 10px 14px;border:1px dashed var(--border);border-radius:1.2rem;overflow:hidden}
+.searchbar{display:flex;gap:.5rem;align-items:center}
+.field{flex:1 1 auto;min-width:0;min-height:52px;display:flex;align-items:center;padding:.4rem 1rem;border:1px solid var(--border);border-radius:1rem;background:var(--surface);color:var(--muted);white-space:nowrap;overflow:hidden}
+.field,.mic{opacity:.5}
+.mic{flex:0 0 48px;height:48px;display:grid;place-items:center;border:1px solid var(--border);border-radius:.9rem;color:var(--fg)}
+.cancel{flex:0 0 auto;padding:0 .4rem;color:var(--accent);font-weight:700}
+.pullpill{position:absolute;left:18px;top:37px;z-index:2}
+.pill{display:inline-flex;align-items:center;gap:.5rem;white-space:nowrap;min-height:46px;padding:0 1rem 0 .6rem;border:1px solid var(--border);border-radius:999px;background:var(--surface);color:var(--muted);font-size:.9rem;font-weight:600;box-shadow:0 2px 8px rgba(0,0,0,.12)}
+.scene[data-stage="1"] .pill{color:var(--fg);border-color:var(--accent);font-weight:700}
+.g{flex:none;overflow:visible;margin:-5px 0}
+.notes{margin:1.4rem 0 0;padding:1rem 1.2rem;border:1px solid var(--border);border-radius:1.2rem;background:var(--surface);font-size:.95rem}
+.notes h2{font-size:1rem;margin:0 0 .5rem}
+.notes ul{margin:0;padding-left:1.1rem;display:grid;gap:.35rem}
+.links{margin:1.2rem 0 0;display:flex;gap:.6rem;flex-wrap:wrap}
+html.embed .k-banner,html.embed h1,html.embed .lead,html.embed .notes,html.embed .links{display:none}
+html.embed body{padding:8px 6px 6px}
+html.embed .scene{padding-inline:6px}
+html.embed .pullpill{left:14px}
+html.embed .rig{left:6px}
+html.embed .frame{margin:0 0 .5rem}
+html.embed .cap{font-size:.75rem;margin:0 0 .25rem}
+html.embed .cap .k-chip{display:none}
+
+.spr .base{fill:none;stroke:var(--accent);stroke-width:2;stroke-linecap:round}
+.spr .coil{fill:none;stroke:var(--accent);stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;transform-origin:17px 36px;transform-box:view-box}
+.spr .lens{fill:var(--surface);stroke:var(--fg);stroke-width:1.9}
+.spr .stem{fill:none;stroke:var(--fg);stroke-width:1.9;stroke-linecap:round}
+.scene[data-stage="1"] .spr .coil{transform:scaleY(.55)}
+.scene[data-stage="1"] .spr .mag{transform:translateY(6.3px)}
+.scene[data-stage="1"] .spr .lens{fill:var(--find-gold)}
+@media (prefers-reduced-motion:no-preference){
+  .scene[data-stage="1"] .spr .coil{animation:d-coil 2.2s ease-in-out infinite}
+  .scene[data-stage="1"] .spr .mag{animation:d-mag 2.2s ease-in-out infinite}
+  .scene[data-stage="0"] .spr .coil{animation:d-idle-c 3s ease-in-out infinite}
+  .scene[data-stage="0"] .spr .mag{animation:d-idle-m 3s ease-in-out infinite}
+}
+@keyframes d-coil{
+  0%{transform:scaleY(1)}
+  34%{transform:scaleY(.55)}
+  40%{transform:scaleY(.6)}
+  44%{transform:scaleY(.55)}
+  50%{transform:scaleY(.58)}
+  56%{transform:scaleY(1.2)}
+  66%{transform:scaleY(.9)}
+  76%{transform:scaleY(1.05)}
+  86%,100%{transform:scaleY(1)}
+}
+@keyframes d-mag{
+  0%{transform:translateY(0)}
+  34%{transform:translateY(6.3px)}
+  40%{transform:translateY(5.6px)}
+  44%{transform:translateY(6.3px)}
+  50%{transform:translateY(5.9px)}
+  56%{transform:translateY(-8px)}
+  66%{transform:translateY(1.4px)}
+  76%{transform:translateY(-.7px)}
+  86%,100%{transform:translateY(0)}
+}
+@keyframes d-idle-c{0%,100%{transform:scaleY(1)}50%{transform:scaleY(.94)}}
+@keyframes d-idle-m{0%,100%{transform:translateY(0)}50%{transform:translateY(.8px)}}
+</style>
+<script>if(location.hash==="#embed")document.documentElement.classList.add("embed");</script>
+</head>
+<body>
+<div class="k-banner"><strong>Mockup</strong> &middot; sample data &middot; release to search</div>
+<h1>D Spring magnifier</h1>
+<p class="lead">A magnifier on a coil spring, pressed down and loaded. It quivers, then boings up and settles, like a jack-in-the-box.</p>
+<section class="frame" aria-label="1. Pulling, short of the line">
+  <p class="cap"><span class="k-chip">Pulling</span> 1. Pulling, short of the line</p>
+  <div class="scene" data-stage="0" aria-hidden="true">
+    <div class="pullpill"><span class="pill"><svg class="g spr" width="46" height="52" viewBox="0 0 34 38" aria-hidden="true" focusable="false"><path class="base" d="M9 36.5H25"/><path class="coil" d="M17 22L24 24L10 27L24 30L10 33L17 35"/><g class="mag"><circle class="lens" cx="17" cy="9" r="6.5"/><path class="stem" d="M17 15.5V22"/></g></svg>Pull down to search</span></div>
+    <div class="searchbar"><div class="field">Search your kitchen</div><span class="mic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3"/></svg></span><span class="cancel">Cancel</span></div>
+  </div>
+</section>
+<section class="frame" aria-label="2. Past the line: let go and search opens">
+  <p class="cap"><span class="k-chip">Armed</span> 2. Past the line: let go and search opens</p>
+  <div class="scene" data-stage="1" aria-hidden="true">
+    <div class="pullpill"><span class="pill"><svg class="g spr" width="46" height="52" viewBox="0 0 34 38" aria-hidden="true" focusable="false"><path class="base" d="M9 36.5H25"/><path class="coil" d="M17 22L24 24L10 27L24 30L10 33L17 35"/><g class="mag"><circle class="lens" cx="17" cy="9" r="6.5"/><path class="stem" d="M17 15.5V22"/></g></svg>Release to search</span></div>
+    <div class="searchbar"><div class="field">Search your kitchen</div><span class="mic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3"/></svg></span><span class="cancel">Cancel</span></div>
+  </div>
+</section>
+<div class="notes">
+  <h2>What to look at</h2>
+  <ul>
+    <li>Short of the line the spring rests at full height. Past the line it is squashed down with the lens glowing, then it releases with a bounce.</li>
+    <li>Motion: squash, quiver, boing, settle, every 2.2 s. Transforms only.</li>
+    <li>The magnifier is the app's own search symbol, so the pill still reads as search.</li>
+    <li>Reduced motion: nothing moves. The armed pill shows the held pose (bands taut, door ajar, lid lifted, spring squashed, egg cracked) with the same words.</li>
+  </ul>
+</div>
+<p class="links"><a class="k-btn" href="../index.html">All five options</a> <a class="k-btn" href="../../index.html">Home screen</a></p>
+</body>
+</html>

@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kitchie: release to search, A Rubber band</title>
+<meta name="description" content="The pill hangs from two rubber bands that go taut, tremble and almost snap. Not the live product.">
+<meta name="robots" content="noindex">
+<!-- Colours, fonts and base rules come from the shared theme. Never copy them into this page. -->
+<link rel="stylesheet" href="../../../theme.css">
+<style>
+
+:root{--page-width:30rem}
+h1{font-size:2.4rem;line-height:1.05;font-weight:700;margin:.5rem 0 .6rem}
+.lead{margin:0 0 1.2rem;color:var(--muted)}
+.frame{margin:0 0 1.2rem}
+.cap{display:flex;gap:.5rem;align-items:center;margin:0 0 .45rem;font-size:.9rem;color:var(--muted)}
+.scene{position:relative;padding:34px 10px 14px;border:1px dashed var(--border);border-radius:1.2rem;overflow:hidden}
+.searchbar{display:flex;gap:.5rem;align-items:center}
+.field{flex:1 1 auto;min-width:0;min-height:52px;display:flex;align-items:center;padding:.4rem 1rem;border:1px solid var(--border);border-radius:1rem;background:var(--surface);color:var(--muted);white-space:nowrap;overflow:hidden}
+.field,.mic{opacity:.5}
+.mic{flex:0 0 48px;height:48px;display:grid;place-items:center;border:1px solid var(--border);border-radius:.9rem;color:var(--fg)}
+.cancel{flex:0 0 auto;padding:0 .4rem;color:var(--accent);font-weight:700}
+.pullpill{position:absolute;left:18px;top:37px;z-index:2}
+.pill{display:inline-flex;align-items:center;gap:.5rem;white-space:nowrap;min-height:46px;padding:0 1rem 0 .6rem;border:1px solid var(--border);border-radius:999px;background:var(--surface);color:var(--muted);font-size:.9rem;font-weight:600;box-shadow:0 2px 8px rgba(0,0,0,.12)}
+.scene[data-stage="1"] .pill{color:var(--fg);border-color:var(--accent);font-weight:700}
+.g{flex:none;overflow:visible;margin:-5px 0}
+.notes{margin:1.4rem 0 0;padding:1rem 1.2rem;border:1px solid var(--border);border-radius:1.2rem;background:var(--surface);font-size:.95rem}
+.notes h2{font-size:1rem;margin:0 0 .5rem}
+.notes ul{margin:0;padding-left:1.1rem;display:grid;gap:.35rem}
+.links{margin:1.2rem 0 0;display:flex;gap:.6rem;flex-wrap:wrap}
+html.embed .k-banner,html.embed h1,html.embed .lead,html.embed .notes,html.embed .links{display:none}
+html.embed body{padding:8px 6px 6px}
+html.embed .scene{padding-inline:6px}
+html.embed .pullpill{left:14px}
+html.embed .rig{left:6px}
+html.embed .frame{margin:0 0 .5rem}
+html.embed .cap{font-size:.75rem;margin:0 0 .25rem}
+html.embed .cap .k-chip{display:none}
+
+.rig{left:10px;top:0;width:300px;height:100px;display:block}
+.rig .bands{position:absolute;left:0;top:0;overflow:visible}
+.rig .pill{position:absolute;left:8px;top:37px}
+.band{fill:none;stroke:var(--accent);stroke-width:3.5;stroke-linecap:round}
+.peg{fill:var(--bg);stroke:var(--accent);stroke-width:2.5}
+.bandlines{transform-origin:110px 8px;transform-box:view-box}
+.scene[data-stage="1"] .bandlines{transform:scaleY(1.12)}
+.scene[data-stage="1"] .band{stroke-width:2.6}
+.scene[data-stage="1"] .pill{transform:translate(0,6px)}
+@media (prefers-reduced-motion:no-preference){
+  .scene[data-stage="1"] .pill{animation:a-pill 1.8s ease-in infinite}
+  .scene[data-stage="1"] .bandlines{animation:a-band 1.8s ease-in infinite}
+  .scene[data-stage="0"] .pill{animation:a-idle 3s ease-in-out infinite}
+}
+@keyframes a-pill{
+  0%{transform:translate(0,0)}
+  50%{transform:translate(0,7px)}
+  54%{transform:translate(-1.5px,6px)}
+  58%{transform:translate(1.5px,7px)}
+  62%{transform:translate(-1px,6px)}
+  66%{transform:translate(0,7px)}
+  72%{transform:translate(0,-5px)}
+  80%{transform:translate(0,3px)}
+  88%{transform:translate(0,-1px)}
+  100%{transform:translate(0,0)}
+}
+@keyframes a-band{
+  0%{transform:scaleY(1)}
+  50%{transform:scaleY(1.14)}
+  66%{transform:scaleY(1.14)}
+  72%{transform:scaleY(.9)}
+  80%{transform:scaleY(1.05)}
+  100%{transform:scaleY(1)}
+}
+@keyframes a-idle{0%,100%{transform:translate(0,0)}50%{transform:translate(0,2px)}}
+</style>
+<script>if(location.hash==="#embed")document.documentElement.classList.add("embed");</script>
+</head>
+<body>
+<div class="k-banner"><strong>Mockup</strong> &middot; sample data &middot; release to search</div>
+<h1>A Rubber band</h1>
+<p class="lead">The pill hangs from two rubber bands. They go taut as you pull, the pill trembles, then it dips and springs back, as if about to snap.</p>
+<section class="frame" aria-label="1. Pulling, short of the line">
+  <p class="cap"><span class="k-chip">Pulling</span> 1. Pulling, short of the line</p>
+  <div class="scene" data-stage="0" aria-hidden="true">
+    <div class="pullpill rig"><svg class="bands" width="300" height="60" viewBox="0 0 300 60" aria-hidden="true"><g class="bandlines"><path class="band" d="M10 8 Q18 56 46 52"/><path class="band" d="M210 8 Q202 56 174 52"/></g><circle class="peg" cx="10" cy="8" r="5"/><circle class="peg" cx="210" cy="8" r="5"/></svg><span class="pill"><span class="gl"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 5v13M6 13l6 6 6-6"/></svg></span>Pull down to search</span></div>
+    <div class="searchbar"><div class="field">Search your kitchen</div><span class="mic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3"/></svg></span><span class="cancel">Cancel</span></div>
+  </div>
+</section>
+<section class="frame" aria-label="2. Past the line: let go and search opens">
+  <p class="cap"><span class="k-chip">Armed</span> 2. Past the line: let go and search opens</p>
+  <div class="scene" data-stage="1" aria-hidden="true">
+    <div class="pullpill rig"><svg class="bands" width="300" height="60" viewBox="0 0 300 60" aria-hidden="true"><g class="bandlines"><path class="band" d="M10 8 L46 52"/><path class="band" d="M210 8 L174 52"/></g><circle class="peg" cx="10" cy="8" r="5"/><circle class="peg" cx="210" cy="8" r="5"/></svg><span class="pill"><span class="gl"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg></span>Release to search</span></div>
+    <div class="searchbar"><div class="field">Search your kitchen</div><span class="mic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3"/></svg></span><span class="cancel">Cancel</span></div>
+  </div>
+</section>
+<div class="notes">
+  <h2>What to look at</h2>
+  <ul>
+    <li>Short of the line the bands sag slack and the pill rests with its down arrow. Past the line the bands pull straight and the arrow becomes the magnifier.</li>
+    <li>Motion: the pill sinks about 7 px, trembles, then recoils and settles, every 1.8 s. Only transforms.</li>
+    <li>Why it works: stretched band means let go and it will spring, which is what releasing does. The pill sits where it does today.</li>
+    <li>Reduced motion: nothing moves. The armed pill shows the held pose (bands taut, door ajar, lid lifted, spring squashed, egg cracked) with the same words.</li>
+  </ul>
+</div>
+<p class="links"><a class="k-btn" href="../index.html">All five options</a> <a class="k-btn" href="../../index.html">Home screen</a></p>
+</body>
+</html>
