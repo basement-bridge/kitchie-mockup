@@ -45,23 +45,47 @@
 /* Measurement edit, option A: inline */
 .medit{padding:.6rem 0 .8rem}
 .mrow{display:flex;align-items:center;gap:.4rem}
-.mrow .k-step{width:44px;height:44px;font-size:1.25rem;color:var(--muted);background:transparent}
-.mrow .k-step:disabled{opacity:.3}
-.mnum{flex:0 0 auto;min-width:6.6rem;max-width:10rem;padding:.3rem .5rem;text-align:center;font-size:1.55rem;font-weight:700;font-family:var(--head);overflow-x:auto;text-overflow:clip}
+.mrow{align-items:center}
+.seg{display:flex;align-items:stretch;flex:0 1 auto;min-width:0;max-width:100%;height:52px;border:1px solid var(--border);border-radius:1rem;background:var(--surface);overflow:hidden}
+.seg:focus-within{outline:3px solid var(--accent);outline-offset:2px}
+.seg.is-free{flex:1 1 auto}
+.seg .k-step{width:42px;height:auto;border:0;border-radius:0;background:transparent;color:var(--muted);font-size:1.2rem}
+.seg .k-step:hover:not(:disabled){background:var(--bg);border-color:transparent}
+.seg #mMinus,.seg #msMinus{border-right:1px solid var(--border)}
+.seg #mPlus,.seg #msPlus{border-left:1px solid var(--border)}
+.seg .k-step:disabled{opacity:.3}
+.seg .mnum{border:0;border-radius:0;background:transparent;min-height:0;height:auto;outline:none}
+.mrow>.k-step{width:44px;height:44px;font-size:1.25rem;color:var(--muted);background:transparent}
+.mnum{flex:0 1 auto;min-width:0;max-width:10rem;padding:.3rem .5rem;text-align:center;font-size:1.55rem;font-weight:700;font-family:var(--head);overflow-x:auto;text-overflow:clip}
 .mnum.is-free{flex:1 1 auto;width:auto;max-width:none;min-width:0;text-align:left;font-family:inherit;font-size:1.05rem;font-weight:400}
-.mrow{gap:.3rem}
-.munit{position:relative;flex:0 1 auto;min-width:0}
+.mrow{gap:.6rem}
+.munit{position:relative;flex:0 0 auto}
 .munit .k-field{padding:.4rem .8rem}
 .mfoot{display:flex;align-items:center;justify-content:space-between;gap:.5rem;margin:.5rem 0 0}
 .mfoot .k-note{margin:0}
+/* Look 2: one joined pill, quantity and unit side by side */
+body[data-look="joined"] .mrow{gap:0}
+body[data-look="joined"] .seg{border-radius:1.6rem 0 0 1.6rem;border-right:0}
+body[data-look="joined"] .seg.is-free{border-right:1px solid var(--border);border-radius:1rem}
+body[data-look="joined"] .unitbox{height:52px;border-radius:0 1.6rem 1.6rem 0;padding-left:1rem}
+/* Look 3: value first, no frame; round quiet steppers hug the number */
+body[data-look="value"] .seg{border:0;background:transparent;gap:.5rem;align-items:center;height:56px;overflow:visible}
+body[data-look="value"] .seg:focus-within{outline:none}
+body[data-look="value"] .seg .k-step{width:36px;height:36px;border:1px solid var(--border);border-radius:50%;font-size:1.1rem}
+body[data-look="value"] .seg .mnum{font-size:2.1rem;min-width:5rem;border-bottom:2px solid var(--border);border-radius:0;height:56px}
+body[data-look="value"] .seg .mnum:focus{border-bottom-color:var(--accent)}
+body[data-look="value"] .seg.is-free{border:1px solid var(--border);border-radius:1rem;background:var(--surface);gap:0;height:52px}
+body[data-look="value"] .seg.is-free .mnum{border-bottom:0}
 .addunit{position:relative;flex:0 0 auto}
 .addunit[hidden]{display:none}
 .addbtn{min-height:40px;padding:0 .2rem;border:0;border-radius:.6rem;background:none;color:var(--muted);font:inherit;font-size:.9rem;cursor:pointer;text-decoration:underline;text-underline-offset:3px;transition:color .25s,background .25s,border-color .25s}
 .addbtn.is-nudged{padding:0 .8rem;border:1px solid var(--accent);background:var(--surface);color:var(--accent);font-weight:600;text-decoration:none}
 .sheet .addunit{margin:.6rem 0 0}
-.unitbox{position:relative}
-.unitbox .k-field{padding-right:2.6rem}
-.unitx{position:absolute;right:.35rem;top:50%;transform:translateY(-50%);width:36px;height:36px}
+.unitbox{display:flex;align-items:center;gap:.5rem;height:44px;padding:0 .3rem 0 .9rem;border:1px solid var(--border);border-radius:999px;background:var(--surface)}
+.unitbox .k-field{width:auto;min-height:0;padding:0;border:0;border-radius:0;background:none;gap:.7rem;font-weight:600}
+.unitx{flex:0 0 auto;width:30px;height:30px;padding:0;border:0;border-radius:50%;background:none;color:var(--muted);font-size:1.15rem}
+.unitx:hover{color:var(--fg)}
+.medit .addunit{margin-top:.2rem}
 .fracs{display:flex;gap:.3rem;margin:.5rem 0 0}
 .fracs .k-pill{min-height:40px;flex:1 1 0;padding:0}
 /* Sheets and full screen */
@@ -101,6 +125,12 @@ details.rules summary{cursor:pointer;font-weight:600;color:var(--fg)}
     <button type="button" class="k-pill" data-m-ui="inline" aria-pressed="true">A: in place</button>
     <button type="button" class="k-pill" data-m-ui="sheet" aria-pressed="false">B: bottom sheet</button>
   </div>
+  <p class="lab">Quantity look</p>
+  <div class="strip-row" role="group" aria-label="Quantity look">
+    <button type="button" class="k-pill" data-look="seg" aria-pressed="true">1: Segmented</button>
+    <button type="button" class="k-pill" data-look="joined" aria-pressed="false">2: Joined pill</button>
+    <button type="button" class="k-pill" data-look="value" aria-pressed="false">3: Value first</button>
+  </div>
   <p class="lab">Preview</p>
   <div class="strip-row"><button type="button" class="k-pill" id="themeToggle">Phone</button></div>
 </section>
@@ -125,19 +155,18 @@ details.rules summary{cursor:pointer;font-weight:600;color:var(--fg)}
       <button type="button" class="rowbtn" id="mRead" aria-label="Quantity. Tap to change"><span class="k">Quantity</span><span class="v" id="mVal"></span></button>
       <div class="medit" id="mEditInline" hidden>
         <div class="mrow">
+          <div class="seg" id="mSeg">
           <button type="button" class="k-step" id="mMinus" aria-label="Less" hidden>&minus;</button>
           <input class="k-field mnum" id="mNum" type="text" inputmode="text" autocomplete="off" autocapitalize="none" maxlength="80" aria-label="Quantity" enterkeyhint="done" placeholder="Amount">
           <button type="button" class="k-step" id="mPlus" aria-label="More" hidden>+</button>
+          </div>
           <div class="munit" id="mUnitWrap" hidden>
             <div class="unitbox"><button type="button" class="k-field" id="mUnit" aria-haspopup="listbox" aria-expanded="false" aria-label="Unit"><span id="mUnitText"></span><span class="k-caret" aria-hidden="true">&#9662;</span></button>
               <button type="button" class="k-icon unitx" id="mUnitX" aria-label="Clear the unit" title="Clear the unit (free text)">&times;</button></div>
             <ul class="k-list is-right" id="mUnitList" role="listbox" aria-label="Unit" hidden></ul></div>
         </div>
-        <div class="mfoot">
-          <div class="addunit" id="mAddWrap"><button type="button" class="addbtn" id="mAdd" aria-haspopup="listbox" aria-expanded="false">+ Add unit</button>
+        <div class="addunit" id="mAddWrap"><button type="button" class="addbtn" id="mAdd" aria-haspopup="listbox" aria-expanded="false">+ Add unit</button>
             <ul class="k-list" id="mAddList" role="listbox" aria-label="Unit" hidden></ul></div>
-          <button type="button" class="k-btn is-primary" id="mDone">Done</button>
-        </div>
       </div>
     </li>
     <li><div class="rowbtn stub"><span class="k">Location</span><span class="v" id="sLoc"></span></div></li>
@@ -170,9 +199,11 @@ details.rules summary{cursor:pointer;font-weight:600;color:var(--fg)}
   <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="msT">
     <h2 id="msT">Quantity</h2>
     <div class="mrow">
+      <div class="seg" id="msSeg" style="flex:1 1 auto">
       <button type="button" class="k-step" id="msMinus" aria-label="Less" hidden>&minus;</button>
-      <input class="k-field mnum" id="msNum" type="text" inputmode="text" autocomplete="off" autocapitalize="none" maxlength="80" aria-label="Quantity" style="flex:1 1 auto" placeholder="Amount">
+      <input class="k-field mnum" id="msNum" type="text" inputmode="text" autocomplete="off" autocapitalize="none" maxlength="80" aria-label="Quantity" placeholder="Amount">
       <button type="button" class="k-step" id="msPlus" aria-label="More" hidden>+</button>
+      </div>
     </div>
     <div class="chips" id="msUnits" role="group" aria-label="Unit" hidden></div>
     <div class="addunit" id="msAddWrap"><button type="button" class="addbtn" id="msAdd">+ Add unit</button></div>
@@ -332,8 +363,8 @@ details.rules summary{cursor:pointer;font-weight:600;color:var(--fg)}
     var st = { mode: "free", unit: "" };
     function grow() {
       var on = st.mode === "structured";
-      inp.classList.toggle("is-free", !on);
-      inp.style.width = on ? "calc(" + Math.max(inp.value.length, 1) + "ch + 1.4rem)" : "";            // grows with the value; CSS min and max hold it, then it scrolls inside
+      inp.classList.toggle("is-free", !on); if (ui.seg) $(ui.seg).classList.toggle("is-free", !on);
+      inp.style.width = on ? "max(5.8rem, calc(" + Math.max(inp.value.length, 1) + "ch + 1.4rem))" : "";            // grows with the value; CSS min and max hold it, then it scrolls inside
       minus.disabled = !(on && num() > 0);                                              // minus stops at zero and looks it
     }
     function paint() {
@@ -392,12 +423,12 @@ details.rules summary{cursor:pointer;font-weight:600;color:var(--fg)}
     };
   }
   var ul = $("mUnitList");
-  var A = qEditor({ num: "mNum", minus: "mMinus", plus: "mPlus", add: "mAdd", addWrap: "mAddWrap",
+  var A = qEditor({ seg: "mSeg", num: "mNum", minus: "mMinus", plus: "mPlus", add: "mAdd", addWrap: "mAddWrap",
     paintUnit: function (on, unit) {
       $("mUnitWrap").hidden = !on; if (on) $("mUnitText").textContent = unit; closeList();
       Array.prototype.forEach.call(ul.children, function (li) { li.setAttribute("aria-selected", String(on && li.dataset.u === unit)); });
     } });
-  var B = qEditor({ num: "msNum", minus: "msMinus", plus: "msPlus", add: "msAdd", addWrap: "msAddWrap",
+  var B = qEditor({ seg: "msSeg", num: "msNum", minus: "msMinus", plus: "msPlus", add: "msAdd", addWrap: "msAddWrap",
     paintUnit: function (on, unit) {
       var c = $("msUnits"); c.hidden = !on; $("msClear").hidden = !on;
       Array.prototype.forEach.call(c.children, function (b) { if (b.dataset.u !== undefined) b.setAttribute("aria-pressed", String(on && b.dataset.u === unit)); });
@@ -431,7 +462,6 @@ details.rules summary{cursor:pointer;font-weight:600;color:var(--fg)}
   }
   function closeA(save) { if (save) commitQ(A.text()); $("mEditInline").hidden = true; $("mRead").hidden = false; $("mRead").focus(); closeList(); }
   $("mNum").addEventListener("keydown", function (e) { if (e.key === "Enter") { e.preventDefault(); closeA(true); } else if (e.key === "Escape") closeA(false); });
-  $("mDone").addEventListener("click", function () { closeA(true); });
   // Tapping anywhere else finishes the edit and returns to the read view
   document.addEventListener("pointerdown", function (e) { if (!$("mEditInline").hidden && !$("mEditInline").contains(e.target)) closeA(true); });
   $("msSave").addEventListener("click", function () { commitQ(B.text()); $("mSheet").hidden = true; $("mRead").focus(); });
@@ -462,6 +492,10 @@ details.rules summary{cursor:pointer;font-weight:600;color:var(--fg)}
   Array.prototype.forEach.call(document.querySelectorAll("[data-m-ui]"), function (b) {
     b.addEventListener("click", function () { mUi = b.dataset.mUi; Array.prototype.forEach.call(document.querySelectorAll("[data-m-ui]"), function (x) { x.setAttribute("aria-pressed", String(x === b)); }); });
   });
+  Array.prototype.forEach.call(document.querySelectorAll("[data-look]"), function (b) {
+    b.addEventListener("click", function () { document.body.dataset.look = b.dataset.look; Array.prototype.forEach.call(document.querySelectorAll("[data-look]"), function (x) { x.setAttribute("aria-pressed", String(x === b)); }); });
+  });
+  document.body.dataset.look = "seg";
   var themes = ["Phone", "Light", "Dark"], ti = 0;
   $("themeToggle").addEventListener("click", function () {
     ti = (ti + 1) % 3; $("themeToggle").textContent = themes[ti];
