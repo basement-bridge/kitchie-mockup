@@ -51,10 +51,11 @@ body.is-pulling{-webkit-user-select:none;user-select:none}
 .vcard{display:flex;flex-direction:column;align-items:center;gap:.5rem;padding:1.1rem 1.6rem;border-radius:1.2rem;background:var(--surface);border:1px solid var(--border);box-shadow:0 8px 28px rgba(0,0,0,.18)}
 .vcard svg{width:84px;height:84px;overflow:visible;stroke:var(--fg);fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
 .refreshveil.blend{align-items:flex-start;justify-content:flex-start;background:color-mix(in srgb,var(--bg) 50%,transparent);-webkit-backdrop-filter:blur(1.5px);backdrop-filter:blur(1.5px)}
-.refreshveil.blend #veil-one{background:none;border:0;box-shadow:none;padding:0;width:100%;gap:.25rem;align-items:stretch}
-.refreshveil.blend #veil-one svg{width:100%;height:auto;max-height:84px}
+.refreshveil.blend{justify-content:center}
+.refreshveil.blend #veil-one{background:color-mix(in srgb,var(--surface) 72%,transparent);border:1px solid var(--border);border-radius:1.2rem;box-shadow:0 6px 20px rgba(0,0,0,.08);padding:.9rem 1rem .8rem;width:min(78%,300px);margin:0 auto;gap:.4rem;align-items:stretch}
+.refreshveil.blend #veil-one svg{width:100%;height:auto;max-height:150px}
 .refreshveil.blend #veil-text{font-size:.82rem;font-weight:600;color:var(--muted);text-align:center;letter-spacing:.02em}
-.v-wide .shelf{stroke:var(--border);stroke-width:3}
+.v-wide .plank{fill:var(--muted);opacity:.55}
 .v-wide .jar{fill:var(--accent);stroke:none;animation:vhop 1.3s ease-in-out infinite}
 #list.refreshing li{animation:vrow 1.3s ease-in-out infinite}
 @keyframes vrow{0%,100%{opacity:.35}40%{opacity:.75}}
@@ -847,10 +848,10 @@ li .meta mark{color:var(--fg)}
   // ribbon hidden) and a temporary search is cleared. LATER: whatever the app learns about the person (their usual view, defaults) applies here exactly as on a page load.
   // An opaque cover blocks the whole screen until the data is in.
   var LOADERS = {
-    shelves: { blend: true, text: "Tidying the shelves…", svg: '<svg class="v-wide" viewBox="0 0 390 62" preserveAspectRatio="xMidYMax meet" aria-hidden="true"><path class="shelf" d="M0 58h390"/><rect class="jar" x="14" y="34" width="14" height="22" rx="3" style="animation-delay:0.00s;opacity:1"/><rect class="jar" x="50" y="26" width="12" height="30" rx="3" style="animation-delay:0.09s;opacity:0.75"/><rect class="jar" x="92" y="38" width="16" height="18" rx="3" style="animation-delay:0.18s;opacity:1"/><rect class="jar" x="128" y="22" width="12" height="34" rx="3" style="animation-delay:0.27s;opacity:0.6"/><rect class="jar" x="170" y="32" width="14" height="24" rx="3" style="animation-delay:0.36s;opacity:0.9"/><rect class="jar" x="212" y="28" width="16" height="28" rx="3" style="animation-delay:0.45s;opacity:0.7"/><rect class="jar" x="248" y="36" width="12" height="20" rx="3" style="animation-delay:0.54s;opacity:1"/><rect class="jar" x="290" y="24" width="14" height="32" rx="3" style="animation-delay:0.63s;opacity:0.65"/><rect class="jar" x="330" y="30" width="12" height="26" rx="3" style="animation-delay:0.72s;opacity:0.9"/><rect class="jar" x="362" y="34" width="14" height="22" rx="3" style="animation-delay:0.81s;opacity:0.75"/></svg>' }
+    shelves: { blend: true, text: "Tidying the shelves…", svg: '<svg class="v-wide" viewBox="0 0 240 124" aria-hidden="true"><rect class="plank" x="4" y="53" width="232" height="6" rx="3"/><rect class="plank" x="4" y="113" width="232" height="6" rx="3"/><rect class="jar" x="18" y="19" width="24" height="34" rx="4" style="animation-delay:0.0s"/><rect class="jar" x="58" y="9" width="20" height="44" rx="4" style="animation-delay:0.1s"/><rect class="jar" x="96" y="25" width="26" height="28" rx="4" style="animation-delay:0.2s"/><rect class="jar" x="140" y="13" width="20" height="40" rx="4" style="animation-delay:0.3s"/><rect class="jar" x="186" y="21" width="24" height="32" rx="4" style="animation-delay:0.4s"/><rect class="jar" x="16" y="73" width="22" height="40" rx="4" style="animation-delay:0.5s"/><rect class="jar" x="56" y="83" width="26" height="30" rx="4" style="animation-delay:0.6s"/><rect class="jar" x="100" y="67" width="20" height="46" rx="4" style="animation-delay:0.7s"/><rect class="jar" x="142" y="81" width="26" height="32" rx="4" style="animation-delay:0.8s"/><rect class="jar" x="184" y="71" width="22" height="42" rx="4" style="animation-delay:0.9s"/></svg>' }
   };
   var loader = "shelves";
-  function showLoader(k) { loader = k; var v = $("#refreshveil"); v.classList.toggle("blend", !!LOADERS[k].blend); v.style.paddingTop = LOADERS[k].blend ? Math.max(0, $("#list").getBoundingClientRect().top - 8) + "px" : ""; $("#veil-glyph").innerHTML = LOADERS[k].svg; $("#veil-text").textContent = LOADERS[k].text; }
+  function showLoader(k) { loader = k; var v = $("#refreshveil"); v.classList.toggle("blend", !!LOADERS[k].blend); v.style.paddingTop = LOADERS[k].blend ? Math.max(0, $("#list").getBoundingClientRect().top + 16) + "px" : ""; $("#veil-glyph").innerHTML = LOADERS[k].svg; $("#veil-text").textContent = LOADERS[k].text; }
   function startRefresh() {
     refreshing = true; pull = null; document.body.classList.remove("is-pulling");
     wrap.classList.remove("armed", "deep", "settle", "pulling"); wrap.style.height = ""; barEl.style.removeProperty("--p"); pill(-1);
