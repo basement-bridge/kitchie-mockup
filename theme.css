@@ -20,6 +20,7 @@
   --bg: #0F1E19; --surface: #172A23; --border: #24403A;
   --fg: #F3EEE3; --muted: #A9B8AE;
   --accent: #F2B84B; --danger: #FF9A8F; --sage: #9CCBA8; --added: #86D99B;
+  --find-violet: #B3A6F7; --find-violet-ink: #17123A; --find-gold: #E8DA55; --find-gold-ink: #231D00;
   --scrim: rgba(0,0,0,.45); --shadow: 0 8px 24px rgba(0,0,0,.35);
   --font-body: "DM Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --head: "Bricolage Grotesque", "DM Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
@@ -31,6 +32,7 @@
     --bg: #F6F1E6; --surface: #FFFFFF; --border: #D9D1BF;
     --fg: #1D2A24; --muted: #56645B;
     --accent: #8A5600; --danger: #B42318; --sage: #2F6B45; --added: #1E7A44;
+    --find-violet: #5B49BD; --find-violet-ink: #FFFFFF; --find-gold: #E2BE2E; --find-gold-ink: #241C00;
   }
 }
 :root[data-theme="light"] {
@@ -38,13 +40,17 @@
   --bg: #F6F1E6; --surface: #FFFFFF; --border: #D9D1BF;
   --fg: #1D2A24; --muted: #56645B;
   --accent: #8A5600; --danger: #B42318; --sage: #2F6B45; --added: #1E7A44;
+  --find-violet: #5B49BD; --find-violet-ink: #FFFFFF; --find-gold: #E2BE2E; --find-gold-ink: #241C00;
 }
 :root[data-theme="dark"] {
   color-scheme: dark;
   --bg: #0F1E19; --surface: #172A23; --border: #24403A;
   --fg: #F3EEE3; --muted: #A9B8AE;
   --accent: #F2B84B; --danger: #FF9A8F; --sage: #9CCBA8; --added: #86D99B;
+  --find-violet: #B3A6F7; --find-violet-ink: #17123A; --find-gold: #E8DA55; --find-gold-ink: #231D00;
 }
+
+/* The search indicator colours (--find-*): used only by the pull-down search banner. Nothing else in the app uses them, so an active search cannot be mistaken for a button, a toggle, a use-by tone or the added arrow. */
 
 /* Base rules every page shares. */
 *, *::before, *::after { box-sizing: border-box; }

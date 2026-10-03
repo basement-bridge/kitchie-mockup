@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Kitchie: home, pull down to search, B: solid banner</title>
-<meta name="description" content="A Home screen variation: pull the list down to search; while a search is on, a solid accent banner above the list reads Results for the term and the count. Not the live product.">
+<title>Kitchie: home, pull down to search, B1: violet banner</title>
+<meta name="description" content="A Home screen variation: pull the list down to search; while a search is on, a solid violet banner above the list reads Results for the term and the count. Not the live product.">
 <meta name="robots" content="noindex">
 <link rel="stylesheet" href="../../theme.css">
 <style>
@@ -189,20 +189,20 @@ table td:nth-child(2){white-space:nowrap}
 .tog[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--bg)}
 .tog[aria-pressed="true"] svg circle{fill:currentColor}.tog[aria-pressed="true"] svg path{stroke:var(--accent)}
 nav.tabs[data-view="category"] a[aria-current=page]{background:var(--sage)}
-/* Matched words inside the rows: the same words the Home matcher used, marked with the theme accent. */
-mark{background:color-mix(in srgb,var(--accent) 34%,transparent);color:inherit;border-radius:.2em;padding:0 .06em;margin:0 -.06em}
+/* Matched words inside the rows: the same words the Home matcher used, marked in the search colour. */
+mark{background:color-mix(in srgb,var(--find-violet) 38%,transparent);color:inherit;border-radius:.2em;padding:0 .06em;margin:0 -.06em}
 li .meta mark{color:var(--fg)}
 /* Results banner: set apart from the Location and Category chips. Tap the words to edit, the cross to clear. */
-.rbanner{display:flex;align-items:center;gap:.1rem;min-height:48px;margin:0 0 .6rem;padding:0 .2rem 0 .9rem;border:1px solid color-mix(in srgb,var(--accent) 55%,transparent);border-radius:.9rem;background:color-mix(in srgb,var(--accent) 16%,var(--surface));color:var(--fg);font-size:.95rem}
+.rbanner{display:flex;align-items:center;gap:.1rem;min-height:48px;margin:0 0 .6rem;padding:0 .2rem 0 .9rem;border:1px solid var(--find-violet);border-radius:.9rem;background:var(--find-violet);color:var(--find-violet-ink);font-size:.95rem}
 .rbanner .rtext,.rcount .rtext{flex:1 1 auto;min-width:0;display:flex;align-items:center;min-height:44px;padding:0;border:0;background:transparent;color:inherit;font:inherit;text-align:left;cursor:pointer;border-radius:.6rem}
 .rtext .rlead,.rtext .rn{flex:none;white-space:pre}
 .rtext .rterm{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:700}
 .rx{flex:0 0 auto;width:44px;height:44px;display:grid;place-items:center;padding:0;border:0;border-radius:.7rem;background:transparent;color:inherit;cursor:pointer}
 .rx svg{width:20px;height:20px}
 .rx:hover{background:color-mix(in srgb,currentColor 12%,transparent)}
-.rbanner.solid{border-color:var(--accent);background:var(--accent);color:var(--bg)}
-.rbanner.solid :focus-visible{outline-color:var(--bg)}
-.rbanner.solid .rx:hover{background:color-mix(in srgb,var(--bg) 22%,transparent)}
+.rbanner.solid{border-color:color-mix(in srgb,var(--find-violet) 55%,var(--find-violet-ink));background:var(--find-violet);color:var(--find-violet-ink)}
+.rbanner.solid :focus-visible{outline-color:var(--find-violet-ink)}
+.rbanner.solid .rx:hover{background:color-mix(in srgb,var(--find-violet-ink) 16%,transparent)}
 </style>
 </head>
 <body>
@@ -220,14 +220,13 @@ li .meta mark{color:var(--fg)}
       <button type="button" class="seg" data-theme-pick="light" aria-pressed="false">Light</button>
       <button type="button" class="seg" data-theme-pick="dark" aria-pressed="false">Dark</button>
     </fieldset>
-    <p><strong>Considered, not used.</strong> Why: it is filled with the app accent, the same palette as buttons and toggles; replaced by B1 and B2, which use a colour found nowhere else. Good at: the loudest, clearest sign that a search is on, with the layout, the &times;, tap-the-words-to-edit and row highlighting that B1 and B2 keep.</p>
     <p>Try: pull the list down from the top and type milk, cheese or e. Also: swipe a row, tap the &minus; or tick, the plus to add, the pin and tag toggles, the clock (Use by) and the ribbon. Undo appears for 5 seconds after a change.</p>
     <ul class="rules">
       <li>Pull down from the top to search. Closing the field (Cancel, the Search key, a tap outside, scrolling) keeps the search on.</li>
-      <li>The same banner as A, filled solid with the accent colour and contrasting text: the loudest sign that a search is on. Tap the words to edit; tap the &times; to clear.</li>
+      <li>A solid banner sits right above the list, below the ribbon: Results for &ldquo;milk&rdquo; &middot; 3 items, with a &times;. Tap the words to edit the search; the field opens pre-filled.</li>
       <li>The words that matched are marked inside each row (the name and its second line), so you can see why it is there.</li>
-      <li>A search is temporary: it is cleared by the &times; or by pulling down for a new one; it never changes your Location or Category.</li>
-      <li>Not remembered: a refresh or leaving the screen clears it (a search is temporary). The live app today remembers the last search unless Settings turns that off; keeping or dropping that is still to be decided.</li>
+      <li>A search is temporary: it is cleared by the &times; or by pulling down for a new one; it never changes your Location or Category. A refresh or leaving the screen clears it too.</li>
+      <li>Colour: violet. The fill is used nowhere else in the app (not the accent, the use-by tones or the added arrow).</li>
     </ul>
     <p><button type="button" class="seg" id="reset">Reset sample items</button></p>
   </div>
