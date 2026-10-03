@@ -45,11 +45,32 @@ body.is-pulling{-webkit-user-select:none;user-select:none}
 .pullwrap.deep .searchbar{opacity:.12}
 .pullwrap.refreshing .searchbar{visibility:hidden}
 #list{transition:opacity .2s ease}
-#list.refreshing{visibility:hidden}
-.refreshveil{position:fixed;inset:0;z-index:60;background:var(--bg);display:none;align-items:center;justify-content:center;flex-direction:column;gap:.8rem;color:var(--muted);font-weight:600}
+#list.refreshing{pointer-events:none}
+.refreshveil{position:fixed;inset:0;z-index:60;background:color-mix(in srgb,var(--bg) 72%,transparent);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);display:none;align-items:center;justify-content:center;flex-direction:column;gap:.6rem;color:var(--fg);font-weight:600}
 .refreshveil.on{display:flex}
-.refreshveil svg{width:32px;height:32px;animation:spin .9s linear infinite}
-@media (prefers-reduced-motion: reduce){.refreshveil svg{animation:none}}
+.vcard{display:flex;flex-direction:column;align-items:center;gap:.5rem;padding:1.1rem 1.6rem;border-radius:1.2rem;background:var(--surface);border:1px solid var(--border);box-shadow:0 8px 28px rgba(0,0,0,.18)}
+.vcard svg{width:84px;height:84px;overflow:visible;stroke:var(--fg);fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.vcard .glow{fill:var(--accent);stroke:none}
+/* fridge: the door swings open and shut, the light comes on */
+.v-fridge .door{transform-origin:20px 32px;animation:vdoor 1.6s ease-in-out infinite}
+.v-fridge .glow{animation:vlight 1.6s ease-in-out infinite;opacity:0}
+@keyframes vdoor{0%,15%{transform:scaleX(1)}45%,65%{transform:scaleX(.18)}95%,100%{transform:scaleX(1)}}
+@keyframes vlight{0%,20%{opacity:0}45%,65%{opacity:.85}95%,100%{opacity:0}}
+/* eggs: the carton fills one egg at a time */
+.v-eggs .egg{fill:var(--accent);stroke:none;opacity:.15;animation:vegg 1.8s ease-in-out infinite}
+.v-eggs .egg:nth-of-type(2){animation-delay:.15s}.v-eggs .egg:nth-of-type(3){animation-delay:.3s}.v-eggs .egg:nth-of-type(4){animation-delay:.45s}.v-eggs .egg:nth-of-type(5){animation-delay:.6s}.v-eggs .egg:nth-of-type(6){animation-delay:.75s}
+@keyframes vegg{0%,10%{opacity:.15;transform:translateY(0)}30%{opacity:1;transform:translateY(-3px)}60%,100%{opacity:.15;transform:translateY(0)}}
+/* shelves: the jars hop in a wave */
+.v-shelves .jar{fill:var(--accent);stroke:none;animation:vhop 1.2s ease-in-out infinite}
+.v-shelves .jar:nth-of-type(2){animation-delay:.12s}.v-shelves .jar:nth-of-type(3){animation-delay:.24s}.v-shelves .jar:nth-of-type(4){animation-delay:.36s}.v-shelves .jar:nth-of-type(5){animation-delay:.48s}.v-shelves .jar:nth-of-type(6){animation-delay:.6s}
+@keyframes vhop{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-6px)}}
+/* pot: the lid rattles, steam rises */
+.v-pot .lid{transform-origin:32px 30px;animation:vlid .5s ease-in-out infinite}
+.v-pot .steam{stroke:var(--accent);animation:vsteam 1.6s ease-in infinite;opacity:0}
+.v-pot .steam:nth-of-type(2){animation-delay:.5s}.v-pot .steam:nth-of-type(3){animation-delay:1s}
+@keyframes vlid{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-2px) rotate(-3deg)}}
+@keyframes vsteam{0%{opacity:0;transform:translateY(6px)}30%{opacity:.9}100%{opacity:0;transform:translateY(-10px)}}
+@media (prefers-reduced-motion: reduce){.vcard *{animation:none!important}.v-fridge .glow{opacity:.6}.v-eggs .egg{opacity:.7}.v-pot .steam{opacity:.7}}
 @media (prefers-reduced-motion: reduce){.pullpill .pill svg{transition:none;transform:none!important;animation:none!important}#list{transition:none}}
 #search-mic[aria-pressed="true"]{color:#fff;background:#C0392B;border-color:#C0392B;animation:listen 1.2s ease-in-out infinite}
 @keyframes listen{50%{box-shadow:0 0 0 6px rgba(192,57,43,.25)}}
@@ -241,12 +262,19 @@ li .meta mark{color:var(--fg)}
     </fieldset>
     <p>Try: pull the list down a little and type milk, cheese or e; keep pulling and it refreshes by itself, no letting go needed.</p>
     <ul class="rules">
-      <li>Pull a little and let go: search. Keep pulling: it refreshes on its own, behind a solid cover until the data is in.</li>
+      <li>Pull a little and let go: search. Keep pulling: it refreshes on its own, behind a see-through cover with a small kitchen animation until the data is in.</li>
       <li>Pull down from the top to search. Closing the field (Cancel, the Search key, a tap outside, scrolling) keeps the search on.</li>
       <li>An amber-gold banner sits right above the list: Results for &ldquo;milk&rdquo; &middot; 3 items, with a &times;. Tap the words to edit the search; the field opens pre-filled.</li>
       <li>The words that matched are marked inside each row, so you can see why it is there.</li>
       <li>A search is temporary: the &times; or a new pull-down clears it; it never changes your Location or Category, and a refresh clears it, because a refresh follows the same rules as opening the page.</li>
     </ul>
+    <fieldset aria-label="Refresh picture"><legend>Refresh picture</legend>
+      <button type="button" class="seg" data-loader="fridge" aria-pressed="true">Fridge</button>
+      <button type="button" class="seg" data-loader="eggs" aria-pressed="false">Eggs</button>
+      <button type="button" class="seg" data-loader="shelves" aria-pressed="false">Shelves</button>
+      <button type="button" class="seg" data-loader="pot" aria-pressed="false">Pot</button>
+      <button type="button" class="seg" id="try-refresh">Preview refresh</button>
+    </fieldset>
     <p><button type="button" class="seg" id="reset">Reset sample items</button></p>
   </div>
 </details>
@@ -262,7 +290,7 @@ li .meta mark{color:var(--fg)}
   </div>
 </div>
 <div class="pullpill" id="pullpill" data-stage="0" aria-hidden="true"><span class="pill"><span id="pill-glyph"></span><span id="pill-text"></span></span></div>
-<div class="refreshveil" id="refreshveil" aria-hidden="true"><span id="veil-glyph"></span><span>Refreshing…</span></div>
+<div class="refreshveil" id="refreshveil" aria-hidden="true"><div class="vcard"><span id="veil-glyph"></span><span id="veil-text">Refreshing…</span></div></div>
 <div class="sr-only" id="pullstatus" role="status" aria-live="polite"></div>
 <p id="add-from-search-wrap" hidden><a id="add-from-search" class="btn" href="#">Add as a new item</a></p>
 <div id="tabs"></div>
@@ -834,10 +862,19 @@ li .meta mark{color:var(--fg)}
   // Visual only in the mockup. Refresh follows the SAME rules as opening the page: the view returns to how the app opens (Use by on, Location and Category off,
   // ribbon hidden) and a temporary search is cleared. LATER: whatever the app learns about the person (their usual view, defaults) applies here exactly as on a page load.
   // An opaque cover blocks the whole screen until the data is in.
+  var LOADERS = {
+    fridge: { text: "Checking the fridge…", svg: '<svg class="v-fridge" viewBox="0 0 64 64" aria-hidden="true"><rect x="16" y="6" width="32" height="52" rx="4"/><path d="M20 32h24"/><rect class="glow" x="20" y="10" width="24" height="20" rx="2"/><rect class="door" x="20" y="10" width="24" height="46" rx="2" style="fill:var(--surface)"/><path class="door" d="M40 18v8M40 38v10"/></svg>' },
+    eggs: { text: "Counting the eggs…", svg: '<svg class="v-eggs" viewBox="0 0 64 64" aria-hidden="true"><rect x="6" y="20" width="52" height="30" rx="6"/><ellipse class="egg" cx="18" cy="31" rx="6" ry="7.5"/><ellipse class="egg" cx="32" cy="31" rx="6" ry="7.5"/><ellipse class="egg" cx="46" cy="31" rx="6" ry="7.5"/><ellipse class="egg" cx="18" cy="42" rx="6" ry="7.5"/><ellipse class="egg" cx="32" cy="42" rx="6" ry="7.5"/><ellipse class="egg" cx="46" cy="42" rx="6" ry="7.5"/></svg>' },
+    shelves: { text: "Tidying the shelves…", svg: '<svg class="v-shelves" viewBox="0 0 64 64" aria-hidden="true"><path d="M8 28h48M8 52h48"/><rect class="jar" x="12" y="16" width="8" height="12" rx="2"/><rect class="jar" x="26" y="12" width="8" height="16" rx="2"/><rect class="jar" x="40" y="18" width="8" height="10" rx="2"/><rect class="jar" x="12" y="40" width="8" height="12" rx="2"/><rect class="jar" x="26" y="36" width="8" height="16" rx="2"/><rect class="jar" x="40" y="42" width="8" height="10" rx="2"/></svg>' },
+    pot: { text: "Simmering…", svg: '<svg class="v-pot" viewBox="0 0 64 64" aria-hidden="true"><path d="M14 34h36v12a8 8 0 0 1-8 8H22a8 8 0 0 1-8-8z"/><path d="M10 38h4M50 38h4"/><g class="lid"><path d="M16 34a16 6 0 0 1 32 0"/><path d="M32 28v-3"/></g><path class="steam" d="M24 20c-3-3 3-5 0-9"/><path class="steam" d="M32 20c-3-3 3-5 0-9"/><path class="steam" d="M40 20c-3-3 3-5 0-9"/></svg>' }
+  };
+  var loader = (new URLSearchParams(location.search).get("loader") || "fridge");
+  if (!LOADERS[loader]) loader = "fridge";
+  function showLoader(k) { loader = k; $("#veil-glyph").innerHTML = LOADERS[k].svg; $("#veil-text").textContent = LOADERS[k].text; $$("[data-loader]").forEach(function (b) { b.setAttribute("aria-pressed", String(b.getAttribute("data-loader") === k)); }); }
   function startRefresh() {
     refreshing = true; pull = null; document.body.classList.remove("is-pulling");
     wrap.classList.remove("armed", "deep", "settle", "pulling"); wrap.style.height = ""; barEl.style.removeProperty("--p"); pill(-1);
-    $("#veil-glyph").innerHTML = ICONS.retry; $("#refreshveil").classList.add("on");
+    showLoader(loader); $("#refreshveil").classList.add("on");
     $("#list").classList.add("refreshing"); $("#list").setAttribute("aria-busy", "true");
     $("#pullstatus").textContent = "Refreshing";
     setTimeout(function () {
@@ -848,6 +885,8 @@ li .meta mark{color:var(--fg)}
       $("#pullstatus").textContent = "List refreshed";
     }, REFRESH_MS);
   }
+  $$("[data-loader]").forEach(function (b) { b.addEventListener("click", function () { showLoader(b.getAttribute("data-loader")); }); });
+  $("#try-refresh").addEventListener("click", function () { if (!refreshing) startRefresh(); });
   function canPull(t) {
     if (refreshing || fieldOpen || !state.items.length || window.scrollY > 0 || !$("#quick-add").hidden) return false;
     if (t.closest && t.closest("input,select,textarea,summary,.sheet,nav.tabs.reordering,details.profile[open]")) return false;
